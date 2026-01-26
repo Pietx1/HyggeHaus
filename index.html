@@ -14,17 +14,26 @@
     .card-pad{ padding:16px; }
     .grid{ display:grid; gap:16px; }
     @media(min-width:900px){ .grid-3{ grid-template-columns:repeat(3,1fr); } }
-    label{ font-weight:600; font-size:14px; }
-    input, textarea{ width:100%; border:1px solid var(--border); border-radius:12px; padding:10px 12px; font-size:14px; outline:none; }
+    label{ font-weight:700; font-size:13px; }
+    input, textarea, select{
+      width:100%;
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:10px 12px;
+      font-size:14px;
+      outline:none;
+      background:#fff;
+    }
     textarea{ min-height:90px; resize:vertical; }
     .row{ display:grid; gap:12px; }
     .btn{
       display:inline-flex; align-items:center; justify-content:center;
       gap:8px; border:0; cursor:pointer; border-radius:12px;
-      padding:10px 14px; font-weight:700; font-size:14px;
+      padding:10px 14px; font-weight:800; font-size:14px;
       background:#111827; color:#fff;
     }
     .btn:disabled{ opacity:.5; cursor:not-allowed; }
+    .btn-danger{ background:#b91c1c; }
     .drop{
       border:2px dashed #cbd5e1; border-radius:16px; padding:18px;
       text-align:center; background:#fafafa; color:var(--muted);
@@ -35,11 +44,26 @@
     .product img{ width:100%; height:180px; object-fit:cover; border-radius:12px; border:1px solid var(--border); background:#fff; }
     .product h3{ margin:10px 0 4px; font-size:16px; }
     .product p{ margin:0; color:var(--muted); font-size:13px; line-height:1.35; }
-    .prod-actions{ display:flex; justify-content:flex-end; margin-top:10px; }
-    .btn-danger{ background:#b91c1c; }
     .status{ margin-top:10px; font-size:13px; color:var(--muted); }
     .error{ color:#b91c1c; }
     .ok{ color:#047857; }
+    .section-title{ font-weight:900; margin:10px 0 6px; }
+    .order-line{
+      display:flex; gap:10px; align-items:center; justify-content:space-between;
+      border:1px solid var(--border); border-radius:12px; padding:8px 10px;
+      background:#fff;
+    }
+    .order-badges{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+    .badge{
+      border:1px solid var(--border);
+      border-radius:999px;
+      padding:4px 10px;
+      font-size:12px;
+      background:#f9fafb;
+    }
+    .order-form{ display:grid; gap:10px; }
+    .order-grid{ display:grid; grid-template-columns:1fr 1fr 1fr 110px; gap:10px; }
+    @media(max-width:900px){ .order-grid{ grid-template-columns:1fr 1fr; } }
   </style>
 </head>
 <body>
@@ -49,6 +73,7 @@
       <div class="hint">GitHub Pages • Supabase</div>
     </div>
 
+    <!-- Produkt anlegen -->
     <div class="card">
       <div class="card-pad">
         <h2 style="margin:0 0 12px;font-size:18px;">Produkt anlegen</h2>
@@ -56,7 +81,7 @@
         <div class="row">
           <div>
             <label for="name">Produktname</label>
-            <input id="name" placeholder="z. B. Handyhalter" />
+            <input id="name" placeholder="z. B. Bunny 20cm" />
           </div>
 
           <div>
@@ -79,18 +104,23 @@
 
     <div style="height:18px"></div>
 
+    <!-- Produkte -->
     <div id="list" class="grid grid-3"></div>
   </div>
 
-  <!-- Supabase JS (Browser) -->
   <script type="module">
     import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-    // ✅ HIER EINTRAGEN:
+    // ✅ Deine Daten:
     const SUPABASE_URL = "https://htgrzmlcdolxxzvkppon.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0Z3J6bWxjZG9seHh6dmtwcG9uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0MzM2ODIsImV4cCI6MjA4NTAwOTY4Mn0.B0PxMAzmuvsHNd2n_mgNspjlPkaBpQlkrNzGu7p78fY";
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Farben für Dropdown (kannst du beliebig anpassen)
+    const COLORS = [
+      "schwarz","weiß","grau","blau","rot","gelb","grün","orange","pink","lila","braun"
+    ];
 
     const elName = document.getElementById("name");
     const elDesc = document.getElementById("desc");
@@ -106,6 +136,12 @@
     function setStatus(msg, type="") {
       elStatus.className = "status " + type;
       elStatus.textContent = msg || "";
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, s => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+      }[s]));
     }
 
     function updateSaveEnabled() {
@@ -133,51 +169,48 @@
       updateSaveEnabled();
     }
 
+    function colorOptionsHtml(selected) {
+      return COLORS.map(c => `<option value="${escapeHtml(c)}" ${c===selected ? "selected":""}>${escapeHtml(c)}</option>`).join("");
+    }
+
     async function loadProducts() {
       setStatus("Lade Produkte…");
-      const { data, error } = await supabase
+
+      const { data: products, error: pErr } = await supabase
         .from("products")
         .select("id,name,desc,image,created_at")
         .order("created_at", { ascending: false });
 
-      if (error) {
-        setStatus("Fehler beim Laden: " + error.message, "error");
+      if (pErr) {
+        setStatus("Fehler beim Laden: " + pErr.message, "error");
         return;
       }
-      renderProducts(data || []);
-      setStatus("");
-    }
 
-    function renderProducts(products) {
-      elList.innerHTML = "";
-      for (const p of products) {
-        const card = document.createElement("div");
-        card.className = "card card-pad product";
+      const ids = (products || []).map(p => p.id);
 
-        card.innerHTML = `
-          <img src="${p.image || ""}" alt="${escapeHtml(p.name || "")}">
-          <h3>${escapeHtml(p.name || "")}</h3>
-          <p>${escapeHtml(p.desc || "")}</p>
-          <div class="prod-actions">
-            <button class="btn btn-danger" data-id="${p.id}">Löschen</button>
-          </div>
-        `;
-        elList.appendChild(card);
+      let orders = [];
+      if (ids.length) {
+        const { data: oData, error: oErr } = await supabase
+          .from("orders")
+          .select("id,product_id,body_color,ears_color,butt_color,qty,created_at")
+          .in("product_id", ids)
+          .order("created_at", { ascending: true });
+
+        if (oErr) {
+          setStatus("Fehler beim Laden (Bestellungen): " + oErr.message, "error");
+          return;
+        }
+        orders = oData || [];
       }
 
-      elList.querySelectorAll("button[data-id]").forEach(btn => {
-        btn.addEventListener("click", async () => {
-          const id = btn.getAttribute("data-id");
-          if (!id) return;
-          await deleteProduct(id);
-        });
-      });
-    }
+      const byProduct = new Map();
+      for (const o of orders) {
+        if (!byProduct.has(o.product_id)) byProduct.set(o.product_id, []);
+        byProduct.get(o.product_id).push(o);
+      }
 
-    function escapeHtml(str) {
-      return String(str).replace(/[&<>"']/g, s => ({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-      }[s]));
+      renderProducts(products || [], byProduct);
+      setStatus("");
     }
 
     async function addProduct() {
@@ -187,8 +220,8 @@
 
       setStatus("Upload läuft…");
 
-      // 1) Upload in Storage
       const fileName = `${Date.now()}-${imageFile.name}`;
+
       const { error: upErr } = await supabase
         .storage
         .from("product-images")
@@ -199,7 +232,6 @@
         return;
       }
 
-      // 2) Public URL holen
       const { data: pub } = supabase
         .storage
         .from("product-images")
@@ -207,7 +239,6 @@
 
       const imageUrl = pub?.publicUrl;
 
-      // 3) In Tabelle speichern
       const { error: insErr } = await supabase
         .from("products")
         .insert({ name, desc, image: imageUrl });
@@ -217,7 +248,6 @@
         return;
       }
 
-      // Reset
       elName.value = "";
       elDesc.value = "";
       imageFile = null;
@@ -230,7 +260,7 @@
     }
 
     async function deleteProduct(id) {
-      setStatus("Lösche…");
+      setStatus("Lösche Produkt…");
       const { error } = await supabase.from("products").delete().eq("id", id);
       if (error) {
         setStatus("Löschen fehlgeschlagen: " + error.message, "error");
@@ -238,6 +268,170 @@
       }
       setStatus("Gelöscht ✅", "ok");
       await loadProducts();
+    }
+
+    async function addOrder(productId, bodyColor, earsColor, buttColor, qty) {
+      if (!productId) return;
+      if (!bodyColor || !earsColor || !buttColor) {
+        setStatus("Bitte alle Farben auswählen.", "error");
+        return;
+      }
+      const q = parseInt(qty, 10);
+      if (!Number.isFinite(q) || q < 1) {
+        setStatus("Menge muss >= 1 sein.", "error");
+        return;
+      }
+
+      setStatus("Speichere Bestell-Position…");
+
+      const { error } = await supabase
+        .from("orders")
+        .insert({
+          product_id: productId,
+          body_color: bodyColor,
+          ears_color: earsColor,
+          butt_color: buttColor,
+          qty: q
+        });
+
+      if (error) {
+        setStatus("Fehler (Order): " + error.message, "error");
+        return;
+      }
+
+      setStatus("Gespeichert ✅", "ok");
+      await loadProducts();
+    }
+
+    async function deleteOrder(orderId) {
+      setStatus("Entferne Position…");
+      const { error } = await supabase.from("orders").delete().eq("id", orderId);
+      if (error) {
+        setStatus("Fehler beim Entfernen: " + error.message, "error");
+        return;
+      }
+      setStatus("Entfernt ✅", "ok");
+      await loadProducts();
+    }
+
+    function renderProducts(products, ordersByProduct) {
+      elList.innerHTML = "";
+
+      for (const p of products) {
+        const card = document.createElement("div");
+        card.className = "card card-pad product";
+
+        // Bild-Link robust
+        const bucket = "product-images";
+        const imageSrc = (p.image && p.image.startsWith("http"))
+          ? p.image
+          : (p.image ? `${SUPABASE_URL}/storage/v1/object/public/${bucket}/${encodeURIComponent(p.image)}` : "");
+
+        const orders = ordersByProduct.get(p.id) || [];
+        const totalQty = orders.reduce((sum, o) => sum + (o.qty || 0), 0);
+
+        const ordersHtml = orders.length
+          ? orders.map(o => `
+              <div class="order-line">
+                <div class="order-badges">
+                  <span class="badge"><b>Körper:</b> ${escapeHtml(o.body_color)}</span>
+                  <span class="badge"><b>Ohren:</b> ${escapeHtml(o.ears_color)}</span>
+                  <span class="badge"><b>Popo:</b> ${escapeHtml(o.butt_color)}</span>
+                  <span class="badge"><b>Menge:</b> ${o.qty}</span>
+                </div>
+                <button class="btn btn-danger" data-order-id="${o.id}" style="padding:8px 10px;font-size:12px;">Entfernen</button>
+              </div>
+            `).join("")
+          : `<div class="hint">Noch keine Bestellungen.</div>`;
+
+        card.innerHTML = `
+          <img src="${imageSrc}" alt="${escapeHtml(p.name || "")}">
+          <h3>${escapeHtml(p.name || "")}</h3>
+          <p>${escapeHtml(p.desc || "")}</p>
+
+          <div class="section-title">Bestellungen (Körper/Ohren/Popo + Menge)</div>
+
+          <div class="order-form">
+            <div class="order-grid">
+              <div>
+                <label>Körper</label>
+                <select data-body-for="${p.id}">
+                  ${colorOptionsHtml("schwarz")}
+                </select>
+              </div>
+              <div>
+                <label>Ohren</label>
+                <select data-ears-for="${p.id}">
+                  ${colorOptionsHtml("schwarz")}
+                </select>
+              </div>
+              <div>
+                <label>Popo</label>
+                <select data-butt-for="${p.id}">
+                  ${colorOptionsHtml("schwarz")}
+                </select>
+              </div>
+              <div>
+                <label>Menge</label>
+                <input type="number" min="1" value="1" data-qty-for="${p.id}">
+              </div>
+            </div>
+
+            <button class="btn" data-add-order-for="${p.id}">+ Position hinzufügen</button>
+
+            <div class="hint">Gesamtmenge für dieses Produkt: <b>${totalQty}</b></div>
+
+            <div style="display:grid;gap:8px;">
+              ${ordersHtml}
+            </div>
+
+            <div style="display:flex;justify-content:flex-end;">
+              <button class="btn btn-danger" data-delete-product="${p.id}">Produkt löschen</button>
+            </div>
+          </div>
+        `;
+
+        elList.appendChild(card);
+      }
+
+      // Produkt löschen
+      elList.querySelectorAll("button[data-delete-product]").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const id = btn.getAttribute("data-delete-product");
+          if (!id) return;
+          await deleteProduct(id);
+        });
+      });
+
+      // Order hinzufügen
+      elList.querySelectorAll("button[data-add-order-for]").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const productId = btn.getAttribute("data-add-order-for");
+          const bodyEl = elList.querySelector(`select[data-body-for="${productId}"]`);
+          const earsEl = elList.querySelector(`select[data-ears-for="${productId}"]`);
+          const buttEl = elList.querySelector(`select[data-butt-for="${productId}"]`);
+          const qtyEl  = elList.querySelector(`input[data-qty-for="${productId}"]`);
+
+          await addOrder(
+            productId,
+            bodyEl?.value || "",
+            earsEl?.value || "",
+            buttEl?.value || "",
+            qtyEl?.value || "1"
+          );
+
+          if (qtyEl) qtyEl.value = "1";
+        });
+      });
+
+      // Order entfernen
+      elList.querySelectorAll("button[data-order-id]").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const orderId = btn.getAttribute("data-order-id");
+          if (!orderId) return;
+          await deleteOrder(orderId);
+        });
+      });
     }
 
     elSave.addEventListener("click", addProduct);
