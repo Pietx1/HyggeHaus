@@ -1,85 +1,249 @@
-// ⚠️ WICHTIG: Diese Version nutzt Supabase für
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mein 3D-Druck Business</title>
+  <style>
+    :root { --bg:#f6f7fb; --card:#fff; --text:#111827; --muted:#6b7280; --border:#e5e7eb; }
+    *{ box-sizing:border-box; }
+    body{ margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; background:var(--bg); color:var(--text); }
+    .container{ max-width:1100px; margin:0 auto; padding:24px; }
+    h1{ font-size:28px; margin:0 0 16px; }
+    .card{ background:var(--card); border:1px solid var(--border); border-radius:16px; box-shadow:0 6px 20px rgba(0,0,0,.06); }
+    .card-pad{ padding:16px; }
+    .grid{ display:grid; gap:16px; }
+    @media(min-width:900px){ .grid-3{ grid-template-columns:repeat(3,1fr); } }
+    label{ font-weight:600; font-size:14px; }
+    input, textarea{ width:100%; border:1px solid var(--border); border-radius:12px; padding:10px 12px; font-size:14px; outline:none; }
+    textarea{ min-height:90px; resize:vertical; }
+    .row{ display:grid; gap:12px; }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      gap:8px; border:0; cursor:pointer; border-radius:12px;
+      padding:10px 14px; font-weight:700; font-size:14px;
+      background:#111827; color:#fff;
+    }
+    .btn:disabled{ opacity:.5; cursor:not-allowed; }
+    .drop{
+      border:2px dashed #cbd5e1; border-radius:16px; padding:18px;
+      text-align:center; background:#fafafa; color:var(--muted);
+    }
+    .drop strong{ color:var(--text); }
+    .topbar{ display:flex; gap:12px; align-items:center; justify-content:space-between; margin-bottom:16px; }
+    .hint{ color:var(--muted); font-size:13px; }
+    .product img{ width:100%; height:180px; object-fit:cover; border-radius:12px; border:1px solid var(--border); background:#fff; }
+    .product h3{ margin:10px 0 4px; font-size:16px; }
+    .product p{ margin:0; color:var(--muted); font-size:13px; line-height:1.35; }
+    .prod-actions{ display:flex; justify-content:flex-end; margin-top:10px; }
+    .btn-danger{ background:#b91c1c; }
+    .status{ margin-top:10px; font-size:13px; color:var(--muted); }
+    .error{ color:#b91c1c; }
+    .ok{ color:#047857; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <h1>Mein 3D-Druck Business</h1>
+      <div class="hint">GitHub Pages • Supabase</div>
+    </div>
 
+    <div class="card">
+      <div class="card-pad">
+        <h2 style="margin:0 0 12px;font-size:18px;">Produkt anlegen</h2>
 
-const fileName = `${Date.now()}-${imageFile.name}`;
+        <div class="row">
+          <div>
+            <label for="name">Produktname</label>
+            <input id="name" placeholder="z. B. Handyhalter" />
+          </div>
 
+          <div>
+            <label for="desc">Beschreibung</label>
+            <textarea id="desc" placeholder="Kurzbeschreibung…"></textarea>
+          </div>
 
-await supabase.storage.from("product-images").upload(fileName, imageFile);
+          <div id="drop" class="drop">
+            <div><strong>Bild</strong> hier ablegen oder klicken 📸</div>
+            <div id="fileName" style="margin-top:6px;"></div>
+            <input id="file" type="file" accept="image/*" style="display:none" />
+          </div>
 
+          <button id="saveBtn" class="btn" disabled>+ Produkt speichern</button>
 
-const { data: image } = supabase.storage
-.from("product-images")
-.getPublicUrl(fileName);
+          <div id="status" class="status"></div>
+        </div>
+      </div>
+    </div>
 
+    <div style="height:18px"></div>
 
-await supabase.from("products").insert({
-name,
-desc,
-image: image.publicUrl,
-});
+    <div id="list" class="grid grid-3"></div>
+  </div>
 
+  <!-- Supabase JS (Browser) -->
+  <script type="module">
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-setName("");
-setDesc("");
-setImageFile(null);
-loadProducts();
-};
+    // ✅ HIER EINTRAGEN:
+    const SUPABASE_URL = "https://DEIN-PROJEKT.supabase.co";
+    const SUPABASE_ANON_KEY = "DEIN_PUBLIC_ANON_KEY";
 
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-return (
-<div className="min-h-screen bg-gray-100 p-6">
-<h1 className="text-3xl font-bold mb-6">Mein 3D-Druck Business</h1>
+    const elName = document.getElementById("name");
+    const elDesc = document.getElementById("desc");
+    const elFile = document.getElementById("file");
+    const elDrop = document.getElementById("drop");
+    const elFileName = document.getElementById("fileName");
+    const elSave = document.getElementById("saveBtn");
+    const elStatus = document.getElementById("status");
+    const elList = document.getElementById("list");
 
+    let imageFile = null;
 
-<Card className="mb-8">
-<CardContent className="space-y-4 p-4">
-<h2 className="text-xl font-semibold">Produkt anlegen</h2>
-<Input placeholder="Produktname" value={name} onChange={(e) => setName(e.target.value)} />
-<Textarea placeholder="Beschreibung" value={desc} onChange={(e) => setDesc(e.target.value)} />
+    function setStatus(msg, type="") {
+      elStatus.className = "status " + type;
+      elStatus.textContent = msg || "";
+    }
 
+    function updateSaveEnabled() {
+      elSave.disabled = !(elName.value.trim() && imageFile);
+    }
 
-<div
-className="border-2 border-dashed rounded-xl p-6 text-center cursor-pointer bg-gray-50"
-onDragOver={(e) => e.preventDefault()}
-onDrop={(e) => {
-e.preventDefault();
-const file = e.dataTransfer.files[0];
-if (file) setImageFile(file);
-}}
->
-<input
-type="file"
-accept="image/*"
-className="hidden"
-id="imageUpload"
-onChange={(e) => setImageFile(e.target.files[0])}
-/>
-<label htmlFor="imageUpload" className="cursor-pointer">
-{imageFile ? (
-<p>{imageFile.name}</p>
-) : (
-<p className="text-gray-500">Bild hier ablegen oder antippen 📸</p>
-)}
-</label>
-</div>
+    elName.addEventListener("input", updateSaveEnabled);
 
+    elDrop.addEventListener("click", () => elFile.click());
+    elDrop.addEventListener("dragover", (e) => { e.preventDefault(); });
+    elDrop.addEventListener("drop", (e) => {
+      e.preventDefault();
+      const f = e.dataTransfer.files?.[0];
+      if (f) setFile(f);
+    });
 
-<Button onClick={addProduct}><Plus className="mr-2" />Produkt speichern</Button>
-</CardContent>
-</Card>
+    elFile.addEventListener("change", () => {
+      const f = elFile.files?.[0];
+      if (f) setFile(f);
+    });
 
+    function setFile(f) {
+      imageFile = f;
+      elFileName.textContent = f.name;
+      updateSaveEnabled();
+    }
 
-<div className="grid md:grid-cols-3 gap-6">
-{products.map((p) => (
-<Card key={p.id}>
-<CardContent className="p-4 space-y-2">
-<img src={p.image} alt={p.name} className="rounded-xl" />
-<h3 className="text-lg font-bold">{p.name}</h3>
-<p className="text-sm text-gray-600">{p.desc}</p>
-</CardContent>
-</Card>
-))}
-</div>
-</div>
-);
-}
+    async function loadProducts() {
+      setStatus("Lade Produkte…");
+      const { data, error } = await supabase
+        .from("products")
+        .select("id,name,desc,image,created_at")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        setStatus("Fehler beim Laden: " + error.message, "error");
+        return;
+      }
+      renderProducts(data || []);
+      setStatus("");
+    }
+
+    function renderProducts(products) {
+      elList.innerHTML = "";
+      for (const p of products) {
+        const card = document.createElement("div");
+        card.className = "card card-pad product";
+
+        card.innerHTML = `
+          <img src="${p.image || ""}" alt="${escapeHtml(p.name || "")}">
+          <h3>${escapeHtml(p.name || "")}</h3>
+          <p>${escapeHtml(p.desc || "")}</p>
+          <div class="prod-actions">
+            <button class="btn btn-danger" data-id="${p.id}">Löschen</button>
+          </div>
+        `;
+        elList.appendChild(card);
+      }
+
+      elList.querySelectorAll("button[data-id]").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const id = btn.getAttribute("data-id");
+          if (!id) return;
+          await deleteProduct(id);
+        });
+      });
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, s => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+      }[s]));
+    }
+
+    async function addProduct() {
+      const name = elName.value.trim();
+      const desc = elDesc.value.trim();
+      if (!name || !imageFile) return;
+
+      setStatus("Upload läuft…");
+
+      // 1) Upload in Storage
+      const fileName = `${Date.now()}-${imageFile.name}`;
+      const { error: upErr } = await supabase
+        .storage
+        .from("product-images")
+        .upload(fileName, imageFile, { upsert: false });
+
+      if (upErr) {
+        setStatus("Upload-Fehler: " + upErr.message, "error");
+        return;
+      }
+
+      // 2) Public URL holen
+      const { data: pub } = supabase
+        .storage
+        .from("product-images")
+        .getPublicUrl(fileName);
+
+      const imageUrl = pub?.publicUrl;
+
+      // 3) In Tabelle speichern
+      const { error: insErr } = await supabase
+        .from("products")
+        .insert({ name, desc, image: imageUrl });
+
+      if (insErr) {
+        setStatus("DB-Fehler: " + insErr.message, "error");
+        return;
+      }
+
+      // Reset
+      elName.value = "";
+      elDesc.value = "";
+      imageFile = null;
+      elFile.value = "";
+      elFileName.textContent = "";
+      updateSaveEnabled();
+
+      setStatus("Gespeichert ✅", "ok");
+      await loadProducts();
+    }
+
+    async function deleteProduct(id) {
+      setStatus("Lösche…");
+      const { error } = await supabase.from("products").delete().eq("id", id);
+      if (error) {
+        setStatus("Löschen fehlgeschlagen: " + error.message, "error");
+        return;
+      }
+      setStatus("Gelöscht ✅", "ok");
+      await loadProducts();
+    }
+
+    elSave.addEventListener("click", addProduct);
+
+    // Start
+    await loadProducts();
+  </script>
+</body>
+</html>
