@@ -1,0 +1,85 @@
+// ⚠️ WICHTIG: Diese Version nutzt Supabase für
+
+
+const fileName = `${Date.now()}-${imageFile.name}`;
+
+
+await supabase.storage.from("product-images").upload(fileName, imageFile);
+
+
+const { data: image } = supabase.storage
+.from("product-images")
+.getPublicUrl(fileName);
+
+
+await supabase.from("products").insert({
+name,
+desc,
+image: image.publicUrl,
+});
+
+
+setName("");
+setDesc("");
+setImageFile(null);
+loadProducts();
+};
+
+
+return (
+<div className="min-h-screen bg-gray-100 p-6">
+<h1 className="text-3xl font-bold mb-6">Mein 3D-Druck Business</h1>
+
+
+<Card className="mb-8">
+<CardContent className="space-y-4 p-4">
+<h2 className="text-xl font-semibold">Produkt anlegen</h2>
+<Input placeholder="Produktname" value={name} onChange={(e) => setName(e.target.value)} />
+<Textarea placeholder="Beschreibung" value={desc} onChange={(e) => setDesc(e.target.value)} />
+
+
+<div
+className="border-2 border-dashed rounded-xl p-6 text-center cursor-pointer bg-gray-50"
+onDragOver={(e) => e.preventDefault()}
+onDrop={(e) => {
+e.preventDefault();
+const file = e.dataTransfer.files[0];
+if (file) setImageFile(file);
+}}
+>
+<input
+type="file"
+accept="image/*"
+className="hidden"
+id="imageUpload"
+onChange={(e) => setImageFile(e.target.files[0])}
+/>
+<label htmlFor="imageUpload" className="cursor-pointer">
+{imageFile ? (
+<p>{imageFile.name}</p>
+) : (
+<p className="text-gray-500">Bild hier ablegen oder antippen 📸</p>
+)}
+</label>
+</div>
+
+
+<Button onClick={addProduct}><Plus className="mr-2" />Produkt speichern</Button>
+</CardContent>
+</Card>
+
+
+<div className="grid md:grid-cols-3 gap-6">
+{products.map((p) => (
+<Card key={p.id}>
+<CardContent className="p-4 space-y-2">
+<img src={p.image} alt={p.name} className="rounded-xl" />
+<h3 className="text-lg font-bold">{p.name}</h3>
+<p className="text-sm text-gray-600">{p.desc}</p>
+</CardContent>
+</Card>
+))}
+</div>
+</div>
+);
+}
