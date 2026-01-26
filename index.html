@@ -960,14 +960,14 @@
       const b11 = items.filter(i=>i.product_type==="bunny" && i.bunny_size==="11").reduce((s,i)=>s+i.quantity,0);
 
       const bundle = Math.min(b20,b15,b11);
-      total += bundle * 22.0;
+      total += bundle * 22.50;
       total += (b20 - bundle) * 12.0;
       total += (b15 - bundle) * 9.0;
       total += (b11 - bundle) * 6.0;
 
       // lumis
       const lumis = items.filter(i=>i.product_type==="lumi").reduce((s,i)=>s+i.quantity,0);
-      total += lumis * 8.0;
+      total += lumis * 8.50;
 
       // other: 0 (du kannst später Preise ergänzen)
       return Number(total.toFixed(2));
