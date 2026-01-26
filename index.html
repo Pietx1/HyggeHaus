@@ -63,7 +63,6 @@
     .sizes{ display:flex; gap:10px; flex-wrap:wrap; }
     .sizes .btn{ min-width:90px; }
 
-    /* PRIORITY Buttons */
     .prioRow{
       display:grid;
       grid-template-columns: 1fr 1.6fr 1fr;
@@ -86,16 +85,16 @@
     .error{ color:var(--red); }
     .ok{ color:#047857; }
 
-    /* Farben: Pfeil im Feld + klickbar */
+    /* Farben: EIN Pfeil (immer sichtbar + klickbar) */
     .colorWrap{ position:relative; width:100%; }
-    .colorWrap input{ padding-right:44px; }
+    .colorWrap input{ padding-right:52px; }
     .colorWrap button.arrowBtn{
       position:absolute;
       right:10px;
       top:50%;
       transform:translateY(-50%);
-      width:30px;
-      height:30px;
+      width:36px;
+      height:36px;
       border-radius:12px;
       border:1px solid var(--border);
       background:#fff;
@@ -106,10 +105,10 @@
       cursor:pointer;
       padding:0;
       line-height:1;
+      font-weight:950;
+      font-size:16px;
     }
-    .subhint{ margin-top:6px; color:var(--muted); font-size:12px; }
 
-    /* Menge Buttons */
     .qtyGrid{ display:grid; grid-template-columns:repeat(9, 1fr); gap:8px; }
     .qtyBtn{
       border:1px solid var(--border);
@@ -124,7 +123,6 @@
     .qtyRow2{ display:grid; grid-template-columns:1fr; gap:10px; }
     @media(min-width:900px){ .qtyRow2{ grid-template-columns: 1fr 1fr; } }
 
-    /* Liste */
     .list{ display:grid; gap:12px; margin-top:16px; }
     .order{
       display:flex; gap:12px; align-items:flex-start; justify-content:space-between;
@@ -143,14 +141,12 @@
       background:#f9fafb;
       color:#111827;
     }
-    /* Priorität oben und auffälliger als Farben */
     .badge.prio{
       background:#111827;
       color:#fff;
       border-color:#111827;
       font-weight:950;
     }
-    /* Menge: nicht knallig, aber auffälliger als Farben */
     .badge.qty{
       background:#f1f5f9;
       border-color:#cbd5e1;
@@ -168,7 +164,6 @@
       min-height:18px;
     }
 
-    /* Archiv Bereich unten dezent */
     details.archive{
       margin-top:18px;
       border-top:1px dashed var(--border);
@@ -184,13 +179,10 @@
     details.archive summary::-webkit-details-marker{ display:none; }
     .archiveHint{ color:var(--muted); font-size:12px; margin-top:6px; }
 
-    /* Sortier-Buttons neben Überschrift */
     .headerRow{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
     .sortBtns{ display:flex; gap:8px; }
     .sortBtns .btn{ padding:8px 10px; font-size:13px; border-radius:12px; }
-    .sortBtns .btn-outline{ border:1px solid var(--border); }
 
-    /* Monatsgruppen im Archiv */
     .monthGroup{ margin-top:14px; }
     .monthTitle{
       color:var(--muted);
@@ -199,7 +191,6 @@
       margin:0 0 10px;
     }
 
-    /* Validation: rote Rahmen */
     .invalid{
       border-color: var(--red) !important;
       box-shadow: 0 0 0 3px rgba(185, 28, 28, .12) !important;
@@ -214,6 +205,35 @@
       border:2px solid var(--red) !important;
       box-shadow: 0 0 0 3px rgba(185, 28, 28, .10) !important;
     }
+
+    /* Edit Modal */
+    .modalBackdrop{
+      position:fixed; inset:0; background:rgba(0,0,0,.35);
+      display:none; align-items:center; justify-content:center;
+      padding:16px; z-index:9999;
+    }
+    .modal{
+      width:min(720px, 100%);
+      background:#fff;
+      border-radius:18px;
+      border:1px solid var(--border);
+      box-shadow:0 20px 50px rgba(0,0,0,.2);
+      overflow:hidden;
+    }
+    .modalHead{
+      padding:14px 16px;
+      display:flex; align-items:center; justify-content:space-between;
+      border-bottom:1px solid var(--border);
+      background:#fafafa;
+      font-weight:950;
+    }
+    .modalBody{ padding:16px; }
+    .modalFoot{
+      padding:14px 16px;
+      border-top:1px solid var(--border);
+      display:flex; gap:10px; justify-content:flex-end;
+      background:#fafafa;
+    }
   </style>
 </head>
 
@@ -227,7 +247,6 @@
     <div class="card">
       <div class="card-pad">
 
-        <!-- Produktwahl -->
         <div id="productWrap" class="switch">
           <button id="btnHase" class="btn btn-outline" type="button">🐰 Hase</button>
           <button id="btnLumi" class="btn btn-outline" type="button">🪲 Lumi</button>
@@ -236,7 +255,6 @@
 
         <h2 id="formTitle" style="margin:0 0 12px;font-size:20px;">Neue Bestellung</h2>
 
-        <!-- PRIORITÄT -->
         <div id="prioWrap" class="grid">
           <div>
             <label>Priorität</label>
@@ -250,7 +268,6 @@
 
         <div style="height:12px"></div>
 
-        <!-- Hase -->
         <div id="haseBlock" style="display:none;">
           <div id="sizeWrap">
             <label>Größe</label>
@@ -274,27 +291,26 @@
               <label for="hBody">Körperfarbe</label>
               <div class="colorWrap">
                 <input id="hBody" list="colors" placeholder="Tippen oder auswählen…" />
-                <button class="arrowBtn" type="button" data-focus="hBody">▾</button>
+                <button class="arrowBtn" type="button" data-focus="hBody" aria-label="Farben öffnen">▾</button>
               </div>
             </div>
             <div>
               <label for="hEars">Ohrenfarbe</label>
               <div class="colorWrap">
                 <input id="hEars" list="colors" placeholder="Tippen oder auswählen…" />
-                <button class="arrowBtn" type="button" data-focus="hEars">▾</button>
+                <button class="arrowBtn" type="button" data-focus="hEars" aria-label="Farben öffnen">▾</button>
               </div>
             </div>
             <div>
               <label for="hButt">Popofarbe</label>
               <div class="colorWrap">
                 <input id="hButt" list="colors" placeholder="Tippen oder auswählen…" />
-                <button class="arrowBtn" type="button" data-focus="hButt">▾</button>
+                <button class="arrowBtn" type="button" data-focus="hButt" aria-label="Farben öffnen">▾</button>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Lumi -->
         <div id="lumiBlock" style="display:none;">
           <label>Farben</label>
           <datalist id="colorsL">
@@ -309,27 +325,26 @@
               <label for="lBody">Körperfarbe</label>
               <div class="colorWrap">
                 <input id="lBody" list="colorsL" placeholder="Tippen oder auswählen…" />
-                <button class="arrowBtn" type="button" data-focus="lBody">▾</button>
+                <button class="arrowBtn" type="button" data-focus="lBody" aria-label="Farben öffnen">▾</button>
               </div>
             </div>
             <div>
               <label for="lWings">Flügelfarbe</label>
               <div class="colorWrap">
                 <input id="lWings" list="colorsL" placeholder="Tippen oder auswählen…" />
-                <button class="arrowBtn" type="button" data-focus="lWings">▾</button>
+                <button class="arrowBtn" type="button" data-focus="lWings" aria-label="Farben öffnen">▾</button>
               </div>
             </div>
             <div>
               <label for="lFeelers">Fühlerfarbe</label>
               <div class="colorWrap">
                 <input id="lFeelers" list="colorsL" placeholder="Tippen oder auswählen…" />
-                <button class="arrowBtn" type="button" data-focus="lFeelers">▾</button>
+                <button class="arrowBtn" type="button" data-focus="lFeelers" aria-label="Farben öffnen">▾</button>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Weitere Produkt -->
         <div id="otherBlock" style="display:none;">
           <div class="grid grid-2">
             <div>
@@ -353,13 +368,12 @@
           </datalist>
           <div class="colorWrap">
             <input id="oColor" list="colorsO" placeholder="Tippen oder auswählen…" />
-            <button class="arrowBtn" type="button" data-focus="oColor">▾</button>
+            <button class="arrowBtn" type="button" data-focus="oColor" aria-label="Farben öffnen">▾</button>
           </div>
         </div>
 
         <div style="height:12px"></div>
 
-        <!-- Beschreibung (optional) -->
         <div class="grid">
           <div>
             <label for="note">Beschreibung (optional)</label>
@@ -369,7 +383,6 @@
 
         <div style="height:12px"></div>
 
-        <!-- Menge: Buttons 1-9 + Freies Feld -->
         <div id="qtyWrap" class="grid">
           <div>
             <label>Menge</label>
@@ -394,7 +407,6 @@
       </div>
     </div>
 
-    <!-- Offene Bestellungen -->
     <div class="card" style="margin-top:16px;">
       <div class="card-pad">
         <div class="headerRow">
@@ -410,7 +422,6 @@
 
         <div id="list" class="list"></div>
 
-        <!-- Archiv dezent unten -->
         <details class="archive">
           <summary>Archiv (alte Bestellungen anzeigen)</summary>
           <div class="archiveHint">Nach Monaten sortiert. Im Archiv kannst du „Zurückholen“ oder „Löschen“.</div>
@@ -422,11 +433,29 @@
 
   </div>
 
+  <!-- EDIT MODAL -->
+  <div id="modalBackdrop" class="modalBackdrop" role="dialog" aria-modal="true">
+    <div class="modal">
+      <div class="modalHead">
+        <div id="editTitle">Bestellung bearbeiten</div>
+        <button id="closeModal" class="btn btn-outline" type="button" style="padding:8px 10px;border-radius:12px;">✕</button>
+      </div>
+      <div class="modalBody">
+        <div id="editForm"></div>
+        <div id="editStatus" class="status"></div>
+      </div>
+      <div class="modalFoot">
+        <button id="cancelEdit" class="btn btn-outline" type="button">Abbrechen</button>
+        <button id="saveEdit" class="btn" type="button">Speichern</button>
+      </div>
+    </div>
+  </div>
+
   <script type="module">
     import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
     const SUPABASE_URL = "https://htgrzmlcdolxxzvkppon.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0Z3J6bWxjZG9seHh6dmtwcG9uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0MzM2ODIsImV4cCI6MjA4NTAwOTY4Mn0.B0PxMAzmuvsHNd2n_mgNspjlPkaBpQlkrNzGu7p78fY";
+    const SUPABASE_ANON_KEY = "DEIN_ANON_KEY_HIER"; // <- falls du schon drin hast, lass deinen stehen
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     // Elements
@@ -475,6 +504,15 @@
     const sortDateBtn = document.getElementById("sortDate");
     const sortPrioBtn = document.getElementById("sortPrio");
 
+    // Modal
+    const modalBackdrop = document.getElementById("modalBackdrop");
+    const closeModalBtn = document.getElementById("closeModal");
+    const cancelEditBtn = document.getElementById("cancelEdit");
+    const saveEditBtn = document.getElementById("saveEdit");
+    const editFormEl = document.getElementById("editForm");
+    const editTitleEl = document.getElementById("editTitle");
+    const editStatusEl = document.getElementById("editStatus");
+
     // State
     let mode = null;        // hase | lumi | other
     let haseSize = null;    // 20 | 15 | 11
@@ -482,25 +520,20 @@
     let qtyPick = null;     // 1..9
     let sortMode = "date";  // date | prio
 
-    // For archive delete confirmation
-    const pendingDelete = new Set(); // ids
+    // edit state
+    let editRow = null;
 
-    function setStatus(msg, type="") {
-      statusEl.className = "status " + type;
-      statusEl.textContent = msg || "";
-    }
-    function setValidation(msg=""){
-      validationEl.textContent = msg || "";
-    }
+    // Helpers
+    function setStatus(msg, type="") { statusEl.className = "status " + type; statusEl.textContent = msg || ""; }
+    function setValidation(msg=""){ validationEl.textContent = msg || ""; }
+    function setEditStatus(msg, type=""){ editStatusEl.className = "status " + type; editStatusEl.textContent = msg || ""; }
 
     function escapeHtml(str) {
       return String(str).replace(/[&<>"']/g, s => ({
         "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
       }[s]));
     }
-    function dateOnly(iso) {
-      return new Date(iso).toLocaleDateString("de-DE");
-    }
+    function dateOnly(iso) { return new Date(iso).toLocaleDateString("de-DE"); }
     function monthKey(iso){
       const d = new Date(iso);
       const y = d.getFullYear();
@@ -508,13 +541,12 @@
       return `${y}-${m}`;
     }
     function monthTitleFromKey(key){
-      // key = YYYY-MM
       const [y, m] = key.split("-").map(x=>parseInt(x,10));
       const d = new Date(y, (m-1), 1);
       return d.toLocaleDateString("de-DE", { month:"long", year:"numeric" });
     }
 
-    // Extras stored in part3_color (no DB change needed)
+    // Extras stored in part3_color
     function packExtras(part3Color, extras){
       const safe = (v)=> String(v||"").replaceAll("|","/").replaceAll("\n"," ");
       return [
@@ -540,7 +572,6 @@
       return { baseColor: base, note: map.note||"", prio: map.prio||"", otherName: map.otherName||"", otherSize: map.otherSize||"" };
     }
     function prioWeight(p){
-      // lower is more important
       if(p === "sehr") return 0;
       if(p === "wichtig") return 1;
       if(p === "nicht") return 2;
@@ -553,14 +584,21 @@
       return "";
     }
 
-    // Make arrow focus the input
+    // ---- FARBPFEIL FIX: always visible + click opens best possible ----
+    function openColorChooserFor(input){
+      if(!input) return;
+      input.focus();
+
+      // Best-effort: click triggers datalist suggestions on many browsers
+      input.dispatchEvent(new MouseEvent("click", { bubbles:true }));
+      // Some browsers show it on ArrowDown
+      input.dispatchEvent(new KeyboardEvent("keydown", { key:"ArrowDown", bubbles:true }));
+    }
+
     document.querySelectorAll("button.arrowBtn[data-focus]").forEach(b=>{
       b.addEventListener("click", ()=>{
         const id = b.getAttribute("data-focus");
-        const el = document.getElementById(id);
-        if(!el) return;
-        el.focus();
-        el.dispatchEvent(new MouseEvent("click", { bubbles:true }));
+        openColorChooserFor(document.getElementById(id));
       });
     });
 
@@ -597,7 +635,6 @@
       if(mode==="other") formTitle.textContent = "Neue Bestellung: Weitere Produkt";
       if(!mode) formTitle.textContent = "Neue Bestellung";
 
-      // reset size selection on mode change
       haseSize = null;
       haseBlock.querySelectorAll("button[data-size]").forEach(x => x.className = "btn btn-outline");
 
@@ -684,7 +721,6 @@
       sizeWrap?.classList.remove("invalidGroup");
 
       allInputs.forEach(el => el?.classList.remove("invalid"));
-      // Buttons also
       [btnHase,btnLumi,btnOther,pHigh,pMid,pLow].forEach(b => b.classList.remove("invalidBtn"));
       haseBlock.querySelectorAll("button[data-size]").forEach(b => b.classList.remove("invalidBtn"));
       qtyButtonsEl.querySelectorAll("button").forEach(b => b.classList.remove("invalidBtn"));
@@ -714,7 +750,6 @@
       if(!qty){
         missing.push("Menge");
         qtyWrap.classList.add("invalidGroup");
-        // highlight both: buttons and custom field
         qtyButtonsEl.querySelectorAll("button").forEach(b => b.classList.add("invalidBtn"));
         qtyCustomEl.classList.add("invalid");
       }
@@ -776,7 +811,6 @@
     }
 
     function sortRows(rows){
-      // sortMode: date or prio
       const copy = [...rows];
       copy.sort((a,b)=>{
         const ea = unpackExtras(a.part3_color);
@@ -786,17 +820,14 @@
           const wa = prioWeight(ea.prio);
           const wb = prioWeight(eb.prio);
           if(wa !== wb) return wa - wb;
-          // then date desc
           return new Date(b.created_at) - new Date(a.created_at);
         }
-        // date desc
         return new Date(b.created_at) - new Date(a.created_at);
       });
       return copy;
     }
 
     function renderOpen(rows){
-      // totals
       let totalHase=0, totalLumi=0, totalOther=0;
       for(const r of rows){
         if (r.product_type==="hase") totalHase += (r.qty||0);
@@ -822,12 +853,10 @@
         const prio = prioText(extras.prio);
 
         const badgesParts = [];
-        // Priority first and more visible
-        if(prio) badgesParts.push(`<span class="badge prio"><b>Priorität:</b> ${escapeHtml(prio)}</span>`);
-        // qty next (less loud than before)
+        // ✅ CHANGE: only "Sehr wichtig" (no "Priorität:")
+        if(prio) badgesParts.push(`<span class="badge prio">${escapeHtml(prio)}</span>`);
         if(r.qty) badgesParts.push(`<span class="badge qty"><b>Menge:</b> ${r.qty}</span>`);
 
-        // Colors
         if(r.product_type==="other"){
           badgesParts.push(`<span class="badge"><b>${escapeHtml(p2Label)}:</b> ${escapeHtml(extras.otherSize || r.part2_color || "")}</span>`);
           badgesParts.push(`<span class="badge"><b>${escapeHtml(p3Label)}:</b> ${escapeHtml(p3Color)}</span>`);
@@ -848,6 +877,7 @@
             <div class="badges">${badgesParts.join("")}</div>
           </div>
           <div class="right">
+            <button class="btn btn-outline" data-edit="${r.id}" type="button" title="Bearbeiten">✏️ Bearbeiten</button>
             <button class="btn" data-archive="${r.id}" type="button">Archivieren</button>
           </div>
         `;
@@ -860,25 +890,28 @@
           await archiveOrder(id);
         });
       });
+
+      listEl.querySelectorAll("button[data-edit]").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const id = btn.getAttribute("data-edit");
+          const row = rows.find(x => x.id === id);
+          if(row) openEditModal(row);
+        });
+      });
     }
 
     function renderArchiveByMonth(rows){
-      // group by month
-      const groups = new Map(); // key -> rows[]
+      const groups = new Map();
       for(const r of rows){
         const k = monthKey(r.created_at);
         if(!groups.has(k)) groups.set(k, []);
         groups.get(k).push(r);
       }
-
-      // sort month keys desc
       const keys = Array.from(groups.keys()).sort((a,b)=> b.localeCompare(a));
-
       archiveListEl.innerHTML = "";
 
       for(const k of keys){
         const monthRows = groups.get(k) || [];
-        // rows already globally sorted; but ensure internal order respects current sort mode too
         const sorted = sortRows(monthRows);
 
         const wrap = document.createElement("div");
@@ -904,7 +937,7 @@
           const prio = prioText(extras.prio);
 
           const badgesParts = [];
-          if(prio) badgesParts.push(`<span class="badge prio"><b>Priorität:</b> ${escapeHtml(prio)}</span>`);
+          if(prio) badgesParts.push(`<span class="badge prio">${escapeHtml(prio)}</span>`);
           if(r.qty) badgesParts.push(`<span class="badge qty"><b>Menge:</b> ${r.qty}</span>`);
 
           if(r.product_type==="other"){
@@ -918,9 +951,6 @@
 
           if(extras.note) badgesParts.push(`<span class="badge"><b>Beschreibung:</b> ${escapeHtml(extras.note)}</span>`);
 
-          const id = r.id;
-          const confirming = pendingDelete.has(id);
-
           const item = document.createElement("div");
           item.className = "order";
           item.innerHTML = `
@@ -930,18 +960,8 @@
               <div class="badges">${badgesParts.join("")}</div>
             </div>
             <div class="right">
-              <button class="btn btn-outline" data-restore="${id}" type="button">Zurückholen</button>
-
-              ${
-                confirming
-                  ? `
-                    <button class="btn btn-danger" data-delete-confirm="${id}" type="button">Ja, löschen</button>
-                    <button class="btn btn-outline" data-delete-cancel="${id}" type="button">Abbrechen</button>
-                  `
-                  : `
-                    <button class="btn btn-danger" data-delete="${id}" type="button">Löschen</button>
-                  `
-              }
+              <button class="btn btn-outline" data-restore="${r.id}" type="button">Zurückholen</button>
+              <button class="btn btn-danger" data-delete="${r.id}" type="button">Löschen</button>
             </div>
           `;
           list.appendChild(item);
@@ -951,7 +971,6 @@
         archiveListEl.appendChild(wrap);
       }
 
-      // Archive handlers
       archiveListEl.querySelectorAll("button[data-restore]").forEach(btn=>{
         btn.addEventListener("click", async ()=>{
           const id = btn.getAttribute("data-restore");
@@ -960,25 +979,9 @@
       });
 
       archiveListEl.querySelectorAll("button[data-delete]").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
-          const id = btn.getAttribute("data-delete");
-          pendingDelete.add(id);
-          loadOrders();
-        });
-      });
-
-      archiveListEl.querySelectorAll("button[data-delete-cancel]").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
-          const id = btn.getAttribute("data-delete-cancel");
-          pendingDelete.delete(id);
-          loadOrders();
-        });
-      });
-
-      archiveListEl.querySelectorAll("button[data-delete-confirm]").forEach(btn=>{
         btn.addEventListener("click", async ()=>{
-          const id = btn.getAttribute("data-delete-confirm");
-          pendingDelete.delete(id);
+          const id = btn.getAttribute("data-delete");
+          if(!confirm("Bist du sicher, dass du diese Bestellung löschen willst?")) return;
           await deleteOrder(id);
         });
       });
@@ -1070,9 +1073,7 @@
         return;
       }
 
-      // Reset fields
       note.value = "";
-
       qtyPick = null;
       qtyCustomEl.value = "";
       renderQtyButtons();
@@ -1097,6 +1098,272 @@
 
     addBtn.addEventListener("click", addOrder);
 
+    // ---- EDIT MODAL ----
+    function openEditModal(row){
+      editRow = row;
+      const extras = unpackExtras(row.part3_color);
+
+      editTitleEl.textContent = "Bestellung bearbeiten";
+      setEditStatus("");
+
+      // build form depending on type
+      const type = row.product_type;
+      let html = "";
+
+      const prio = extras.prio || "";
+      const noteVal = extras.note || "";
+
+      // priority buttons
+      html += `
+        <div class="grid">
+          <div>
+            <label>Priorität</label>
+            <div class="prioRow" id="editPrioRow">
+              <button class="prioBtn ${prio==="sehr"?"active":""}" data-prio="sehr" type="button">Sehr wichtig</button>
+              <button class="prioBtn big ${prio==="wichtig"?"active":""}" data-prio="wichtig" type="button">Wichtig</button>
+              <button class="prioBtn ${prio==="nicht"?"active":""}" data-prio="nicht" type="button">Nicht wichtig</button>
+            </div>
+          </div>
+        </div>
+        <div style="height:12px"></div>
+      `;
+
+      // qty
+      html += `
+        <div class="grid grid-2">
+          <div>
+            <label for="eQty">Menge</label>
+            <input id="eQty" type="number" min="1" value="${row.qty || 1}">
+          </div>
+          <div></div>
+        </div>
+        <div style="height:12px"></div>
+      `;
+
+      if(type==="hase"){
+        html += `
+          <div>
+            <label>Größe</label>
+            <div class="sizes" id="eSizeRow" style="margin-bottom:10px;">
+              <button class="btn ${row.size_cm===20?"btn-active":"btn-outline"}" data-size="20" type="button">20 cm</button>
+              <button class="btn ${row.size_cm===15?"btn-active":"btn-outline"}" data-size="15" type="button">15 cm</button>
+              <button class="btn ${row.size_cm===11?"btn-active":"btn-outline"}" data-size="11" type="button">11 cm</button>
+            </div>
+          </div>
+
+          <label>Farben</label>
+          <div class="grid grid-3">
+            <div>
+              <label for="eBody">Körperfarbe</label>
+              <div class="colorWrap">
+                <input id="eBody" list="colors" value="${escapeHtml(row.body_color||"")}">
+                <button class="arrowBtn" type="button" data-focus="eBody">▾</button>
+              </div>
+            </div>
+            <div>
+              <label for="eP2">Ohrenfarbe</label>
+              <div class="colorWrap">
+                <input id="eP2" list="colors" value="${escapeHtml(row.part2_color||"")}">
+                <button class="arrowBtn" type="button" data-focus="eP2">▾</button>
+              </div>
+            </div>
+            <div>
+              <label for="eP3">Popofarbe</label>
+              <div class="colorWrap">
+                <input id="eP3" list="colors" value="${escapeHtml(extras.baseColor||"")}">
+                <button class="arrowBtn" type="button" data-focus="eP3">▾</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      if(type==="lumi"){
+        html += `
+          <label>Farben</label>
+          <div class="grid grid-3">
+            <div>
+              <label for="eBody">Körperfarbe</label>
+              <div class="colorWrap">
+                <input id="eBody" list="colorsL" value="${escapeHtml(row.body_color||"")}">
+                <button class="arrowBtn" type="button" data-focus="eBody">▾</button>
+              </div>
+            </div>
+            <div>
+              <label for="eP2">Flügelfarbe</label>
+              <div class="colorWrap">
+                <input id="eP2" list="colorsL" value="${escapeHtml(row.part2_color||"")}">
+                <button class="arrowBtn" type="button" data-focus="eP2">▾</button>
+              </div>
+            </div>
+            <div>
+              <label for="eP3">Fühlerfarbe</label>
+              <div class="colorWrap">
+                <input id="eP3" list="colorsL" value="${escapeHtml(extras.baseColor||"")}">
+                <button class="arrowBtn" type="button" data-focus="eP3">▾</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      if(type==="other"){
+        html += `
+          <div class="grid grid-2">
+            <div>
+              <label for="eName">Name</label>
+              <input id="eName" value="${escapeHtml(extras.otherName||row.body_color||"")}">
+            </div>
+            <div>
+              <label for="eSize">Größe</label>
+              <input id="eSize" value="${escapeHtml(extras.otherSize||row.part2_color||"")}">
+            </div>
+          </div>
+
+          <div style="height:10px"></div>
+
+          <label for="eP3">Farbe</label>
+          <div class="colorWrap">
+            <input id="eP3" list="colorsO" value="${escapeHtml(extras.baseColor||"")}">
+            <button class="arrowBtn" type="button" data-focus="eP3">▾</button>
+          </div>
+        `;
+      }
+
+      html += `
+        <div style="height:12px"></div>
+        <div>
+          <label for="eNote">Beschreibung (optional)</label>
+          <textarea id="eNote" placeholder="Hinweis…">${escapeHtml(noteVal)}</textarea>
+        </div>
+      `;
+
+      editFormEl.innerHTML = html;
+
+      // attach arrow open behavior inside modal too
+      editFormEl.querySelectorAll("button.arrowBtn[data-focus]").forEach(b=>{
+        b.addEventListener("click", ()=>{
+          const id = b.getAttribute("data-focus");
+          openColorChooserFor(document.getElementById(id));
+        });
+      });
+
+      // priority toggle
+      const prioRow = document.getElementById("editPrioRow");
+      prioRow?.querySelectorAll("button[data-prio]").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          prioRow.querySelectorAll("button").forEach(x=>x.classList.remove("active"));
+          btn.classList.add("active");
+        });
+      });
+
+      // size toggle
+      const sizeRow = document.getElementById("eSizeRow");
+      sizeRow?.querySelectorAll("button[data-size]").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          sizeRow.querySelectorAll("button").forEach(x=>x.className = "btn btn-outline");
+          btn.className = "btn btn-active";
+        });
+      });
+
+      modalBackdrop.style.display = "flex";
+    }
+
+    function closeEditModal(){
+      editRow = null;
+      editFormEl.innerHTML = "";
+      modalBackdrop.style.display = "none";
+      setEditStatus("");
+    }
+
+    closeModalBtn.addEventListener("click", closeEditModal);
+    cancelEditBtn.addEventListener("click", closeEditModal);
+    modalBackdrop.addEventListener("click", (e)=>{
+      if(e.target === modalBackdrop) closeEditModal();
+    });
+
+    saveEditBtn.addEventListener("click", async ()=>{
+      if(!editRow) return;
+
+      const type = editRow.product_type;
+      const extrasOld = unpackExtras(editRow.part3_color);
+
+      // get prio from modal
+      let newPrio = "";
+      const prioBtn = editFormEl.querySelector("#editPrioRow .active");
+      if(prioBtn) newPrio = prioBtn.getAttribute("data-prio") || "";
+
+      const qty = parseInt(editFormEl.querySelector("#eQty")?.value || "1", 10);
+      if(!Number.isFinite(qty) || qty < 1){
+        setEditStatus("Menge muss >= 1 sein.", "error");
+        return;
+      }
+
+      let update = { qty };
+
+      // note
+      const newNote = (editFormEl.querySelector("#eNote")?.value || "").trim();
+
+      if(type==="hase"){
+        const sizeBtn = editFormEl.querySelector("#eSizeRow .btn-active");
+        const sizeCm = sizeBtn ? parseInt(sizeBtn.getAttribute("data-size"),10) : null;
+
+        const body = (editFormEl.querySelector("#eBody")?.value || "").trim();
+        const p2 = (editFormEl.querySelector("#eP2")?.value || "").trim();
+        const p3 = (editFormEl.querySelector("#eP3")?.value || "").trim();
+
+        if(!sizeCm || !body || !p2 || !p3 || !newPrio){
+          setEditStatus("Bitte alle Pflichtfelder ausfüllen (Größe, Farben, Priorität).", "error");
+          return;
+        }
+
+        update.size_cm = sizeCm;
+        update.body_color = body;
+        update.part2_color = p2;
+        update.part3_color = packExtras(p3, { note:newNote, prio:newPrio, otherName:"", otherSize:"" });
+      }
+
+      if(type==="lumi"){
+        const body = (editFormEl.querySelector("#eBody")?.value || "").trim();
+        const p2 = (editFormEl.querySelector("#eP2")?.value || "").trim();
+        const p3 = (editFormEl.querySelector("#eP3")?.value || "").trim();
+
+        if(!body || !p2 || !p3 || !newPrio){
+          setEditStatus("Bitte alle Pflichtfelder ausfüllen (Farben, Priorität).", "error");
+          return;
+        }
+
+        update.body_color = body;
+        update.part2_color = p2;
+        update.part3_color = packExtras(p3, { note:newNote, prio:newPrio, otherName:"", otherSize:"" });
+      }
+
+      if(type==="other"){
+        const name = (editFormEl.querySelector("#eName")?.value || "").trim();
+        const size = (editFormEl.querySelector("#eSize")?.value || "").trim();
+        const color = (editFormEl.querySelector("#eP3")?.value || "").trim();
+
+        if(!name || !size || !color || !newPrio){
+          setEditStatus("Bitte alle Pflichtfelder ausfüllen (Name, Größe, Farbe, Priorität).", "error");
+          return;
+        }
+
+        update.body_color = name;
+        update.part2_color = size;
+        update.part3_color = packExtras(color, { note:newNote, prio:newPrio, otherName:name, otherSize:size });
+      }
+
+      setEditStatus("Speichere…");
+      const { error } = await supabase.from("orders").update(update).eq("id", editRow.id);
+      if(error){
+        setEditStatus("Fehler: " + error.message, "error");
+        return;
+      }
+      setEditStatus("Gespeichert ✅", "ok");
+      await loadOrders();
+      closeEditModal();
+    });
+
     // Start: nothing selected
     setMode(null);
     clearProductButtons();
@@ -1105,6 +1372,10 @@
     otherBlock.style.display = "none";
     formTitle.textContent = "Neue Bestellung";
 
+    addBtn.addEventListener("click", addOrder);
+
+    // initial sort buttons
+    setSortMode("date");
     await loadOrders();
   </script>
 </body>
