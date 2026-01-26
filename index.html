@@ -27,9 +27,10 @@
       border:1px solid var(--border);
       border-radius:14px;
       padding:12px 12px;
-      font-size:16px; /* iOS zoom vermeiden */
+      font-size:16px;
       outline:none;
       background:#fff;
+      display:block;
     }
     textarea{ min-height:90px; resize:vertical; }
 
@@ -48,7 +49,6 @@
       background:var(--dark); color:#fff;
     }
     .btn:disabled{ opacity:.55; cursor:not-allowed; }
-
     .btn-outline{
       background:#fff; color:var(--text);
       border:1px solid var(--border);
@@ -57,15 +57,13 @@
     .btn-active{ background:var(--dark); color:#fff; border:1px solid var(--dark); }
     .btn-danger{ background:#b91c1c; }
 
-    /* Produkt-Switch Buttons */
     .switch{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
     .switch .btn{ flex:1; min-width:140px; }
 
-    /* Größen-Buttons */
     .sizes{ display:flex; gap:10px; flex-wrap:wrap; }
     .sizes .btn{ min-width:90px; }
 
-    /* Priority Buttons (Sehr wichtig / Wichtig / Nicht wichtig) */
+    /* PRIORITY Buttons */
     .prioRow{
       display:grid;
       grid-template-columns: 1fr 1.6fr 1fr;
@@ -88,20 +86,43 @@
     .error{ color:var(--red); }
     .ok{ color:#047857; }
 
-    /* Farben: “Dropdown sichtbar” */
-    .colorWrap{ position:relative; }
-    .colorWrap input{ padding-right:40px; }
-    .colorWrap .arrow{
-      position:absolute; right:12px; top:50%; transform:translateY(-50%);
-      width:26px; height:26px; border-radius:10px;
-      display:flex; align-items:center; justify-content:center;
+    /* Farben: Pfeil im Feld + klickbar */
+    .colorWrap{ position:relative; width:100%; }
+    .colorWrap input{ padding-right:44px; }
+    .colorWrap button.arrowBtn{
+      position:absolute;
+      right:10px;
+      top:50%;
+      transform:translateY(-50%);
+      width:30px;
+      height:30px;
+      border-radius:12px;
       border:1px solid var(--border);
-      color:var(--muted);
       background:#fff;
-      pointer-events:none;
-      font-size:14px;
+      color:var(--muted);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      padding:0;
+      line-height:1;
     }
     .subhint{ margin-top:6px; color:var(--muted); font-size:12px; }
+
+    /* Menge Buttons */
+    .qtyGrid{ display:grid; grid-template-columns:repeat(9, 1fr); gap:8px; }
+    .qtyBtn{
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:14px;
+      padding:10px 0;
+      font-weight:950;
+      cursor:pointer;
+      font-size:14px;
+    }
+    .qtyBtn.active{ background:var(--dark); color:#fff; border-color:var(--dark); }
+    .qtyRow2{ display:grid; grid-template-columns:1fr; gap:10px; }
+    @media(min-width:900px){ .qtyRow2{ grid-template-columns: 1fr 1fr; } }
 
     /* Liste */
     .list{ display:grid; gap:12px; margin-top:16px; }
@@ -113,26 +134,85 @@
     .order h3{ margin:0 0 6px; font-size:16px; }
     .meta{ color:var(--muted); font-size:13px; line-height:1.35; }
     .badges{ display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
-    .badge{ border:1px solid var(--border); border-radius:999px; padding:4px 10px; font-size:12px; background:#f9fafb; }
-    .right{ display:flex; flex-direction:column; gap:8px; align-items:flex-end; }
 
-    .qtyPill{
-      font-size:18px;
-      font-weight:1000;
-      padding:6px 12px;
-      border-radius:999px;
+    .badge{
       border:1px solid var(--border);
+      border-radius:999px;
+      padding:4px 10px;
+      font-size:12px;
+      background:#f9fafb;
+      color:#111827;
+    }
+    /* Priorität oben und auffälliger als Farben */
+    .badge.prio{
       background:#111827;
       color:#fff;
-      display:inline-block;
+      border-color:#111827;
+      font-weight:950;
     }
+    /* Menge: nicht knallig, aber auffälliger als Farben */
+    .badge.qty{
+      background:#f1f5f9;
+      border-color:#cbd5e1;
+      font-weight:950;
+      color:#111827;
+    }
+
+    .right{ display:flex; flex-direction:column; gap:8px; align-items:flex-end; }
 
     .validation{
       margin-top:10px;
       font-size:13px;
       color:var(--red);
-      font-weight:800;
+      font-weight:900;
       min-height:18px;
+    }
+
+    /* Archiv Bereich unten dezent */
+    details.archive{
+      margin-top:18px;
+      border-top:1px dashed var(--border);
+      padding-top:12px;
+    }
+    details.archive summary{
+      cursor:pointer;
+      color:var(--muted);
+      font-weight:900;
+      font-size:13px;
+      list-style:none;
+    }
+    details.archive summary::-webkit-details-marker{ display:none; }
+    .archiveHint{ color:var(--muted); font-size:12px; margin-top:6px; }
+
+    /* Sortier-Buttons neben Überschrift */
+    .headerRow{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+    .sortBtns{ display:flex; gap:8px; }
+    .sortBtns .btn{ padding:8px 10px; font-size:13px; border-radius:12px; }
+    .sortBtns .btn-outline{ border:1px solid var(--border); }
+
+    /* Monatsgruppen im Archiv */
+    .monthGroup{ margin-top:14px; }
+    .monthTitle{
+      color:var(--muted);
+      font-weight:950;
+      font-size:13px;
+      margin:0 0 10px;
+    }
+
+    /* Validation: rote Rahmen */
+    .invalid{
+      border-color: var(--red) !important;
+      box-shadow: 0 0 0 3px rgba(185, 28, 28, .12) !important;
+    }
+    .invalidGroup{
+      border:2px solid var(--red) !important;
+      border-radius:16px;
+      padding:10px;
+      box-shadow: 0 0 0 3px rgba(185, 28, 28, .08);
+    }
+    .invalidBtn{
+      border:2px solid var(--red) !important;
+      box-shadow: 0 0 0 3px rgba(185, 28, 28, .10) !important;
     }
   </style>
 </head>
@@ -147,8 +227,8 @@
     <div class="card">
       <div class="card-pad">
 
-        <!-- Produktwahl (nichts automatisch aktiv) -->
-        <div class="switch">
+        <!-- Produktwahl -->
+        <div id="productWrap" class="switch">
           <button id="btnHase" class="btn btn-outline" type="button">🐰 Hase</button>
           <button id="btnLumi" class="btn btn-outline" type="button">🪲 Lumi</button>
           <button id="btnOther" class="btn btn-outline" type="button">➕ Weitere Produkt</button>
@@ -156,8 +236,8 @@
 
         <h2 id="formTitle" style="margin:0 0 12px;font-size:20px;">Neue Bestellung</h2>
 
-        <!-- Priorität (nichts automatisch aktiv) -->
-        <div class="grid">
+        <!-- PRIORITÄT -->
+        <div id="prioWrap" class="grid">
           <div>
             <label>Priorität</label>
             <div class="prioRow">
@@ -172,11 +252,13 @@
 
         <!-- Hase -->
         <div id="haseBlock" style="display:none;">
-          <label>Größe</label>
-          <div class="sizes" style="margin-bottom:10px;">
-            <button class="btn btn-outline" data-size="20" type="button">20 cm</button>
-            <button class="btn btn-outline" data-size="15" type="button">15 cm</button>
-            <button class="btn btn-outline" data-size="11" type="button">11 cm</button>
+          <div id="sizeWrap">
+            <label>Größe</label>
+            <div class="sizes" style="margin-bottom:10px;">
+              <button class="btn btn-outline" data-size="20" type="button">20 cm</button>
+              <button class="btn btn-outline" data-size="15" type="button">15 cm</button>
+              <button class="btn btn-outline" data-size="11" type="button">11 cm</button>
+            </div>
           </div>
 
           <label>Farben</label>
@@ -192,22 +274,21 @@
               <label for="hBody">Körperfarbe</label>
               <div class="colorWrap">
                 <input id="hBody" list="colors" placeholder="Tippen oder auswählen…" />
-                <div class="arrow">▾</div>
+                <button class="arrowBtn" type="button" data-focus="hBody">▾</button>
               </div>
-              <div class="subhint">Tipp: Tippe „sch…“ und wähle aus der Liste.</div>
             </div>
             <div>
               <label for="hEars">Ohrenfarbe</label>
               <div class="colorWrap">
                 <input id="hEars" list="colors" placeholder="Tippen oder auswählen…" />
-                <div class="arrow">▾</div>
+                <button class="arrowBtn" type="button" data-focus="hEars">▾</button>
               </div>
             </div>
             <div>
               <label for="hButt">Popofarbe</label>
               <div class="colorWrap">
                 <input id="hButt" list="colors" placeholder="Tippen oder auswählen…" />
-                <div class="arrow">▾</div>
+                <button class="arrowBtn" type="button" data-focus="hButt">▾</button>
               </div>
             </div>
           </div>
@@ -228,21 +309,21 @@
               <label for="lBody">Körperfarbe</label>
               <div class="colorWrap">
                 <input id="lBody" list="colorsL" placeholder="Tippen oder auswählen…" />
-                <div class="arrow">▾</div>
+                <button class="arrowBtn" type="button" data-focus="lBody">▾</button>
               </div>
             </div>
             <div>
               <label for="lWings">Flügelfarbe</label>
               <div class="colorWrap">
                 <input id="lWings" list="colorsL" placeholder="Tippen oder auswählen…" />
-                <div class="arrow">▾</div>
+                <button class="arrowBtn" type="button" data-focus="lWings">▾</button>
               </div>
             </div>
             <div>
               <label for="lFeelers">Fühlerfarbe</label>
               <div class="colorWrap">
                 <input id="lFeelers" list="colorsL" placeholder="Tippen oder auswählen…" />
-                <div class="arrow">▾</div>
+                <button class="arrowBtn" type="button" data-focus="lFeelers">▾</button>
               </div>
             </div>
           </div>
@@ -270,10 +351,9 @@
             <option value="grün"></option><option value="orange"></option><option value="pink"></option>
             <option value="lila"></option><option value="braun"></option>
           </datalist>
-
           <div class="colorWrap">
             <input id="oColor" list="colorsO" placeholder="Tippen oder auswählen…" />
-            <div class="arrow">▾</div>
+            <button class="arrowBtn" type="button" data-focus="oColor">▾</button>
           </div>
         </div>
 
@@ -289,31 +369,57 @@
 
         <div style="height:12px"></div>
 
-        <!-- Menge + Speichern -->
-        <div class="grid grid-2">
+        <!-- Menge: Buttons 1-9 + Freies Feld -->
+        <div id="qtyWrap" class="grid">
           <div>
-            <label for="qty">Menge</label>
-            <input id="qty" type="number" min="1" placeholder="z.B. 3" />
-          </div>
-          <div style="display:flex;align-items:flex-end;">
-            <button id="addBtn" class="btn" type="button" style="width:100%;">+ Bestellung hinzufügen</button>
+            <label>Menge</label>
+            <div class="qtyGrid" id="qtyButtons"></div>
+
+            <div style="height:10px"></div>
+            <div class="qtyRow2">
+              <div>
+                <label for="qtyCustom" style="font-weight:900;">Andere Menge (optional)</label>
+                <input id="qtyCustom" type="number" min="1" placeholder="z.B. 12" />
+              </div>
+              <div style="display:flex;align-items:flex-end;">
+                <button id="addBtn" class="btn" type="button" style="width:100%;">+ Bestellung hinzufügen</button>
+              </div>
+            </div>
+
+            <div id="validation" class="validation"></div>
+            <div id="status" class="status"></div>
           </div>
         </div>
 
-        <div id="validation" class="validation"></div>
-        <div id="status" class="status"></div>
       </div>
     </div>
 
+    <!-- Offene Bestellungen -->
     <div class="card" style="margin-top:16px;">
       <div class="card-pad">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
-          <h2 style="margin:0;font-size:18px;">Bestellungen</h2>
+        <div class="headerRow">
+          <h2 style="margin:0;font-size:18px;">Offene Bestellungen</h2>
+
+          <div class="sortBtns">
+            <button id="sortDate" class="btn btn-active" type="button">Sort: Datum</button>
+            <button id="sortPrio" class="btn btn-outline" type="button">Sort: Priorität</button>
+          </div>
+
           <div class="hint" id="totals"></div>
         </div>
+
         <div id="list" class="list"></div>
+
+        <!-- Archiv dezent unten -->
+        <details class="archive">
+          <summary>Archiv (alte Bestellungen anzeigen)</summary>
+          <div class="archiveHint">Nach Monaten sortiert. Im Archiv kannst du „Zurückholen“ oder „Löschen“.</div>
+          <div style="height:10px"></div>
+          <div id="archiveList"></div>
+        </details>
       </div>
     </div>
+
   </div>
 
   <script type="module">
@@ -321,18 +427,24 @@
 
     const SUPABASE_URL = "https://htgrzmlcdolxxzvkppon.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0Z3J6bWxjZG9seHh6dmtwcG9uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0MzM2ODIsImV4cCI6MjA4NTAwOTY4Mn0.B0PxMAzmuvsHNd2n_mgNspjlPkaBpQlkrNzGu7p78fY";
-
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     // Elements
+    const productWrap = document.getElementById("productWrap");
     const btnHase = document.getElementById("btnHase");
     const btnLumi = document.getElementById("btnLumi");
     const btnOther = document.getElementById("btnOther");
     const formTitle = document.getElementById("formTitle");
 
+    const prioWrap = document.getElementById("prioWrap");
+    const pHigh = document.getElementById("pHigh");
+    const pMid = document.getElementById("pMid");
+    const pLow = document.getElementById("pLow");
+
     const haseBlock = document.getElementById("haseBlock");
     const lumiBlock = document.getElementById("lumiBlock");
     const otherBlock = document.getElementById("otherBlock");
+    const sizeWrap = document.getElementById("sizeWrap");
 
     const hBody = document.getElementById("hBody");
     const hEars = document.getElementById("hEars");
@@ -347,22 +459,31 @@
     const oColor = document.getElementById("oColor");
 
     const note = document.getElementById("note");
-    const qtyEl = document.getElementById("qty");
+
+    const qtyWrap = document.getElementById("qtyWrap");
+    const qtyButtonsEl = document.getElementById("qtyButtons");
+    const qtyCustomEl = document.getElementById("qtyCustom");
     const addBtn = document.getElementById("addBtn");
+
     const statusEl = document.getElementById("status");
     const validationEl = document.getElementById("validation");
+
     const listEl = document.getElementById("list");
+    const archiveListEl = document.getElementById("archiveList");
     const totalsEl = document.getElementById("totals");
 
-    // Priority buttons
-    const pHigh = document.getElementById("pHigh");
-    const pMid = document.getElementById("pMid");
-    const pLow = document.getElementById("pLow");
+    const sortDateBtn = document.getElementById("sortDate");
+    const sortPrioBtn = document.getElementById("sortPrio");
 
-    // State: NOTHING preselected
+    // State
     let mode = null;        // hase | lumi | other
     let haseSize = null;    // 20 | 15 | 11
     let priority = null;    // sehr | wichtig | nicht
+    let qtyPick = null;     // 1..9
+    let sortMode = "date";  // date | prio
+
+    // For archive delete confirmation
+    const pendingDelete = new Set(); // ids
 
     function setStatus(msg, type="") {
       statusEl.className = "status " + type;
@@ -378,11 +499,22 @@
       }[s]));
     }
     function dateOnly(iso) {
+      return new Date(iso).toLocaleDateString("de-DE");
+    }
+    function monthKey(iso){
       const d = new Date(iso);
-      return d.toLocaleDateString("de-DE");
+      const y = d.getFullYear();
+      const m = String(d.getMonth()+1).padStart(2,"0");
+      return `${y}-${m}`;
+    }
+    function monthTitleFromKey(key){
+      // key = YYYY-MM
+      const [y, m] = key.split("-").map(x=>parseInt(x,10));
+      const d = new Date(y, (m-1), 1);
+      return d.toLocaleDateString("de-DE", { month:"long", year:"numeric" });
     }
 
-    // Store extras in part3_color (keine DB-Änderung nötig)
+    // Extras stored in part3_color (no DB change needed)
     function packExtras(part3Color, extras){
       const safe = (v)=> String(v||"").replaceAll("|","/").replaceAll("\n"," ");
       return [
@@ -407,14 +539,54 @@
       }
       return { baseColor: base, note: map.note||"", prio: map.prio||"", otherName: map.otherName||"", otherSize: map.otherSize||"" };
     }
+    function prioWeight(p){
+      // lower is more important
+      if(p === "sehr") return 0;
+      if(p === "wichtig") return 1;
+      if(p === "nicht") return 2;
+      return 3;
+    }
+    function prioText(p){
+      if(p === "sehr") return "Sehr wichtig";
+      if(p === "wichtig") return "Wichtig";
+      if(p === "nicht") return "Nicht wichtig";
+      return "";
+    }
 
-    // MODE SWITCH (no auto select beyond mode)
+    // Make arrow focus the input
+    document.querySelectorAll("button.arrowBtn[data-focus]").forEach(b=>{
+      b.addEventListener("click", ()=>{
+        const id = b.getAttribute("data-focus");
+        const el = document.getElementById(id);
+        if(!el) return;
+        el.focus();
+        el.dispatchEvent(new MouseEvent("click", { bubbles:true }));
+      });
+    });
+
+    // Sorting buttons
+    function setSortMode(m){
+      sortMode = m;
+      sortDateBtn.className = (sortMode==="date") ? "btn btn-active" : "btn btn-outline";
+      sortPrioBtn.className = (sortMode==="prio") ? "btn btn-active" : "btn btn-outline";
+      loadOrders();
+    }
+    sortDateBtn.addEventListener("click", ()=> setSortMode("date"));
+    sortPrioBtn.addEventListener("click", ()=> setSortMode("prio"));
+
+    // Product mode
+    function clearProductButtons(){
+      btnHase.className = "btn btn-outline";
+      btnLumi.className = "btn btn-outline";
+      btnOther.className = "btn btn-outline";
+    }
     function setMode(newMode){
       mode = newMode;
 
-      btnHase.className = (mode==="hase") ? "btn btn-active" : "btn btn-outline";
-      btnLumi.className = (mode==="lumi") ? "btn btn-active" : "btn btn-outline";
-      btnOther.className = (mode==="other") ? "btn btn-active" : "btn btn-outline";
+      clearProductButtons();
+      if(mode==="hase") btnHase.className = "btn btn-active";
+      if(mode==="lumi") btnLumi.className = "btn btn-active";
+      if(mode==="other") btnOther.className = "btn btn-active";
 
       haseBlock.style.display = (mode==="hase") ? "" : "none";
       lumiBlock.style.display = (mode==="lumi") ? "" : "none";
@@ -423,11 +595,13 @@
       if(mode==="hase") formTitle.textContent = "Neue Bestellung: Hase";
       if(mode==="lumi") formTitle.textContent = "Neue Bestellung: Lumi";
       if(mode==="other") formTitle.textContent = "Neue Bestellung: Weitere Produkt";
+      if(!mode) formTitle.textContent = "Neue Bestellung";
 
-      // reset dependent selections
+      // reset size selection on mode change
       haseSize = null;
       haseBlock.querySelectorAll("button[data-size]").forEach(x => x.className = "btn btn-outline");
 
+      clearInvalids();
       setValidation("");
       setStatus("");
     }
@@ -436,7 +610,7 @@
     btnLumi.addEventListener("click", () => setMode("lumi"));
     btnOther.addEventListener("click", () => setMode("other"));
 
-    // HASE SIZE BUTTONS (no default)
+    // Hase sizes
     haseBlock.querySelectorAll("button[data-size]").forEach(b => {
       b.addEventListener("click", () => {
         const s = parseInt(b.getAttribute("data-size"), 10);
@@ -447,53 +621,125 @@
             ? "btn btn-active"
             : "btn btn-outline";
         });
+        clearInvalids();
         setValidation("");
       });
     });
 
-    // PRIORITY (no default)
+    // Priority buttons
     function setPriority(p){
       priority = p;
       pHigh.className = "prioBtn" + (priority==="sehr" ? " active" : "");
       pMid.className  = "prioBtn big" + (priority==="wichtig" ? " active" : "");
       pLow.className  = "prioBtn" + (priority==="nicht" ? " active" : "");
+      clearInvalids();
       setValidation("");
     }
     pHigh.addEventListener("click", () => setPriority("sehr"));
     pMid.addEventListener("click", () => setPriority("wichtig"));
     pLow.addEventListener("click", () => setPriority("nicht"));
 
+    // Qty buttons 1..9
+    function renderQtyButtons(){
+      qtyButtonsEl.innerHTML = "";
+      for(let i=1;i<=9;i++){
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "qtyBtn" + (qtyPick===i ? " active" : "");
+        btn.textContent = String(i);
+        btn.addEventListener("click", ()=>{
+          qtyPick = i;
+          qtyCustomEl.value = "";
+          renderQtyButtons();
+          clearInvalids();
+          setValidation("");
+        });
+        qtyButtonsEl.appendChild(btn);
+      }
+    }
+    qtyCustomEl.addEventListener("input", ()=>{
+      const v = parseInt(qtyCustomEl.value || "", 10);
+      if(Number.isFinite(v) && v >= 1){
+        qtyPick = null;
+        renderQtyButtons();
+      }
+      clearInvalids();
+      setValidation("");
+    });
+    renderQtyButtons();
+
+    function getQty(){
+      const custom = parseInt(qtyCustomEl.value || "", 10);
+      if(Number.isFinite(custom) && custom >= 1) return custom;
+      if(Number.isFinite(qtyPick) && qtyPick >= 1) return qtyPick;
+      return null;
+    }
+
+    // Validation styling helpers
+    const allInputs = [hBody,hEars,hButt,lBody,lWings,lFeelers,oName,oSize,oColor,qtyCustomEl];
+    function clearInvalids(){
+      productWrap.classList.remove("invalidGroup");
+      prioWrap.classList.remove("invalidGroup");
+      qtyWrap.classList.remove("invalidGroup");
+      sizeWrap?.classList.remove("invalidGroup");
+
+      allInputs.forEach(el => el?.classList.remove("invalid"));
+      // Buttons also
+      [btnHase,btnLumi,btnOther,pHigh,pMid,pLow].forEach(b => b.classList.remove("invalidBtn"));
+      haseBlock.querySelectorAll("button[data-size]").forEach(b => b.classList.remove("invalidBtn"));
+      qtyButtonsEl.querySelectorAll("button").forEach(b => b.classList.remove("invalidBtn"));
+    }
+
     function buildMissingMessage(missing){
-      // schöner Text unter dem Button
       return "❗ Bitte erst ausfüllen: " + missing.join(", ");
     }
 
     function validateAllRequired(){
+      clearInvalids();
       const missing = [];
 
-      if(!mode) missing.push("Produkt auswählen");
-      if(!priority) missing.push("Priorität auswählen");
+      if(!mode){
+        missing.push("Produkt");
+        productWrap.classList.add("invalidGroup");
+        [btnHase,btnLumi,btnOther].forEach(b => b.classList.add("invalidBtn"));
+      }
 
-      const qty = parseInt(qtyEl.value || "", 10);
-      if(!Number.isFinite(qty) || qty < 1) missing.push("Menge (>= 1)");
+      if(!priority){
+        missing.push("Priorität");
+        prioWrap.classList.add("invalidGroup");
+        [pHigh,pMid,pLow].forEach(b => b.classList.add("invalidBtn"));
+      }
+
+      const qty = getQty();
+      if(!qty){
+        missing.push("Menge");
+        qtyWrap.classList.add("invalidGroup");
+        // highlight both: buttons and custom field
+        qtyButtonsEl.querySelectorAll("button").forEach(b => b.classList.add("invalidBtn"));
+        qtyCustomEl.classList.add("invalid");
+      }
 
       if(mode === "hase"){
-        if(!haseSize) missing.push("Größe auswählen");
-        if(!(hBody.value||"").trim()) missing.push("Körperfarbe");
-        if(!(hEars.value||"").trim()) missing.push("Ohrenfarbe");
-        if(!(hButt.value||"").trim()) missing.push("Popofarbe");
+        if(!haseSize){
+          missing.push("Größe");
+          sizeWrap.classList.add("invalidGroup");
+          haseBlock.querySelectorAll("button[data-size]").forEach(b => b.classList.add("invalidBtn"));
+        }
+        if(!(hBody.value||"").trim()){ missing.push("Körperfarbe"); hBody.classList.add("invalid"); }
+        if(!(hEars.value||"").trim()){ missing.push("Ohrenfarbe"); hEars.classList.add("invalid"); }
+        if(!(hButt.value||"").trim()){ missing.push("Popofarbe"); hButt.classList.add("invalid"); }
       }
 
       if(mode === "lumi"){
-        if(!(lBody.value||"").trim()) missing.push("Körperfarbe");
-        if(!(lWings.value||"").trim()) missing.push("Flügelfarbe");
-        if(!(lFeelers.value||"").trim()) missing.push("Fühlerfarbe");
+        if(!(lBody.value||"").trim()){ missing.push("Körperfarbe"); lBody.classList.add("invalid"); }
+        if(!(lWings.value||"").trim()){ missing.push("Flügelfarbe"); lWings.classList.add("invalid"); }
+        if(!(lFeelers.value||"").trim()){ missing.push("Fühlerfarbe"); lFeelers.classList.add("invalid"); }
       }
 
       if(mode === "other"){
-        if(!(oName.value||"").trim()) missing.push("Name");
-        if(!(oSize.value||"").trim()) missing.push("Größe");
-        if(!(oColor.value||"").trim()) missing.push("Farbe");
+        if(!(oName.value||"").trim()){ missing.push("Name"); oName.classList.add("invalid"); }
+        if(!(oSize.value||"").trim()){ missing.push("Größe"); oSize.classList.add("invalid"); }
+        if(!(oColor.value||"").trim()){ missing.push("Farbe"); oColor.classList.add("invalid"); }
       }
 
       if(missing.length){
@@ -504,101 +750,260 @@
       return true;
     }
 
+    // Data load + render
     async function loadOrders(){
       const { data, error } = await supabase
         .from("orders")
-        .select("id,product_type,size_cm,qty,body_color,part2_color,part3_color,created_at")
+        .select("id,product_type,size_cm,qty,body_color,part2_color,part3_color,created_at,archived")
         .order("created_at", { ascending:false });
 
       if(error){
         setStatus("Fehler beim Laden: " + error.message, "error");
         return;
       }
-      renderOrders(data || []);
+
+      const rows = data || [];
+      const open = rows.filter(x => !x.archived);
+      const arch = rows.filter(x => x.archived);
+
+      const openSorted = sortRows(open);
+      renderOpen(openSorted);
+
+      const archSorted = sortRows(arch);
+      renderArchiveByMonth(archSorted);
+
       setStatus("");
     }
 
-    function renderOrders(rows){
-      listEl.innerHTML = "";
+    function sortRows(rows){
+      // sortMode: date or prio
+      const copy = [...rows];
+      copy.sort((a,b)=>{
+        const ea = unpackExtras(a.part3_color);
+        const eb = unpackExtras(b.part3_color);
 
+        if(sortMode === "prio"){
+          const wa = prioWeight(ea.prio);
+          const wb = prioWeight(eb.prio);
+          if(wa !== wb) return wa - wb;
+          // then date desc
+          return new Date(b.created_at) - new Date(a.created_at);
+        }
+        // date desc
+        return new Date(b.created_at) - new Date(a.created_at);
+      });
+      return copy;
+    }
+
+    function renderOpen(rows){
+      // totals
       let totalHase=0, totalLumi=0, totalOther=0;
+      for(const r of rows){
+        if (r.product_type==="hase") totalHase += (r.qty||0);
+        if (r.product_type==="lumi") totalLumi += (r.qty||0);
+        if (r.product_type==="other") totalOther += (r.qty||0);
+      }
+      totalsEl.textContent = `Hase: ${totalHase} • Lumi: ${totalLumi} • Weitere: ${totalOther}`;
 
+      listEl.innerHTML = "";
       for(const r of rows){
         const extras = unpackExtras(r.part3_color);
         const p3Color = extras.baseColor;
 
-        if (r.product_type==="hase") totalHase += (r.qty||0);
-        if (r.product_type==="lumi") totalLumi += (r.qty||0);
-        if (r.product_type==="other") totalOther += (r.qty||0);
-
-        let title = "";
-        let p2Label = "";
-        let p3Label = "";
-
+        let title = "", p2Label = "", p3Label = "";
         if(r.product_type==="hase"){
-          title = `🐰 Hase ${r.size_cm || ""}cm`;
-          p2Label = "Ohren";
-          p3Label = "Popo";
+          title = `🐰 Hase ${r.size_cm || ""}cm`; p2Label = "Ohren"; p3Label = "Popo";
         } else if (r.product_type==="lumi"){
-          title = `🪲 Lumi`;
-          p2Label = "Flügel";
-          p3Label = "Fühler";
+          title = `🪲 Lumi`; p2Label = "Flügel"; p3Label = "Fühler";
         } else {
-          title = `➕ ${extras.otherName || "Weitere Produkt"}`;
-          p2Label = "Größe";
-          p3Label = "Farbe";
+          title = `➕ ${extras.otherName || "Weitere Produkt"}`; p2Label = "Größe"; p3Label = "Farbe";
         }
 
-        const prioText =
-          extras.prio === "sehr" ? "Sehr wichtig" :
-          extras.prio === "wichtig" ? "Wichtig" :
-          extras.prio === "nicht" ? "Nicht wichtig" : "";
+        const prio = prioText(extras.prio);
+
+        const badgesParts = [];
+        // Priority first and more visible
+        if(prio) badgesParts.push(`<span class="badge prio"><b>Priorität:</b> ${escapeHtml(prio)}</span>`);
+        // qty next (less loud than before)
+        if(r.qty) badgesParts.push(`<span class="badge qty"><b>Menge:</b> ${r.qty}</span>`);
+
+        // Colors
+        if(r.product_type==="other"){
+          badgesParts.push(`<span class="badge"><b>${escapeHtml(p2Label)}:</b> ${escapeHtml(extras.otherSize || r.part2_color || "")}</span>`);
+          badgesParts.push(`<span class="badge"><b>${escapeHtml(p3Label)}:</b> ${escapeHtml(p3Color)}</span>`);
+        } else {
+          badgesParts.push(`<span class="badge"><b>Körper:</b> ${escapeHtml(r.body_color)}</span>`);
+          badgesParts.push(`<span class="badge"><b>${escapeHtml(p2Label)}:</b> ${escapeHtml(r.part2_color)}</span>`);
+          badgesParts.push(`<span class="badge"><b>${escapeHtml(p3Label)}:</b> ${escapeHtml(p3Color)}</span>`);
+        }
+
+        if(extras.note) badgesParts.push(`<span class="badge"><b>Beschreibung:</b> ${escapeHtml(extras.note)}</span>`);
 
         const item = document.createElement("div");
         item.className = "order";
         item.innerHTML = `
           <div>
             <h3>${escapeHtml(title)}</h3>
-            <div class="meta">
-              <span class="qtyPill">Menge: ${r.qty}</span>
-              <div style="height:6px"></div>
-              Datum: <b>${dateOnly(r.created_at)}</b>
-            </div>
-
-            <div class="badges">
-              ${
-                r.product_type==="other"
-                ? `
-                  <span class="badge"><b>${escapeHtml(p2Label)}:</b> ${escapeHtml(extras.otherSize || r.part2_color || "")}</span>
-                  <span class="badge"><b>${escapeHtml(p3Label)}:</b> ${escapeHtml(p3Color)}</span>
-                `
-                : `
-                  <span class="badge"><b>Körper:</b> ${escapeHtml(r.body_color)}</span>
-                  <span class="badge"><b>${escapeHtml(p2Label)}:</b> ${escapeHtml(r.part2_color)}</span>
-                  <span class="badge"><b>${escapeHtml(p3Label)}:</b> ${escapeHtml(p3Color)}</span>
-                `
-              }
-              ${ prioText ? `<span class="badge"><b>Priorität:</b> ${escapeHtml(prioText)}</span>` : "" }
-              ${ extras.note ? `<span class="badge"><b>Beschreibung:</b> ${escapeHtml(extras.note)}</span>` : "" }
-            </div>
+            <div class="meta">Datum: <b>${dateOnly(r.created_at)}</b></div>
+            <div class="badges">${badgesParts.join("")}</div>
           </div>
-
           <div class="right">
-            <button class="btn btn-danger" data-del="${r.id}" type="button">Löschen</button>
+            <button class="btn" data-archive="${r.id}" type="button">Archivieren</button>
           </div>
         `;
-
         listEl.appendChild(item);
       }
 
-      totalsEl.textContent = `Hase: ${totalHase} • Lumi: ${totalLumi} • Weitere: ${totalOther}`;
-
-      listEl.querySelectorAll("button[data-del]").forEach(btn => {
+      listEl.querySelectorAll("button[data-archive]").forEach(btn => {
         btn.addEventListener("click", async () => {
-          const id = btn.getAttribute("data-del");
+          const id = btn.getAttribute("data-archive");
+          await archiveOrder(id);
+        });
+      });
+    }
+
+    function renderArchiveByMonth(rows){
+      // group by month
+      const groups = new Map(); // key -> rows[]
+      for(const r of rows){
+        const k = monthKey(r.created_at);
+        if(!groups.has(k)) groups.set(k, []);
+        groups.get(k).push(r);
+      }
+
+      // sort month keys desc
+      const keys = Array.from(groups.keys()).sort((a,b)=> b.localeCompare(a));
+
+      archiveListEl.innerHTML = "";
+
+      for(const k of keys){
+        const monthRows = groups.get(k) || [];
+        // rows already globally sorted; but ensure internal order respects current sort mode too
+        const sorted = sortRows(monthRows);
+
+        const wrap = document.createElement("div");
+        wrap.className = "monthGroup";
+        wrap.innerHTML = `<div class="monthTitle">${escapeHtml(monthTitleFromKey(k))}</div>`;
+
+        const list = document.createElement("div");
+        list.className = "list";
+
+        for(const r of sorted){
+          const extras = unpackExtras(r.part3_color);
+          const p3Color = extras.baseColor;
+
+          let title = "", p2Label = "", p3Label = "";
+          if(r.product_type==="hase"){
+            title = `🐰 Hase ${r.size_cm || ""}cm`; p2Label = "Ohren"; p3Label = "Popo";
+          } else if (r.product_type==="lumi"){
+            title = `🪲 Lumi`; p2Label = "Flügel"; p3Label = "Fühler";
+          } else {
+            title = `➕ ${extras.otherName || "Weitere Produkt"}`; p2Label = "Größe"; p3Label = "Farbe";
+          }
+
+          const prio = prioText(extras.prio);
+
+          const badgesParts = [];
+          if(prio) badgesParts.push(`<span class="badge prio"><b>Priorität:</b> ${escapeHtml(prio)}</span>`);
+          if(r.qty) badgesParts.push(`<span class="badge qty"><b>Menge:</b> ${r.qty}</span>`);
+
+          if(r.product_type==="other"){
+            badgesParts.push(`<span class="badge"><b>${escapeHtml(p2Label)}:</b> ${escapeHtml(extras.otherSize || r.part2_color || "")}</span>`);
+            badgesParts.push(`<span class="badge"><b>${escapeHtml(p3Label)}:</b> ${escapeHtml(p3Color)}</span>`);
+          } else {
+            badgesParts.push(`<span class="badge"><b>Körper:</b> ${escapeHtml(r.body_color)}</span>`);
+            badgesParts.push(`<span class="badge"><b>${escapeHtml(p2Label)}:</b> ${escapeHtml(r.part2_color)}</span>`);
+            badgesParts.push(`<span class="badge"><b>${escapeHtml(p3Label)}:</b> ${escapeHtml(p3Color)}</span>`);
+          }
+
+          if(extras.note) badgesParts.push(`<span class="badge"><b>Beschreibung:</b> ${escapeHtml(extras.note)}</span>`);
+
+          const id = r.id;
+          const confirming = pendingDelete.has(id);
+
+          const item = document.createElement("div");
+          item.className = "order";
+          item.innerHTML = `
+            <div>
+              <h3>${escapeHtml(title)}</h3>
+              <div class="meta">Datum: <b>${dateOnly(r.created_at)}</b></div>
+              <div class="badges">${badgesParts.join("")}</div>
+            </div>
+            <div class="right">
+              <button class="btn btn-outline" data-restore="${id}" type="button">Zurückholen</button>
+
+              ${
+                confirming
+                  ? `
+                    <button class="btn btn-danger" data-delete-confirm="${id}" type="button">Ja, löschen</button>
+                    <button class="btn btn-outline" data-delete-cancel="${id}" type="button">Abbrechen</button>
+                  `
+                  : `
+                    <button class="btn btn-danger" data-delete="${id}" type="button">Löschen</button>
+                  `
+              }
+            </div>
+          `;
+          list.appendChild(item);
+        }
+
+        wrap.appendChild(list);
+        archiveListEl.appendChild(wrap);
+      }
+
+      // Archive handlers
+      archiveListEl.querySelectorAll("button[data-restore]").forEach(btn=>{
+        btn.addEventListener("click", async ()=>{
+          const id = btn.getAttribute("data-restore");
+          await restoreOrder(id);
+        });
+      });
+
+      archiveListEl.querySelectorAll("button[data-delete]").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          const id = btn.getAttribute("data-delete");
+          pendingDelete.add(id);
+          loadOrders();
+        });
+      });
+
+      archiveListEl.querySelectorAll("button[data-delete-cancel]").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          const id = btn.getAttribute("data-delete-cancel");
+          pendingDelete.delete(id);
+          loadOrders();
+        });
+      });
+
+      archiveListEl.querySelectorAll("button[data-delete-confirm]").forEach(btn=>{
+        btn.addEventListener("click", async ()=>{
+          const id = btn.getAttribute("data-delete-confirm");
+          pendingDelete.delete(id);
           await deleteOrder(id);
         });
       });
+    }
+
+    async function archiveOrder(id){
+      setStatus("Verschiebe ins Archiv…");
+      const { error } = await supabase.from("orders").update({ archived: true }).eq("id", id);
+      if(error){
+        setStatus("Archivieren fehlgeschlagen: " + error.message, "error");
+        return;
+      }
+      setStatus("Archiviert ✅", "ok");
+      await loadOrders();
+    }
+
+    async function restoreOrder(id){
+      setStatus("Hole zurück…");
+      const { error } = await supabase.from("orders").update({ archived: false }).eq("id", id);
+      if(error){
+        setStatus("Zurückholen fehlgeschlagen: " + error.message, "error");
+        return;
+      }
+      setStatus("Zurückgeholt ✅", "ok");
+      await loadOrders();
     }
 
     async function deleteOrder(id){
@@ -616,7 +1021,7 @@
       setStatus("");
       if(!validateAllRequired()) return;
 
-      const qty = parseInt(qtyEl.value, 10);
+      const qty = getQty();
       const desc = (note.value || "").trim();
 
       let payload;
@@ -628,10 +1033,10 @@
           qty,
           body_color: (hBody.value||"").trim(),
           part2_color: (hEars.value||"").trim(),
-          part3_color: packExtras((hButt.value||"").trim(), { note: desc, prio: priority, otherName:"", otherSize:"" })
+          part3_color: packExtras((hButt.value||"").trim(), { note: desc, prio: priority, otherName:"", otherSize:"" }),
+          archived: false
         };
       }
-
       if(mode === "lumi"){
         payload = {
           product_type: "lumi",
@@ -639,10 +1044,10 @@
           qty,
           body_color: (lBody.value||"").trim(),
           part2_color: (lWings.value||"").trim(),
-          part3_color: packExtras((lFeelers.value||"").trim(), { note: desc, prio: priority, otherName:"", otherSize:"" })
+          part3_color: packExtras((lFeelers.value||"").trim(), { note: desc, prio: priority, otherName:"", otherSize:"" }),
+          archived: false
         };
       }
-
       if(mode === "other"){
         const name = (oName.value||"").trim();
         const size = (oSize.value||"").trim();
@@ -653,27 +1058,29 @@
           qty,
           body_color: name,
           part2_color: size,
-          part3_color: packExtras(color, { note: desc, prio: priority, otherName: name, otherSize: size })
+          part3_color: packExtras(color, { note: desc, prio: priority, otherName: name, otherSize: size }),
+          archived: false
         };
       }
 
       setStatus("Speichere…");
-
       const { error } = await supabase.from("orders").insert(payload);
       if(error){
         setStatus("Fehler: " + error.message, "error");
         return;
       }
 
-      // Reset fields (so user must pick again)
+      // Reset fields
       note.value = "";
-      qtyEl.value = "";
+
+      qtyPick = null;
+      qtyCustomEl.value = "";
+      renderQtyButtons();
 
       hBody.value = ""; hEars.value = ""; hButt.value = "";
       lBody.value = ""; lWings.value = ""; lFeelers.value = "";
       oName.value = ""; oSize.value = ""; oColor.value = "";
 
-      // Reset priority & size selections (no auto)
       priority = null;
       pHigh.className = "prioBtn";
       pMid.className  = "prioBtn big";
@@ -682,6 +1089,7 @@
       haseSize = null;
       haseBlock.querySelectorAll("button[data-size]").forEach(x => x.className = "btn btn-outline");
 
+      clearInvalids();
       setValidation("");
       setStatus("Gespeichert ✅", "ok");
       await loadOrders();
@@ -689,11 +1097,9 @@
 
     addBtn.addEventListener("click", addOrder);
 
-    // Start: nothing selected, show no blocks
+    // Start: nothing selected
     setMode(null);
-    btnHase.className = "btn btn-outline";
-    btnLumi.className = "btn btn-outline";
-    btnOther.className = "btn btn-outline";
+    clearProductButtons();
     haseBlock.style.display = "none";
     lumiBlock.style.display = "none";
     otherBlock.style.display = "none";
