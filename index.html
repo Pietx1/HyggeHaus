@@ -3,19 +3,21 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Mein 3D-Druck Business</title>
+  <title>Bestellungen – Hase & Lumi</title>
   <style>
     :root { --bg:#f6f7fb; --card:#fff; --text:#111827; --muted:#6b7280; --border:#e5e7eb; }
     *{ box-sizing:border-box; }
     body{ margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; background:var(--bg); color:var(--text); }
     .container{ max-width:1100px; margin:0 auto; padding:24px; }
-    h1{ font-size:28px; margin:0 0 16px; }
+    h1{ font-size:28px; margin:0; }
+    .topbar{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px; }
+    .hint{ color:var(--muted); font-size:13px; }
+
     .card{ background:var(--card); border:1px solid var(--border); border-radius:16px; box-shadow:0 6px 20px rgba(0,0,0,.06); }
     .card-pad{ padding:16px; }
-    .grid{ display:grid; gap:16px; }
-    @media(min-width:900px){ .grid-3{ grid-template-columns:repeat(3,1fr); } }
-    label{ font-weight:700; font-size:13px; }
-    input, textarea, select{
+
+    label{ font-weight:900; font-size:13px; display:block; margin-bottom:6px; }
+    input{
       width:100%;
       border:1px solid var(--border);
       border-radius:12px;
@@ -24,118 +26,219 @@
       outline:none;
       background:#fff;
     }
-    textarea{ min-height:90px; resize:vertical; }
-    .row{ display:grid; gap:12px; }
+
     .btn{
       display:inline-flex; align-items:center; justify-content:center;
       gap:8px; border:0; cursor:pointer; border-radius:12px;
-      padding:10px 14px; font-weight:800; font-size:14px;
+      padding:10px 14px; font-weight:900; font-size:14px;
       background:#111827; color:#fff;
     }
     .btn:disabled{ opacity:.5; cursor:not-allowed; }
-    .btn-danger{ background:#b91c1c; }
-    .drop{
-      border:2px dashed #cbd5e1; border-radius:16px; padding:18px;
-      text-align:center; background:#fafafa; color:var(--muted);
+    .btn-outline{
+      background:#fff; color:var(--text);
+      border:1px solid var(--border);
+      box-shadow:0 1px 0 rgba(0,0,0,.02);
     }
-    .drop strong{ color:var(--text); }
-    .topbar{ display:flex; gap:12px; align-items:center; justify-content:space-between; margin-bottom:16px; }
-    .hint{ color:var(--muted); font-size:13px; }
-    .product img{ width:100%; height:180px; object-fit:cover; border-radius:12px; border:1px solid var(--border); background:#fff; }
-    .product h3{ margin:10px 0 4px; font-size:16px; }
-    .product p{ margin:0; color:var(--muted); font-size:13px; line-height:1.35; }
+    .btn-active{
+      background:#111827; color:#fff; border:1px solid #111827;
+    }
+    .btn-danger{ background:#b91c1c; }
+
     .status{ margin-top:10px; font-size:13px; color:var(--muted); }
     .error{ color:#b91c1c; }
     .ok{ color:#047857; }
-    .section-title{ font-weight:900; margin:10px 0 6px; }
-    .order-line{
-      display:flex; gap:10px; align-items:center; justify-content:space-between;
-      border:1px solid var(--border); border-radius:12px; padding:8px 10px;
+
+    .grid{ display:grid; gap:12px; }
+    .grid-2{ grid-template-columns:1fr; }
+    .grid-3{ grid-template-columns:1fr; }
+    @media(min-width:900px){
+      .grid-2{ grid-template-columns:1fr 1fr; }
+      .grid-3{ grid-template-columns:repeat(3, 1fr); }
+    }
+
+    .switch{
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin-bottom:12px;
+    }
+    .switch .btn{ min-width:140px; }
+
+    .sizes{ display:flex; gap:10px; flex-wrap:wrap; }
+    .sizes .btn{ min-width:90px; }
+
+    .list{ display:grid; gap:12px; margin-top:16px; }
+    .order{
+      display:flex; gap:12px; align-items:flex-start; justify-content:space-between;
+      border:1px solid var(--border); border-radius:14px; padding:12px;
       background:#fff;
     }
-    .order-badges{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
-    .badge{
-      border:1px solid var(--border);
-      border-radius:999px;
-      padding:4px 10px;
-      font-size:12px;
-      background:#f9fafb;
-    }
-    .order-form{ display:grid; gap:10px; }
-    .order-grid{ display:grid; grid-template-columns:1fr 1fr 1fr 110px; gap:10px; }
-    @media(max-width:900px){ .order-grid{ grid-template-columns:1fr 1fr; } }
+    .order h3{ margin:0 0 6px; font-size:15px; }
+    .meta{ color:var(--muted); font-size:13px; line-height:1.35; }
+    .badges{ display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+    .badge{ border:1px solid var(--border); border-radius:999px; padding:4px 10px; font-size:12px; background:#f9fafb; }
+    .right{ display:flex; flex-direction:column; gap:8px; align-items:flex-end; }
+
+    .section-title{ font-weight:1000; margin:10px 0 6px; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="topbar">
-      <h1>Mein 3D-Druck Business</h1>
+      <h1>Bestellungen</h1>
       <div class="hint">GitHub Pages • Supabase</div>
     </div>
 
-    <!-- Produkt anlegen -->
     <div class="card">
       <div class="card-pad">
-        <h2 style="margin:0 0 12px;font-size:18px;">Produkt anlegen</h2>
 
-        <div class="row">
-          <div>
-            <label for="name">Produktname</label>
-            <input id="name" placeholder="z. B. Bunny 20cm" />
-          </div>
-
-          <div>
-            <label for="desc">Beschreibung</label>
-            <textarea id="desc" placeholder="Kurzbeschreibung…"></textarea>
-          </div>
-
-          <div id="drop" class="drop">
-            <div><strong>Bild</strong> hier ablegen oder klicken 📸</div>
-            <div id="fileName" style="margin-top:6px;"></div>
-            <input id="file" type="file" accept="image/*" style="display:none" />
-          </div>
-
-          <button id="saveBtn" class="btn" disabled>+ Produkt speichern</button>
-
-          <div id="status" class="status"></div>
+        <!-- 1) Produktwahl als 2 Buttons -->
+        <div class="switch">
+          <button id="btnHase" class="btn btn-active" type="button">🐰 Hase</button>
+          <button id="btnLumi" class="btn btn-outline" type="button">✨ Lumi</button>
         </div>
+
+        <h2 id="formTitle" style="margin:0 0 12px;font-size:18px;">Neue Bestellung: Hase</h2>
+
+        <!-- 2) Hase-Block -->
+        <div id="haseBlock">
+          <div class="section-title">Größe</div>
+          <div class="sizes">
+            <button class="btn btn-active" data-size="20" type="button">20 cm</button>
+            <button class="btn btn-outline" data-size="15" type="button">15 cm</button>
+            <button class="btn btn-outline" data-size="11" type="button">11 cm</button>
+          </div>
+
+          <div style="height:12px"></div>
+
+          <div class="section-title">Farben</div>
+
+          <!-- Farben: Dropdown + frei tippen -->
+          <datalist id="colors">
+            <option value="schwarz"></option>
+            <option value="weiß"></option>
+            <option value="grau"></option>
+            <option value="blau"></option>
+            <option value="rot"></option>
+            <option value="gelb"></option>
+            <option value="grün"></option>
+            <option value="orange"></option>
+            <option value="pink"></option>
+            <option value="lila"></option>
+            <option value="braun"></option>
+          </datalist>
+
+          <div class="grid grid-3">
+            <div>
+              <label for="hBody">Körperfarbe</label>
+              <input id="hBody" list="colors" placeholder="z.B. schwarz (oder eigene Farbe tippen)" />
+            </div>
+            <div>
+              <label for="hEars">Ohrenfarbe</label>
+              <input id="hEars" list="colors" placeholder="z.B. weiß (oder eigene Farbe tippen)" />
+            </div>
+            <div>
+              <label for="hButt">Popofarbe</label>
+              <input id="hButt" list="colors" placeholder="z.B. blau (oder eigene Farbe tippen)" />
+            </div>
+          </div>
+        </div>
+
+        <!-- 3) Lumi-Block -->
+        <div id="lumiBlock" style="display:none;">
+          <div class="section-title">Farben</div>
+
+          <datalist id="colors2">
+            <option value="schwarz"></option>
+            <option value="weiß"></option>
+            <option value="grau"></option>
+            <option value="blau"></option>
+            <option value="rot"></option>
+            <option value="gelb"></option>
+            <option value="grün"></option>
+            <option value="orange"></option>
+            <option value="pink"></option>
+            <option value="lila"></option>
+            <option value="braun"></option>
+          </datalist>
+
+          <div class="grid grid-3">
+            <div>
+              <label for="lBody">Körperfarbe</label>
+              <input id="lBody" list="colors2" placeholder="z.B. schwarz (oder eigene Farbe tippen)" />
+            </div>
+            <div>
+              <label for="lWings">Flügelfarbe</label>
+              <input id="lWings" list="colors2" placeholder="z.B. weiß (oder eigene Farbe tippen)" />
+            </div>
+            <div>
+              <label for="lFeelers">Fühlerfarbe</label>
+              <input id="lFeelers" list="colors2" placeholder="z.B. blau (oder eigene Farbe tippen)" />
+            </div>
+          </div>
+        </div>
+
+        <div style="height:12px"></div>
+
+        <!-- Menge + Speichern -->
+        <div class="grid grid-2">
+          <div>
+            <label for="qty">Menge</label>
+            <input id="qty" type="number" min="1" value="1" />
+          </div>
+          <div style="display:flex;align-items:flex-end;">
+            <button id="addBtn" class="btn" type="button" style="width:100%;">+ Bestellung hinzufügen</button>
+          </div>
+        </div>
+
+        <div id="status" class="status"></div>
       </div>
     </div>
 
-    <div style="height:18px"></div>
-
-    <!-- Produkte -->
-    <div id="list" class="grid grid-3"></div>
+    <div class="card" style="margin-top:16px;">
+      <div class="card-pad">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+          <h2 style="margin:0;font-size:18px;">Bestellungen</h2>
+          <div class="hint" id="totals"></div>
+        </div>
+        <div id="list" class="list"></div>
+      </div>
+    </div>
   </div>
 
   <script type="module">
     import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-    // ✅ Deine Daten:
     const SUPABASE_URL = "https://htgrzmlcdolxxzvkppon.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0Z3J6bWxjZG9seHh6dmtwcG9uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0MzM2ODIsImV4cCI6MjA4NTAwOTY4Mn0.B0PxMAzmuvsHNd2n_mgNspjlPkaBpQlkrNzGu7p78fY";
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Farben für Dropdown (kannst du beliebig anpassen)
-    const COLORS = [
-      "schwarz","weiß","grau","blau","rot","gelb","grün","orange","pink","lila","braun"
-    ];
+    const btnHase = document.getElementById("btnHase");
+    const btnLumi = document.getElementById("btnLumi");
+    const formTitle = document.getElementById("formTitle");
 
-    const elName = document.getElementById("name");
-    const elDesc = document.getElementById("desc");
-    const elFile = document.getElementById("file");
-    const elDrop = document.getElementById("drop");
-    const elFileName = document.getElementById("fileName");
-    const elSave = document.getElementById("saveBtn");
-    const elStatus = document.getElementById("status");
-    const elList = document.getElementById("list");
+    const haseBlock = document.getElementById("haseBlock");
+    const lumiBlock = document.getElementById("lumiBlock");
 
-    let imageFile = null;
+    const hBody = document.getElementById("hBody");
+    const hEars = document.getElementById("hEars");
+    const hButt = document.getElementById("hButt");
+
+    const lBody = document.getElementById("lBody");
+    const lWings = document.getElementById("lWings");
+    const lFeelers = document.getElementById("lFeelers");
+
+    const qtyEl = document.getElementById("qty");
+    const addBtn = document.getElementById("addBtn");
+    const statusEl = document.getElementById("status");
+    const listEl = document.getElementById("list");
+    const totalsEl = document.getElementById("totals");
+
+    let mode = "hase";      // "hase" | "lumi"
+    let haseSize = 20;      // 20 | 15 | 11
 
     function setStatus(msg, type="") {
-      elStatus.className = "status " + type;
-      elStatus.textContent = msg || "";
+      statusEl.className = "status " + type;
+      statusEl.textContent = msg || "";
     }
 
     function escapeHtml(str) {
@@ -144,300 +247,180 @@
       }[s]));
     }
 
-    function updateSaveEnabled() {
-      elSave.disabled = !(elName.value.trim() && imageFile);
-    }
+    function setMode(newMode) {
+      mode = newMode;
 
-    elName.addEventListener("input", updateSaveEnabled);
-
-    elDrop.addEventListener("click", () => elFile.click());
-    elDrop.addEventListener("dragover", (e) => { e.preventDefault(); });
-    elDrop.addEventListener("drop", (e) => {
-      e.preventDefault();
-      const f = e.dataTransfer.files?.[0];
-      if (f) setFile(f);
-    });
-
-    elFile.addEventListener("change", () => {
-      const f = elFile.files?.[0];
-      if (f) setFile(f);
-    });
-
-    function setFile(f) {
-      imageFile = f;
-      elFileName.textContent = f.name;
-      updateSaveEnabled();
-    }
-
-    function colorOptionsHtml(selected) {
-      return COLORS.map(c => `<option value="${escapeHtml(c)}" ${c===selected ? "selected":""}>${escapeHtml(c)}</option>`).join("");
-    }
-
-    async function loadProducts() {
-      setStatus("Lade Produkte…");
-
-      const { data: products, error: pErr } = await supabase
-        .from("products")
-        .select("id,name,desc,image,created_at")
-        .order("created_at", { ascending: false });
-
-      if (pErr) {
-        setStatus("Fehler beim Laden: " + pErr.message, "error");
-        return;
+      if (mode === "hase") {
+        btnHase.className = "btn btn-active";
+        btnLumi.className = "btn btn-outline";
+        haseBlock.style.display = "";
+        lumiBlock.style.display = "none";
+        formTitle.textContent = "Neue Bestellung: Hase";
+      } else {
+        btnHase.className = "btn btn-outline";
+        btnLumi.className = "btn btn-active";
+        haseBlock.style.display = "none";
+        lumiBlock.style.display = "";
+        formTitle.textContent = "Neue Bestellung: Lumi";
       }
-
-      const ids = (products || []).map(p => p.id);
-
-      let orders = [];
-      if (ids.length) {
-        const { data: oData, error: oErr } = await supabase
-          .from("orders")
-          .select("id,product_id,body_color,ears_color,butt_color,qty,created_at")
-          .in("product_id", ids)
-          .order("created_at", { ascending: true });
-
-        if (oErr) {
-          setStatus("Fehler beim Laden (Bestellungen): " + oErr.message, "error");
-          return;
-        }
-        orders = oData || [];
-      }
-
-      const byProduct = new Map();
-      for (const o of orders) {
-        if (!byProduct.has(o.product_id)) byProduct.set(o.product_id, []);
-        byProduct.get(o.product_id).push(o);
-      }
-
-      renderProducts(products || [], byProduct);
       setStatus("");
     }
 
-    async function addProduct() {
-      const name = elName.value.trim();
-      const desc = elDesc.value.trim();
-      if (!name || !imageFile) return;
+    btnHase.addEventListener("click", () => setMode("hase"));
+    btnLumi.addEventListener("click", () => setMode("lumi"));
 
-      setStatus("Upload läuft…");
+    // Größe Buttons (nur Hase)
+    haseBlock.querySelectorAll("button[data-size]").forEach(b => {
+      b.addEventListener("click", () => {
+        const s = parseInt(b.getAttribute("data-size"), 10);
+        if (![11,15,20].includes(s)) return;
+        haseSize = s;
 
-      const fileName = `${Date.now()}-${imageFile.name}`;
+        // Active style umschalten
+        haseBlock.querySelectorAll("button[data-size]").forEach(x => {
+          x.className = (parseInt(x.getAttribute("data-size"),10) === haseSize)
+            ? "btn btn-active"
+            : "btn btn-outline";
+        });
+      });
+    });
 
-      const { error: upErr } = await supabase
-        .storage
-        .from("product-images")
-        .upload(fileName, imageFile, { upsert: false });
+    async function loadOrders() {
+      const { data, error } = await supabase
+        .from("orders")
+        .select("id,product_type,size_cm,qty,body_color,part2_color,part3_color,created_at")
+        .order("created_at", { ascending: false });
 
-      if (upErr) {
-        setStatus("Upload-Fehler: " + upErr.message, "error");
+      if (error) {
+        setStatus("Fehler beim Laden: " + error.message, "error");
         return;
       }
-
-      const { data: pub } = supabase
-        .storage
-        .from("product-images")
-        .getPublicUrl(fileName);
-
-      const imageUrl = pub?.publicUrl;
-
-      const { error: insErr } = await supabase
-        .from("products")
-        .insert({ name, desc, image: imageUrl });
-
-      if (insErr) {
-        setStatus("DB-Fehler: " + insErr.message, "error");
-        return;
-      }
-
-      elName.value = "";
-      elDesc.value = "";
-      imageFile = null;
-      elFile.value = "";
-      elFileName.textContent = "";
-      updateSaveEnabled();
-
-      setStatus("Gespeichert ✅", "ok");
-      await loadProducts();
+      renderOrders(data || []);
+      setStatus("");
     }
 
-    async function deleteProduct(id) {
-      setStatus("Lösche Produkt…");
-      const { error } = await supabase.from("products").delete().eq("id", id);
+    function renderOrders(rows) {
+      listEl.innerHTML = "";
+
+      let totalHase = 0;
+      let totalLumi = 0;
+
+      for (const r of rows) {
+        if (r.product_type === "hase") totalHase += (r.qty || 0);
+        if (r.product_type === "lumi") totalLumi += (r.qty || 0);
+
+        const title = (r.product_type === "hase") ? `Hase ${r.size_cm || ""}cm` : "Lumi";
+        const p2Label = (r.product_type === "hase") ? "Ohren" : "Flügel";
+        const p3Label = (r.product_type === "hase") ? "Popo" : "Fühler";
+
+        const item = document.createElement("div");
+        item.className = "order";
+        item.innerHTML = `
+          <div>
+            <h3>${escapeHtml(title)}</h3>
+            <div class="meta">
+              Menge: <b>${r.qty}</b><br>
+              <span class="hint">erstellt: ${new Date(r.created_at).toLocaleString()}</span>
+            </div>
+            <div class="badges">
+              <span class="badge"><b>Körper:</b> ${escapeHtml(r.body_color)}</span>
+              <span class="badge"><b>${escapeHtml(p2Label)}:</b> ${escapeHtml(r.part2_color)}</span>
+              <span class="badge"><b>${escapeHtml(p3Label)}:</b> ${escapeHtml(r.part3_color)}</span>
+            </div>
+          </div>
+          <div class="right">
+            <button class="btn btn-danger" data-del="${r.id}" type="button">Löschen</button>
+          </div>
+        `;
+        listEl.appendChild(item);
+      }
+
+      totalsEl.textContent = `Hase: ${totalHase} • Lumi: ${totalLumi}`;
+
+      listEl.querySelectorAll("button[data-del]").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const id = btn.getAttribute("data-del");
+          await deleteOrder(id);
+        });
+      });
+    }
+
+    async function addOrder() {
+      const qty = parseInt(qtyEl.value || "1", 10);
+      if (!Number.isFinite(qty) || qty < 1) {
+        setStatus("Menge muss >= 1 sein.", "error");
+        return;
+      }
+
+      let payload;
+
+      if (mode === "hase") {
+        const c1 = (hBody.value || "").trim();
+        const c2 = (hEars.value || "").trim();
+        const c3 = (hButt.value || "").trim();
+        if (!c1 || !c2 || !c3) {
+          setStatus("Bitte Körper/Ohren/Popo Farbe eintragen.", "error");
+          return;
+        }
+        payload = {
+          product_type: "hase",
+          size_cm: haseSize,
+          qty,
+          body_color: c1,
+          part2_color: c2,
+          part3_color: c3
+        };
+      } else {
+        const c1 = (lBody.value || "").trim();
+        const c2 = (lWings.value || "").trim();
+        const c3 = (lFeelers.value || "").trim();
+        if (!c1 || !c2 || !c3) {
+          setStatus("Bitte Körper/Flügel/Fühler Farbe eintragen.", "error");
+          return;
+        }
+        payload = {
+          product_type: "lumi",
+          size_cm: null,
+          qty,
+          body_color: c1,
+          part2_color: c2,
+          part3_color: c3
+        };
+      }
+
+      setStatus("Speichere…");
+
+      const { error } = await supabase.from("orders").insert(payload);
+      if (error) {
+        setStatus("Fehler: " + error.message, "error");
+        return;
+      }
+
+      // Reset Felder
+      qtyEl.value = "1";
+      hBody.value = ""; hEars.value = ""; hButt.value = "";
+      lBody.value = ""; lWings.value = ""; lFeelers.value = "";
+
+      setStatus("Gespeichert ✅", "ok");
+      await loadOrders();
+    }
+
+    async function deleteOrder(id) {
+      setStatus("Lösche…");
+      const { error } = await supabase.from("orders").delete().eq("id", id);
       if (error) {
         setStatus("Löschen fehlgeschlagen: " + error.message, "error");
         return;
       }
       setStatus("Gelöscht ✅", "ok");
-      await loadProducts();
+      await loadOrders();
     }
 
-    async function addOrder(productId, bodyColor, earsColor, buttColor, qty) {
-      if (!productId) return;
-      if (!bodyColor || !earsColor || !buttColor) {
-        setStatus("Bitte alle Farben auswählen.", "error");
-        return;
-      }
-      const q = parseInt(qty, 10);
-      if (!Number.isFinite(q) || q < 1) {
-        setStatus("Menge muss >= 1 sein.", "error");
-        return;
-      }
-
-      setStatus("Speichere Bestell-Position…");
-
-      const { error } = await supabase
-        .from("orders")
-        .insert({
-          product_id: productId,
-          body_color: bodyColor,
-          ears_color: earsColor,
-          butt_color: buttColor,
-          qty: q
-        });
-
-      if (error) {
-        setStatus("Fehler (Order): " + error.message, "error");
-        return;
-      }
-
-      setStatus("Gespeichert ✅", "ok");
-      await loadProducts();
-    }
-
-    async function deleteOrder(orderId) {
-      setStatus("Entferne Position…");
-      const { error } = await supabase.from("orders").delete().eq("id", orderId);
-      if (error) {
-        setStatus("Fehler beim Entfernen: " + error.message, "error");
-        return;
-      }
-      setStatus("Entfernt ✅", "ok");
-      await loadProducts();
-    }
-
-    function renderProducts(products, ordersByProduct) {
-      elList.innerHTML = "";
-
-      for (const p of products) {
-        const card = document.createElement("div");
-        card.className = "card card-pad product";
-
-        // Bild-Link robust
-        const bucket = "product-images";
-        const imageSrc = (p.image && p.image.startsWith("http"))
-          ? p.image
-          : (p.image ? `${SUPABASE_URL}/storage/v1/object/public/${bucket}/${encodeURIComponent(p.image)}` : "");
-
-        const orders = ordersByProduct.get(p.id) || [];
-        const totalQty = orders.reduce((sum, o) => sum + (o.qty || 0), 0);
-
-        const ordersHtml = orders.length
-          ? orders.map(o => `
-              <div class="order-line">
-                <div class="order-badges">
-                  <span class="badge"><b>Körper:</b> ${escapeHtml(o.body_color)}</span>
-                  <span class="badge"><b>Ohren:</b> ${escapeHtml(o.ears_color)}</span>
-                  <span class="badge"><b>Popo:</b> ${escapeHtml(o.butt_color)}</span>
-                  <span class="badge"><b>Menge:</b> ${o.qty}</span>
-                </div>
-                <button class="btn btn-danger" data-order-id="${o.id}" style="padding:8px 10px;font-size:12px;">Entfernen</button>
-              </div>
-            `).join("")
-          : `<div class="hint">Noch keine Bestellungen.</div>`;
-
-        card.innerHTML = `
-          <img src="${imageSrc}" alt="${escapeHtml(p.name || "")}">
-          <h3>${escapeHtml(p.name || "")}</h3>
-          <p>${escapeHtml(p.desc || "")}</p>
-
-          <div class="section-title">Bestellungen (Körper/Ohren/Popo + Menge)</div>
-
-          <div class="order-form">
-            <div class="order-grid">
-              <div>
-                <label>Körper</label>
-                <select data-body-for="${p.id}">
-                  ${colorOptionsHtml("schwarz")}
-                </select>
-              </div>
-              <div>
-                <label>Ohren</label>
-                <select data-ears-for="${p.id}">
-                  ${colorOptionsHtml("schwarz")}
-                </select>
-              </div>
-              <div>
-                <label>Popo</label>
-                <select data-butt-for="${p.id}">
-                  ${colorOptionsHtml("schwarz")}
-                </select>
-              </div>
-              <div>
-                <label>Menge</label>
-                <input type="number" min="1" value="1" data-qty-for="${p.id}">
-              </div>
-            </div>
-
-            <button class="btn" data-add-order-for="${p.id}">+ Position hinzufügen</button>
-
-            <div class="hint">Gesamtmenge für dieses Produkt: <b>${totalQty}</b></div>
-
-            <div style="display:grid;gap:8px;">
-              ${ordersHtml}
-            </div>
-
-            <div style="display:flex;justify-content:flex-end;">
-              <button class="btn btn-danger" data-delete-product="${p.id}">Produkt löschen</button>
-            </div>
-          </div>
-        `;
-
-        elList.appendChild(card);
-      }
-
-      // Produkt löschen
-      elList.querySelectorAll("button[data-delete-product]").forEach(btn => {
-        btn.addEventListener("click", async () => {
-          const id = btn.getAttribute("data-delete-product");
-          if (!id) return;
-          await deleteProduct(id);
-        });
-      });
-
-      // Order hinzufügen
-      elList.querySelectorAll("button[data-add-order-for]").forEach(btn => {
-        btn.addEventListener("click", async () => {
-          const productId = btn.getAttribute("data-add-order-for");
-          const bodyEl = elList.querySelector(`select[data-body-for="${productId}"]`);
-          const earsEl = elList.querySelector(`select[data-ears-for="${productId}"]`);
-          const buttEl = elList.querySelector(`select[data-butt-for="${productId}"]`);
-          const qtyEl  = elList.querySelector(`input[data-qty-for="${productId}"]`);
-
-          await addOrder(
-            productId,
-            bodyEl?.value || "",
-            earsEl?.value || "",
-            buttEl?.value || "",
-            qtyEl?.value || "1"
-          );
-
-          if (qtyEl) qtyEl.value = "1";
-        });
-      });
-
-      // Order entfernen
-      elList.querySelectorAll("button[data-order-id]").forEach(btn => {
-        btn.addEventListener("click", async () => {
-          const orderId = btn.getAttribute("data-order-id");
-          if (!orderId) return;
-          await deleteOrder(orderId);
-        });
-      });
-    }
-
-    elSave.addEventListener("click", addProduct);
+    addBtn.addEventListener("click", addOrder);
 
     // Start
-    await loadProducts();
+    setMode("hase");
+    await loadOrders();
   </script>
 </body>
 </html>
