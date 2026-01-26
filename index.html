@@ -3,450 +3,390 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Bestellungen – Hase, Lumi & Weitere</title>
-
+  <title>Bestellungen</title>
   <style>
     :root{
-      --bg:#f6f7fb; --card:#fff; --text:#111827; --muted:#6b7280; --border:#e5e7eb;
-      --dark:#111827; --shadow:0 6px 20px rgba(0,0,0,.06);
-      --red:#b91c1c;
+      --bg:#f6f7fb; --card:#fff; --text:#0f172a; --muted:#64748b; --border:#e2e8f0;
+      --accent:#0b1220; --danger:#b91c1c; --ok:#047857; --chip:#eef2ff;
     }
-    *{ box-sizing:border-box; }
-    body{ margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; background:var(--bg); color:var(--text); }
-    .container{ max-width:1100px; margin:0 auto; padding:18px; }
-    h1{ font-size:30px; margin:0; letter-spacing:-.3px; }
-    .topbar{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px; }
-    .hint{ color:var(--muted); font-size:13px; }
-
-    .card{ background:var(--card); border:1px solid var(--border); border-radius:18px; box-shadow:var(--shadow); }
-    .card-pad{ padding:16px; }
-
-    label{ font-weight:950; font-size:13px; display:block; margin-bottom:6px; }
-    input, textarea{
-      width:100%;
-      border:1px solid var(--border);
-      border-radius:14px;
-      padding:12px 12px;
-      font-size:16px;
-      outline:none;
-      background:#fff;
-      display:block;
-    }
-    textarea{ min-height:90px; resize:vertical; }
-
-    .grid{ display:grid; gap:12px; }
-    .grid-2{ grid-template-columns:1fr; }
-    .grid-3{ grid-template-columns:1fr; }
-    @media(min-width:900px){
-      .grid-2{ grid-template-columns:1fr 1fr; }
-      .grid-3{ grid-template-columns:repeat(3,1fr); }
-    }
+    *{box-sizing:border-box}
+    body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; background:var(--bg); color:var(--text);}
+    .container{max-width:1100px; margin:0 auto; padding:18px;}
+    h1{margin:8px 0 6px; font-size:34px; letter-spacing:-.5px}
+    .hint{color:var(--muted); font-size:13px}
+    .row{display:flex; gap:12px; align-items:center; justify-content:space-between}
+    .card{background:var(--card); border:1px solid var(--border); border-radius:18px; box-shadow:0 10px 25px rgba(2,6,23,.06);}
+    .pad{padding:16px}
+    .sep{height:14px}
+    .grid{display:grid; gap:12px}
+    @media(min-width:900px){ .grid-2{grid-template-columns:1fr 1fr} }
+    @media(min-width:900px){ .grid-3{grid-template-columns:repeat(3,1fr)} }
 
     .btn{
-      display:inline-flex; align-items:center; justify-content:center;
-      gap:10px; border:0; cursor:pointer; border-radius:16px;
-      padding:12px 14px; font-weight:950; font-size:16px;
-      background:var(--dark); color:#fff;
+      border:0; cursor:pointer; border-radius:14px; padding:10px 14px; font-weight:800;
+      background:var(--accent); color:#fff; display:inline-flex; align-items:center; justify-content:center; gap:8px;
     }
-    .btn:disabled{ opacity:.55; cursor:not-allowed; }
-    .btn-outline{
-      background:#fff; color:var(--text);
-      border:1px solid var(--border);
-      box-shadow:0 1px 0 rgba(0,0,0,.02);
+    .btn:disabled{opacity:.5; cursor:not-allowed}
+    .btn-soft{
+      background:#fff; color:var(--accent); border:1px solid var(--border);
     }
-    .btn-active{ background:var(--dark); color:#fff; border:1px solid var(--dark); }
-    .btn-danger{ background:#b91c1c; }
+    .btn-danger{background:var(--danger)}
+    .btn-small{padding:8px 10px; border-radius:12px; font-weight:800}
+    .btn-ghost{background:transparent; border:1px solid var(--border); color:var(--accent)}
+    .toggleRow{display:flex; gap:10px}
+    .toggle{
+      flex:1; border-radius:16px; padding:12px 14px; font-weight:900; border:1px solid var(--border);
+      background:#fff; color:var(--accent); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px;
+    }
+    .toggle.active{background:var(--accent); color:#fff; border-color:transparent}
+    .title2{font-size:22px; margin:0 0 10px; font-weight:900}
+    .label{font-size:13px; font-weight:900; color:var(--text); margin:2px 0 6px}
+    .muted{color:var(--muted)}
+    .err{color:var(--danger); font-weight:800; font-size:13px; margin-top:8px; display:flex; align-items:center; gap:8px}
+    .ok{color:var(--ok); font-weight:800; font-size:13px; margin-top:8px}
+    .field{border:1px solid var(--border); border-radius:14px; padding:10px 12px; width:100%; font-size:15px; outline:none; background:#fff}
+    textarea.field{min-height:86px; resize:vertical}
+    .field.error{border-color:var(--danger); box-shadow:0 0 0 3px rgba(185,28,28,.12)}
+    .chipRow{display:flex; gap:10px; flex-wrap:wrap}
+    .chip{
+      border:1px solid var(--border); background:#fff; padding:10px 14px; border-radius:16px; font-weight:900; cursor:pointer;
+      min-width:84px; text-align:center;
+    }
+    .chip.active{background:var(--accent); color:#fff; border-color:transparent}
+    .prioRow{display:grid; grid-template-columns:1fr 1.2fr 1fr; gap:10px}
+    .prioBtn{border:1px solid var(--border); background:#fff; border-radius:16px; padding:12px 10px; font-weight:950; cursor:pointer}
+    .prioBtn.active{background:var(--accent); color:#fff; border-color:transparent}
+    .prioBtn.small{transform:scale(.92)}
+    .qtyRow{display:flex; gap:8px; flex-wrap:wrap}
+    .qtyBtn{width:44px; height:40px; border-radius:14px; border:1px solid var(--border); background:#fff; font-weight:950; cursor:pointer}
+    .qtyBtn.active{background:var(--accent); color:#fff; border-color:transparent}
+    .inline{display:flex; gap:10px; align-items:center}
+    .grow{flex:1}
 
-    .switch{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
-    .switch .btn{ flex:1; min-width:140px; }
+    /* ---- Custom dropdown (mobile friendly) ---- */
+    .ddWrap{position:relative; display:flex; gap:10px; align-items:center}
+    .ddInput{flex:1}
+    .ddArrow{
+      width:44px; height:42px; border-radius:14px; border:1px solid var(--border); background:#fff;
+      display:flex; align-items:center; justify-content:center; cursor:pointer; user-select:none;
+    }
+    .ddMenu{
+      position:absolute; left:0; right:0; top:50px;
+      background:#fff; border:1px solid var(--border); border-radius:14px; box-shadow:0 16px 30px rgba(2,6,23,.10);
+      overflow:hidden; z-index:50; max-height:240px; overflow-y:auto;
+    }
+    .ddItem{padding:10px 12px; cursor:pointer; font-weight:800}
+    .ddItem:hover{background:#f1f5f9}
 
-    .sizes{ display:flex; gap:10px; flex-wrap:wrap; }
-    .sizes .btn{ min-width:90px; }
+    /* Orders list */
+    .ordersHead{display:flex; align-items:center; justify-content:space-between; gap:12px}
+    .sortBtns{display:flex; gap:10px}
+    .orderCard{border:1px solid var(--border); border-radius:16px; padding:12px; background:#fff}
+    .orderTop{display:flex; align-items:flex-start; justify-content:space-between; gap:10px}
+    .orderMeta{display:flex; flex-direction:column; gap:4px}
+    .orderDate{font-weight:950}
+    .orderCustomer{color:var(--muted); font-weight:800}
+    .orderTotal{font-weight:950}
+    .pill{display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; border:1px solid var(--border); font-weight:900; background:#fff}
+    .pill.prio{background:var(--chip)}
+    .items{margin-top:10px; display:grid; gap:8px}
+    .itemLine{display:flex; align-items:flex-start; justify-content:space-between; gap:10px; padding:10px; border:1px solid var(--border); border-radius:14px; background:#fff}
+    .itemL{display:flex; flex-direction:column; gap:4px}
+    .itemT{font-weight:950}
+    .itemS{color:var(--muted); font-weight:800; font-size:13px}
+    .iconBtn{width:40px; height:40px; border-radius:14px; border:1px solid var(--border); background:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center}
+    .iconBtn:hover{background:#f8fafc}
 
-    .prioRow{
-      display:grid;
-      grid-template-columns: 1fr 1.6fr 1fr;
-      gap:10px;
-      align-items:stretch;
-    }
-    .prioBtn{
-      border-radius:16px;
-      padding:10px 10px;
-      font-weight:950;
-      font-size:14px;
-      border:1px solid var(--border);
-      background:#fff;
-      cursor:pointer;
-    }
-    .prioBtn.big{ font-size:16px; padding:12px 10px; }
-    .prioBtn.active{ background:var(--dark); color:#fff; border:1px solid var(--dark); }
+    details.archive{margin-top:10px}
+    summary{cursor:pointer; color:var(--muted); font-weight:900}
+    .archiveWrap{margin-top:10px; display:grid; gap:10px}
+    .monthTitle{font-weight:950; color:var(--muted); margin-top:8px}
 
-    .status{ margin-top:10px; font-size:13px; color:var(--muted); }
-    .error{ color:var(--red); }
-    .ok{ color:#047857; }
+    /* Modal */
+    .modalBack{position:fixed; inset:0; background:rgba(2,6,23,.45); display:none; align-items:center; justify-content:center; padding:16px; z-index:100}
+    .modal{max-width:680px; width:100%; background:#fff; border-radius:18px; border:1px solid var(--border); box-shadow:0 30px 60px rgba(2,6,23,.25)}
+    .modalHead{display:flex; justify-content:space-between; align-items:center; padding:14px 14px 0}
+    .modalBody{padding:14px}
+    .xBtn{border:1px solid var(--border); background:#fff; border-radius:14px; width:40px; height:40px; cursor:pointer; font-weight:950}
 
-    /* Farben: EIN Pfeil (immer sichtbar + klickbar) */
-    .colorWrap{ position:relative; width:100%; }
-    .colorWrap input{ padding-right:52px; }
-    .colorWrap button.arrowBtn{
-      position:absolute;
-      right:10px;
-      top:50%;
-      transform:translateY(-50%);
-      width:36px;
-      height:36px;
-      border-radius:12px;
-      border:1px solid var(--border);
-      background:#fff;
-      color:var(--muted);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      cursor:pointer;
-      padding:0;
-      line-height:1;
-      font-weight:950;
-      font-size:16px;
-    }
-
-    .qtyGrid{ display:grid; grid-template-columns:repeat(9, 1fr); gap:8px; }
-    .qtyBtn{
-      border:1px solid var(--border);
-      background:#fff;
-      border-radius:14px;
-      padding:10px 0;
-      font-weight:950;
-      cursor:pointer;
-      font-size:14px;
-    }
-    .qtyBtn.active{ background:var(--dark); color:#fff; border-color:var(--dark); }
-    .qtyRow2{ display:grid; grid-template-columns:1fr; gap:10px; }
-    @media(min-width:900px){ .qtyRow2{ grid-template-columns: 1fr 1fr; } }
-
-    .list{ display:grid; gap:12px; margin-top:16px; }
-    .order{
-      display:flex; gap:12px; align-items:flex-start; justify-content:space-between;
-      border:1px solid var(--border); border-radius:16px; padding:12px;
-      background:#fff;
-    }
-    .order h3{ margin:0 0 6px; font-size:16px; }
-    .meta{ color:var(--muted); font-size:13px; line-height:1.35; }
-    .badges{ display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
-
-    .badge{
-      border:1px solid var(--border);
-      border-radius:999px;
-      padding:4px 10px;
-      font-size:12px;
-      background:#f9fafb;
-      color:#111827;
-    }
-    .badge.prio{
-      background:#111827;
-      color:#fff;
-      border-color:#111827;
-      font-weight:950;
-    }
-    .badge.qty{
-      background:#f1f5f9;
-      border-color:#cbd5e1;
-      font-weight:950;
-      color:#111827;
-    }
-
-    .right{ display:flex; flex-direction:column; gap:8px; align-items:flex-end; }
-
-    .validation{
-      margin-top:10px;
-      font-size:13px;
-      color:var(--red);
-      font-weight:900;
-      min-height:18px;
-    }
-
-    details.archive{
-      margin-top:18px;
-      border-top:1px dashed var(--border);
-      padding-top:12px;
-    }
-    details.archive summary{
-      cursor:pointer;
-      color:var(--muted);
-      font-weight:900;
-      font-size:13px;
-      list-style:none;
-    }
-    details.archive summary::-webkit-details-marker{ display:none; }
-    .archiveHint{ color:var(--muted); font-size:12px; margin-top:6px; }
-
-    .headerRow{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
-    .sortBtns{ display:flex; gap:8px; }
-    .sortBtns .btn{ padding:8px 10px; font-size:13px; border-radius:12px; }
-
-    .monthGroup{ margin-top:14px; }
-    .monthTitle{
-      color:var(--muted);
-      font-weight:950;
-      font-size:13px;
-      margin:0 0 10px;
-    }
-
-    .invalid{
-      border-color: var(--red) !important;
-      box-shadow: 0 0 0 3px rgba(185, 28, 28, .12) !important;
-    }
-    .invalidGroup{
-      border:2px solid var(--red) !important;
-      border-radius:16px;
-      padding:10px;
-      box-shadow: 0 0 0 3px rgba(185, 28, 28, .08);
-    }
-    .invalidBtn{
-      border:2px solid var(--red) !important;
-      box-shadow: 0 0 0 3px rgba(185, 28, 28, .10) !important;
-    }
-
-    /* Edit Modal */
-    .modalBackdrop{
-      position:fixed; inset:0; background:rgba(0,0,0,.35);
-      display:none; align-items:center; justify-content:center;
-      padding:16px; z-index:9999;
-    }
-    .modal{
-      width:min(720px, 100%);
-      background:#fff;
-      border-radius:18px;
-      border:1px solid var(--border);
-      box-shadow:0 20px 50px rgba(0,0,0,.2);
-      overflow:hidden;
-    }
-    .modalHead{
-      padding:14px 16px;
-      display:flex; align-items:center; justify-content:space-between;
-      border-bottom:1px solid var(--border);
-      background:#fafafa;
-      font-weight:950;
-    }
-    .modalBody{ padding:16px; }
-    .modalFoot{
-      padding:14px 16px;
-      border-top:1px solid var(--border);
-      display:flex; gap:10px; justify-content:flex-end;
-      background:#fafafa;
+    @media (max-width:520px){
+      h1{font-size:30px}
+      .toggle{padding:10px 10px}
+      .prioBtn{padding:10px 8px}
+      .ddMenu{top:48px}
     }
   </style>
 </head>
-
 <body>
   <div class="container">
-    <div class="topbar">
-      <h1>Bestellungen</h1>
+    <div class="row">
+      <div>
+        <h1>Bestellungen</h1>
+      </div>
       <div class="hint">GitHub Pages • Supabase</div>
     </div>
 
+    <div class="sep"></div>
+
+    <!-- Neue Bestellung -->
     <div class="card">
-      <div class="card-pad">
-
-        <div id="productWrap" class="switch">
-          <button id="btnHase" class="btn btn-outline" type="button">🐰 Hase</button>
-          <button id="btnLumi" class="btn btn-outline" type="button">🪲 Lumi</button>
-          <button id="btnOther" class="btn btn-outline" type="button">➕ Weitere Produkt</button>
+      <div class="pad">
+        <div class="toggleRow" style="margin-bottom:12px">
+          <button id="btnBunny" class="toggle">🐰 Hase</button>
+          <button id="btnLumi" class="toggle">✨🪲 Lumi</button>
+          <button id="btnOther" class="toggle">➕ Weitere</button>
         </div>
 
-        <h2 id="formTitle" style="margin:0 0 12px;font-size:20px;">Neue Bestellung</h2>
+        <div class="title2" id="formTitle">Neue Bestellung</div>
 
-        <div id="prioWrap" class="grid">
+        <!-- Größe (nur Hase) -->
+        <div id="bunnySizeBlock" style="display:none; margin-bottom:10px">
+          <div class="label">Größe</div>
+          <div class="chipRow">
+            <button class="chip" data-size="20">20 cm</button>
+            <button class="chip" data-size="15">15 cm</button>
+            <button class="chip" data-size="11">11 cm</button>
+          </div>
+        </div>
+
+        <!-- Farben -->
+        <div id="colorsBlock" style="margin-top:6px">
+          <div class="label">Farben</div>
+
+          <!-- Hase: Einfarbig -->
+          <div id="bunnyModeRow" style="display:none; margin:6px 0 10px">
+            <div class="chipRow">
+              <button id="btnMulti" class="chip">Mehrfarbig</button>
+              <button id="btnSingle" class="chip">Einfarbig</button>
+            </div>
+          </div>
+
+          <!-- Hase Multi -->
+          <div id="bunnyMulti" class="grid grid-3" style="display:none">
+            <div>
+              <div class="label">Körperfarbe</div>
+              <div class="ddWrap" data-dd="b_body">
+                <input class="field ddInput" id="b_body" placeholder="Tippen oder auswählen..." autocomplete="off">
+                <div class="ddArrow" data-dd-btn="b_body">▼</div>
+                <div class="ddMenu" data-dd-menu="b_body" style="display:none"></div>
+              </div>
+            </div>
+            <div>
+              <div class="label">Ohrenfarbe</div>
+              <div class="ddWrap" data-dd="b_ear">
+                <input class="field ddInput" id="b_ear" placeholder="Tippen oder auswählen..." autocomplete="off">
+                <div class="ddArrow" data-dd-btn="b_ear">▼</div>
+                <div class="ddMenu" data-dd-menu="b_ear" style="display:none"></div>
+              </div>
+            </div>
+            <div>
+              <div class="label">Popofarbe</div>
+              <div class="ddWrap" data-dd="b_butt">
+                <input class="field ddInput" id="b_butt" placeholder="Tippen oder auswählen..." autocomplete="off">
+                <div class="ddArrow" data-dd-btn="b_butt">▼</div>
+                <div class="ddMenu" data-dd-menu="b_butt" style="display:none"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hase Single -->
+          <div id="bunnySingle" style="display:none">
+            <div class="label">Einfarbig</div>
+            <div class="ddWrap" data-dd="b_single">
+              <input class="field ddInput" id="b_single" placeholder="Tippen oder auswählen..." autocomplete="off">
+              <div class="ddArrow" data-dd-btn="b_single">▼</div>
+              <div class="ddMenu" data-dd-menu="b_single" style="display:none"></div>
+            </div>
+            <div class="hint" style="margin-top:6px">Setzt Körper, Ohren und Popo automatisch auf dieselbe Farbe.</div>
+          </div>
+
+          <!-- Lumi -->
+          <div id="lumiColors" class="grid grid-3" style="display:none">
+            <div>
+              <div class="label">Körperfarbe</div>
+              <div class="ddWrap" data-dd="l_body">
+                <input class="field ddInput" id="l_body" placeholder="Tippen oder auswählen..." autocomplete="off">
+                <div class="ddArrow" data-dd-btn="l_body">▼</div>
+                <div class="ddMenu" data-dd-menu="l_body" style="display:none"></div>
+              </div>
+            </div>
+            <div>
+              <div class="label">Flügelfarbe</div>
+              <div class="ddWrap" data-dd="l_wing">
+                <input class="field ddInput" id="l_wing" placeholder="Tippen oder auswählen..." autocomplete="off">
+                <div class="ddArrow" data-dd-btn="l_wing">▼</div>
+                <div class="ddMenu" data-dd-menu="l_wing" style="display:none"></div>
+              </div>
+            </div>
+            <div>
+              <div class="label">Fühlerfarbe</div>
+              <div class="ddWrap" data-dd="l_feel">
+                <input class="field ddInput" id="l_feel" placeholder="Tippen oder auswählen..." autocomplete="off">
+                <div class="ddArrow" data-dd-btn="l_feel">▼</div>
+                <div class="ddMenu" data-dd-menu="l_feel" style="display:none"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Other -->
+          <div id="otherColors" class="grid grid-2" style="display:none">
+            <div>
+              <div class="label">Größe</div>
+              <input class="field" id="o_size" placeholder="z.B. 10cm / XL / ..." />
+            </div>
+            <div>
+              <div class="label">Farbe</div>
+              <div class="ddWrap" data-dd="o_color">
+                <input class="field ddInput" id="o_color" placeholder="Tippen oder auswählen..." autocomplete="off">
+                <div class="ddArrow" data-dd-btn="o_color">▼</div>
+                <div class="ddMenu" data-dd-menu="o_color" style="display:none"></div>
+              </div>
+            </div>
+            <div style="grid-column:1/-1">
+              <div class="label">Beschreibung (für „Weitere“)</div>
+              <input class="field" id="o_desc" placeholder="z.B. Sonderform, eigenes Produkt..." />
+            </div>
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <!-- Kunde (neu) -->
+        <div class="grid grid-2">
           <div>
-            <label>Priorität</label>
+            <div class="label">Kundenname</div>
+            <input class="field" id="customer" placeholder="z.B. Max Mustermann" />
+          </div>
+
+          <div>
+            <div class="label">Priorität</div>
             <div class="prioRow">
-              <button id="pHigh" class="prioBtn" type="button">Sehr wichtig</button>
-              <button id="pMid" class="prioBtn big" type="button">Wichtig</button>
-              <button id="pLow" class="prioBtn" type="button">Nicht wichtig</button>
+              <button id="pVery" class="prioBtn small">Sehr wichtig</button>
+              <button id="pNorm" class="prioBtn">Wichtig</button>
+              <button id="pLow" class="prioBtn small">Nicht wichtig</button>
             </div>
           </div>
         </div>
 
-        <div style="height:12px"></div>
+        <div class="sep"></div>
 
-        <div id="haseBlock" style="display:none;">
-          <div id="sizeWrap">
-            <label>Größe</label>
-            <div class="sizes" style="margin-bottom:10px;">
-              <button class="btn btn-outline" data-size="20" type="button">20 cm</button>
-              <button class="btn btn-outline" data-size="15" type="button">15 cm</button>
-              <button class="btn btn-outline" data-size="11" type="button">11 cm</button>
-            </div>
-          </div>
-
-          <label>Farben</label>
-          <datalist id="colors">
-            <option value="schwarz"></option><option value="weiß"></option><option value="grau"></option>
-            <option value="blau"></option><option value="rot"></option><option value="gelb"></option>
-            <option value="grün"></option><option value="orange"></option><option value="pink"></option>
-            <option value="lila"></option><option value="braun"></option>
-          </datalist>
-
-          <div class="grid grid-3">
-            <div>
-              <label for="hBody">Körperfarbe</label>
-              <div class="colorWrap">
-                <input id="hBody" list="colors" placeholder="Tippen oder auswählen…" />
-                <button class="arrowBtn" type="button" data-focus="hBody" aria-label="Farben öffnen">▾</button>
-              </div>
-            </div>
-            <div>
-              <label for="hEars">Ohrenfarbe</label>
-              <div class="colorWrap">
-                <input id="hEars" list="colors" placeholder="Tippen oder auswählen…" />
-                <button class="arrowBtn" type="button" data-focus="hEars" aria-label="Farben öffnen">▾</button>
-              </div>
-            </div>
-            <div>
-              <label for="hButt">Popofarbe</label>
-              <div class="colorWrap">
-                <input id="hButt" list="colors" placeholder="Tippen oder auswählen…" />
-                <button class="arrowBtn" type="button" data-focus="hButt" aria-label="Farben öffnen">▾</button>
-              </div>
-            </div>
-          </div>
+        <!-- Beschreibung -->
+        <div>
+          <div class="label">Beschreibung (optional)</div>
+          <textarea class="field" id="note" placeholder="z.B. Sonderwunsch, Kunde, Hinweis ..."></textarea>
         </div>
 
-        <div id="lumiBlock" style="display:none;">
-          <label>Farben</label>
-          <datalist id="colorsL">
-            <option value="schwarz"></option><option value="weiß"></option><option value="grau"></option>
-            <option value="blau"></option><option value="rot"></option><option value="gelb"></option>
-            <option value="grün"></option><option value="orange"></option><option value="pink"></option>
-            <option value="lila"></option><option value="braun"></option>
-          </datalist>
+        <div class="sep"></div>
 
-          <div class="grid grid-3">
-            <div>
-              <label for="lBody">Körperfarbe</label>
-              <div class="colorWrap">
-                <input id="lBody" list="colorsL" placeholder="Tippen oder auswählen…" />
-                <button class="arrowBtn" type="button" data-focus="lBody" aria-label="Farben öffnen">▾</button>
-              </div>
-            </div>
-            <div>
-              <label for="lWings">Flügelfarbe</label>
-              <div class="colorWrap">
-                <input id="lWings" list="colorsL" placeholder="Tippen oder auswählen…" />
-                <button class="arrowBtn" type="button" data-focus="lWings" aria-label="Farben öffnen">▾</button>
-              </div>
-            </div>
-            <div>
-              <label for="lFeelers">Fühlerfarbe</label>
-              <div class="colorWrap">
-                <input id="lFeelers" list="colorsL" placeholder="Tippen oder auswählen…" />
-                <button class="arrowBtn" type="button" data-focus="lFeelers" aria-label="Farben öffnen">▾</button>
-              </div>
-            </div>
-          </div>
+        <!-- Menge Buttons -->
+        <div class="label">Menge</div>
+        <div class="qtyRow">
+          <button class="qtyBtn" data-q="1">1</button>
+          <button class="qtyBtn" data-q="2">2</button>
+          <button class="qtyBtn" data-q="3">3</button>
+          <button class="qtyBtn" data-q="4">4</button>
+          <button class="qtyBtn" data-q="5">5</button>
+          <button class="qtyBtn" data-q="6">6</button>
+          <button class="qtyBtn" data-q="7">7</button>
+          <button class="qtyBtn" data-q="8">8</button>
+          <button class="qtyBtn" data-q="9">9</button>
         </div>
 
-        <div id="otherBlock" style="display:none;">
-          <div class="grid grid-2">
-            <div>
-              <label for="oName">Name</label>
-              <input id="oName" placeholder="z.B. Schlüsselanhänger" />
-            </div>
-            <div>
-              <label for="oSize">Größe</label>
-              <input id="oSize" placeholder="z.B. 8 cm / XL / 120mm" />
-            </div>
-          </div>
+        <div class="sep"></div>
 
-          <div style="height:10px"></div>
-
-          <label for="oColor">Farbe</label>
-          <datalist id="colorsO">
-            <option value="schwarz"></option><option value="weiß"></option><option value="grau"></option>
-            <option value="blau"></option><option value="rot"></option><option value="gelb"></option>
-            <option value="grün"></option><option value="orange"></option><option value="pink"></option>
-            <option value="lila"></option><option value="braun"></option>
-          </datalist>
-          <div class="colorWrap">
-            <input id="oColor" list="colorsO" placeholder="Tippen oder auswählen…" />
-            <button class="arrowBtn" type="button" data-focus="oColor" aria-label="Farben öffnen">▾</button>
-          </div>
-        </div>
-
-        <div style="height:12px"></div>
-
-        <div class="grid">
+        <div class="grid grid-2">
           <div>
-            <label for="note">Beschreibung (optional)</label>
-            <textarea id="note" placeholder="z.B. Sonderwunsch, Kunde, Hinweis …"></textarea>
+            <div class="label">Andere Menge (optional)</div>
+            <input class="field" id="qtyOther" placeholder="z.B. 12" inputmode="numeric" />
+          </div>
+          <div class="inline" style="align-items:flex-end">
+            <button id="addItemBtn" class="btn grow">+ Zur Bestellung hinzufügen</button>
           </div>
         </div>
 
-        <div style="height:12px"></div>
+        <div id="formError" class="err" style="display:none">⚠️ Bitte erst ausfüllen: <span id="missing"></span></div>
 
-        <div id="qtyWrap" class="grid">
-          <div>
-            <label>Menge</label>
-            <div class="qtyGrid" id="qtyButtons"></div>
+        <div class="sep"></div>
 
-            <div style="height:10px"></div>
-            <div class="qtyRow2">
-              <div>
-                <label for="qtyCustom" style="font-weight:900;">Andere Menge (optional)</label>
-                <input id="qtyCustom" type="number" min="1" placeholder="z.B. 12" />
-              </div>
-              <div style="display:flex;align-items:flex-end;">
-                <button id="addBtn" class="btn" type="button" style="width:100%;">+ Bestellung hinzufügen</button>
-              </div>
-            </div>
+        <!-- Warenkorb / Positionen -->
+        <div class="title2" style="margin-top:4px">Positionen in dieser Bestellung</div>
+        <div id="cartList" class="grid" style="margin-top:10px"></div>
+        <div class="hint" id="cartHint">Noch keine Positionen hinzugefügt.</div>
 
-            <div id="validation" class="validation"></div>
-            <div id="status" class="status"></div>
-          </div>
-        </div>
+        <div class="sep"></div>
 
+        <button id="saveOrderBtn" class="btn" disabled>✅ Bestellung speichern</button>
+        <div id="saveStatus" class="ok" style="display:none"></div>
       </div>
     </div>
 
-    <div class="card" style="margin-top:16px;">
-      <div class="card-pad">
-        <div class="headerRow">
-          <h2 style="margin:0;font-size:18px;">Offene Bestellungen</h2>
+    <div class="sep"></div>
 
-          <div class="sortBtns">
-            <button id="sortDate" class="btn btn-active" type="button">Sort: Datum</button>
-            <button id="sortPrio" class="btn btn-outline" type="button">Sort: Priorität</button>
+    <!-- Offene Bestellungen -->
+    <div class="card">
+      <div class="pad">
+        <div class="ordersHead">
+          <div>
+            <div class="title2" style="margin:0">Offene Bestellungen</div>
+            <div class="hint" id="openSum">Summe offen: –</div>
           </div>
-
-          <div class="hint" id="totals"></div>
+          <div class="sortBtns">
+            <button id="sortDate" class="btn-small btn">Sort: Datum</button>
+            <button id="sortPrio" class="btn-small btn-soft">Sort: Priorität</button>
+          </div>
         </div>
 
-        <div id="list" class="list"></div>
+        <div class="sep"></div>
+
+        <div id="openOrders" class="grid"></div>
 
         <details class="archive">
           <summary>Archiv (alte Bestellungen anzeigen)</summary>
-          <div class="archiveHint">Nach Monaten sortiert. Im Archiv kannst du „Zurückholen“ oder „Löschen“.</div>
-          <div style="height:10px"></div>
-          <div id="archiveList"></div>
+          <div class="archiveWrap">
+            <div class="row" style="align-items:flex-end">
+              <div class="hint" id="soldSum" style="cursor:pointer; text-decoration:underline">Verkauft gesamt: – (klicken für Korrektur)</div>
+            </div>
+            <div id="archiveOrders" class="grid"></div>
+          </div>
         </details>
       </div>
     </div>
-
   </div>
 
-  <!-- EDIT MODAL -->
-  <div id="modalBackdrop" class="modalBackdrop" role="dialog" aria-modal="true">
+  <!-- Modal: Edit Item -->
+  <div class="modalBack" id="modalBack">
     <div class="modal">
       <div class="modalHead">
-        <div id="editTitle">Bestellung bearbeiten</div>
-        <button id="closeModal" class="btn btn-outline" type="button" style="padding:8px 10px;border-radius:12px;">✕</button>
+        <div class="title2" style="margin:0; font-size:18px">Position bearbeiten</div>
+        <button class="xBtn" id="closeModal">✕</button>
+      </div>
+      <div class="modalBody" id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- Modal: Sold adjustments -->
+  <div class="modalBack" id="adjBack">
+    <div class="modal">
+      <div class="modalHead">
+        <div class="title2" style="margin:0; font-size:18px">Korrektur (verkauft gesamt)</div>
+        <button class="xBtn" id="closeAdj">✕</button>
       </div>
       <div class="modalBody">
-        <div id="editForm"></div>
-        <div id="editStatus" class="status"></div>
-      </div>
-      <div class="modalFoot">
-        <button id="cancelEdit" class="btn btn-outline" type="button">Abbrechen</button>
-        <button id="saveEdit" class="btn" type="button">Speichern</button>
+        <div class="hint">Hier kannst du Beträge abziehen (negativ) oder hinzufügen (positiv).</div>
+        <div class="sep"></div>
+        <div class="grid grid-2">
+          <div>
+            <div class="label">Betrag in €</div>
+            <input class="field" id="adjAmount" placeholder="-2.00" />
+          </div>
+          <div>
+            <div class="label">Notiz</div>
+            <input class="field" id="adjNote" placeholder="z.B. Reklamation / Rabatt" />
+          </div>
+        </div>
+        <div class="sep"></div>
+        <button class="btn" id="addAdjBtn">+ Korrektur speichern</button>
+        <div id="adjMsg" class="ok" style="display:none"></div>
       </div>
     </div>
   </div>
@@ -454,929 +394,992 @@
   <script type="module">
     import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-    const SUPABASE_URL = "https://htgrzmlcdolxxzvkppon.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0Z3J6bWxjZG9seHh6dmtwcG9uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0MzM2ODIsImV4cCI6MjA4NTAwOTY4Mn0.B0PxMAzmuvsHNd2n_mgNspjlPkaBpQlkrNzGu7p78fY"; // <- falls du schon drin hast, lass deinen stehen
+    // ✅ HIER EINTRAGEN:
+    const SUPABASE_URL = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0Z3J6bWxjZG9seHh6dmtwcG9uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0MzM2ODIsImV4cCI6MjA4NTAwOTY4Mn0.B0PxMAzmuvsHNd2n_mgNspjlPkaBpQlkrNzGu7p78fY";
+
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Elements
-    const productWrap = document.getElementById("productWrap");
-    const btnHase = document.getElementById("btnHase");
+    // ---------- UI refs ----------
+    const btnBunny = document.getElementById("btnBunny");
     const btnLumi = document.getElementById("btnLumi");
     const btnOther = document.getElementById("btnOther");
     const formTitle = document.getElementById("formTitle");
 
-    const prioWrap = document.getElementById("prioWrap");
-    const pHigh = document.getElementById("pHigh");
-    const pMid = document.getElementById("pMid");
-    const pLow = document.getElementById("pLow");
+    const bunnySizeBlock = document.getElementById("bunnySizeBlock");
+    const colorsBlock = document.getElementById("colorsBlock");
 
-    const haseBlock = document.getElementById("haseBlock");
-    const lumiBlock = document.getElementById("lumiBlock");
-    const otherBlock = document.getElementById("otherBlock");
-    const sizeWrap = document.getElementById("sizeWrap");
+    const bunnyModeRow = document.getElementById("bunnyModeRow");
+    const btnMulti = document.getElementById("btnMulti");
+    const btnSingle = document.getElementById("btnSingle");
+    const bunnyMulti = document.getElementById("bunnyMulti");
+    const bunnySingle = document.getElementById("bunnySingle");
 
-    const hBody = document.getElementById("hBody");
-    const hEars = document.getElementById("hEars");
-    const hButt = document.getElementById("hButt");
+    const lumiColors = document.getElementById("lumiColors");
+    const otherColors = document.getElementById("otherColors");
 
-    const lBody = document.getElementById("lBody");
-    const lWings = document.getElementById("lWings");
-    const lFeelers = document.getElementById("lFeelers");
+    const customerEl = document.getElementById("customer");
+    const noteEl = document.getElementById("note");
 
-    const oName = document.getElementById("oName");
-    const oSize = document.getElementById("oSize");
-    const oColor = document.getElementById("oColor");
+    const pVery = document.getElementById("pVery");
+    const pNorm = document.getElementById("pNorm");
+    const pLow  = document.getElementById("pLow");
 
-    const note = document.getElementById("note");
+    const qtyBtns = [...document.querySelectorAll(".qtyBtn")];
+    const qtyOther = document.getElementById("qtyOther");
 
-    const qtyWrap = document.getElementById("qtyWrap");
-    const qtyButtonsEl = document.getElementById("qtyButtons");
-    const qtyCustomEl = document.getElementById("qtyCustom");
-    const addBtn = document.getElementById("addBtn");
+    const addItemBtn = document.getElementById("addItemBtn");
+    const cartList = document.getElementById("cartList");
+    const cartHint = document.getElementById("cartHint");
+    const saveOrderBtn = document.getElementById("saveOrderBtn");
+    const saveStatus = document.getElementById("saveStatus");
 
-    const statusEl = document.getElementById("status");
-    const validationEl = document.getElementById("validation");
+    const formError = document.getElementById("formError");
+    const missingEl = document.getElementById("missing");
 
-    const listEl = document.getElementById("list");
-    const archiveListEl = document.getElementById("archiveList");
-    const totalsEl = document.getElementById("totals");
+    const openOrdersEl = document.getElementById("openOrders");
+    const archiveOrdersEl = document.getElementById("archiveOrders");
+    const openSumEl = document.getElementById("openSum");
+    const soldSumEl = document.getElementById("soldSum");
 
-    const sortDateBtn = document.getElementById("sortDate");
-    const sortPrioBtn = document.getElementById("sortPrio");
+    const sortDate = document.getElementById("sortDate");
+    const sortPrio = document.getElementById("sortPrio");
 
-    // Modal
-    const modalBackdrop = document.getElementById("modalBackdrop");
-    const closeModalBtn = document.getElementById("closeModal");
-    const cancelEditBtn = document.getElementById("cancelEdit");
-    const saveEditBtn = document.getElementById("saveEdit");
-    const editFormEl = document.getElementById("editForm");
-    const editTitleEl = document.getElementById("editTitle");
-    const editStatusEl = document.getElementById("editStatus");
+    const modalBack = document.getElementById("modalBack");
+    const modalBody = document.getElementById("modalBody");
+    const closeModal = document.getElementById("closeModal");
 
-    // State
-    let mode = null;        // hase | lumi | other
-    let haseSize = null;    // 20 | 15 | 11
-    let priority = null;    // sehr | wichtig | nicht
-    let qtyPick = null;     // 1..9
-    let sortMode = "date";  // date | prio
+    const adjBack = document.getElementById("adjBack");
+    const closeAdj = document.getElementById("closeAdj");
+    const addAdjBtn = document.getElementById("addAdjBtn");
+    const adjAmount = document.getElementById("adjAmount");
+    const adjNote = document.getElementById("adjNote");
+    const adjMsg = document.getElementById("adjMsg");
 
-    // edit state
-    let editRow = null;
+    // ---------- constants ----------
+    const COLOR_SUGGESTIONS = ["weiß","schwarz","grau","rot","blau","gelb","grün","orange","pink","lila","braun","beige","gold","silber"];
 
-    // Helpers
-    function setStatus(msg, type="") { statusEl.className = "status " + type; statusEl.textContent = msg || ""; }
-    function setValidation(msg=""){ validationEl.textContent = msg || ""; }
-    function setEditStatus(msg, type=""){ editStatusEl.className = "status " + type; editStatusEl.textContent = msg || ""; }
+    // ---------- state ----------
+    let currentProduct = null; // 'bunny' | 'lumi' | 'other'
+    let bunnySize = null;      // '20'|'15'|'11'
+    let bunnyMode = null;      // 'multi'|'single'
+    let priority = null;       // 'very'|'normal'|'low'
+    let qty = null;            // number
+    let cart = [];             // items before saving order
+    let sortMode = "date";     // 'date'|'prio'
 
-    function escapeHtml(str) {
-      return String(str).replace(/[&<>"']/g, s => ({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-      }[s]));
-    }
-    function dateOnly(iso) { return new Date(iso).toLocaleDateString("de-DE"); }
-    function monthKey(iso){
-      const d = new Date(iso);
-      const y = d.getFullYear();
-      const m = String(d.getMonth()+1).padStart(2,"0");
-      return `${y}-${m}`;
-    }
-    function monthTitleFromKey(key){
-      const [y, m] = key.split("-").map(x=>parseInt(x,10));
-      const d = new Date(y, (m-1), 1);
-      return d.toLocaleDateString("de-DE", { month:"long", year:"numeric" });
-    }
+    // dropdown helpers
+    function setupDropdown(inputId){
+      const input = document.getElementById(inputId);
+      const menu = document.querySelector(`[data-dd-menu="${inputId}"]`);
+      const btn  = document.querySelector(`[data-dd-btn="${inputId}"]`);
 
-    // Extras stored in part3_color
-    function packExtras(part3Color, extras){
-      const safe = (v)=> String(v||"").replaceAll("|","/").replaceAll("\n"," ");
-      return [
-        part3Color,
-        `note=${safe(extras.note)}`,
-        `prio=${safe(extras.prio)}`,
-        `otherName=${safe(extras.otherName)}`,
-        `otherSize=${safe(extras.otherSize)}`
-      ].join("|");
-    }
-    function unpackExtras(p3){
-      const parts = String(p3||"").split("|");
-      const base = parts[0] || "";
-      const map = {};
-      for (const p of parts.slice(1)){
-        const idx = p.indexOf("=");
-        if(idx>0){
-          const k = p.slice(0,idx);
-          const v = p.slice(idx+1);
-          map[k] = v;
-        }
-      }
-      return { baseColor: base, note: map.note||"", prio: map.prio||"", otherName: map.otherName||"", otherSize: map.otherSize||"" };
-    }
-    function prioWeight(p){
-      if(p === "sehr") return 0;
-      if(p === "wichtig") return 1;
-      if(p === "nicht") return 2;
-      return 3;
-    }
-    function prioText(p){
-      if(p === "sehr") return "Sehr wichtig";
-      if(p === "wichtig") return "Wichtig";
-      if(p === "nicht") return "Nicht wichtig";
-      return "";
-    }
+      function renderMenu(filter=""){
+        const f = filter.trim().toLowerCase();
+        const list = COLOR_SUGGESTIONS
+          .filter(c => !f || c.toLowerCase().includes(f))
+          .slice(0, 30);
 
-    // ---- FARBPFEIL FIX: always visible + click opens best possible ----
-    function openColorChooserFor(input){
-      if(!input) return;
-      input.focus();
-
-      // Best-effort: click triggers datalist suggestions on many browsers
-      input.dispatchEvent(new MouseEvent("click", { bubbles:true }));
-      // Some browsers show it on ArrowDown
-      input.dispatchEvent(new KeyboardEvent("keydown", { key:"ArrowDown", bubbles:true }));
-    }
-
-    document.querySelectorAll("button.arrowBtn[data-focus]").forEach(b=>{
-      b.addEventListener("click", ()=>{
-        const id = b.getAttribute("data-focus");
-        openColorChooserFor(document.getElementById(id));
-      });
-    });
-
-    // Sorting buttons
-    function setSortMode(m){
-      sortMode = m;
-      sortDateBtn.className = (sortMode==="date") ? "btn btn-active" : "btn btn-outline";
-      sortPrioBtn.className = (sortMode==="prio") ? "btn btn-active" : "btn btn-outline";
-      loadOrders();
-    }
-    sortDateBtn.addEventListener("click", ()=> setSortMode("date"));
-    sortPrioBtn.addEventListener("click", ()=> setSortMode("prio"));
-
-    // Product mode
-    function clearProductButtons(){
-      btnHase.className = "btn btn-outline";
-      btnLumi.className = "btn btn-outline";
-      btnOther.className = "btn btn-outline";
-    }
-    function setMode(newMode){
-      mode = newMode;
-
-      clearProductButtons();
-      if(mode==="hase") btnHase.className = "btn btn-active";
-      if(mode==="lumi") btnLumi.className = "btn btn-active";
-      if(mode==="other") btnOther.className = "btn btn-active";
-
-      haseBlock.style.display = (mode==="hase") ? "" : "none";
-      lumiBlock.style.display = (mode==="lumi") ? "" : "none";
-      otherBlock.style.display = (mode==="other") ? "" : "none";
-
-      if(mode==="hase") formTitle.textContent = "Neue Bestellung: Hase";
-      if(mode==="lumi") formTitle.textContent = "Neue Bestellung: Lumi";
-      if(mode==="other") formTitle.textContent = "Neue Bestellung: Weitere Produkt";
-      if(!mode) formTitle.textContent = "Neue Bestellung";
-
-      haseSize = null;
-      haseBlock.querySelectorAll("button[data-size]").forEach(x => x.className = "btn btn-outline");
-
-      clearInvalids();
-      setValidation("");
-      setStatus("");
-    }
-
-    btnHase.addEventListener("click", () => setMode("hase"));
-    btnLumi.addEventListener("click", () => setMode("lumi"));
-    btnOther.addEventListener("click", () => setMode("other"));
-
-    // Hase sizes
-    haseBlock.querySelectorAll("button[data-size]").forEach(b => {
-      b.addEventListener("click", () => {
-        const s = parseInt(b.getAttribute("data-size"), 10);
-        if (![11,15,20].includes(s)) return;
-        haseSize = s;
-        haseBlock.querySelectorAll("button[data-size]").forEach(x => {
-          x.className = (parseInt(x.getAttribute("data-size"),10) === haseSize)
-            ? "btn btn-active"
-            : "btn btn-outline";
+        menu.innerHTML = list.map(c => `<div class="ddItem" data-val="${c}">${c}</div>`).join("") || `<div class="ddItem" data-val="${filter}">"${filter}" übernehmen</div>`;
+        menu.querySelectorAll(".ddItem").forEach(it=>{
+          it.addEventListener("click", ()=>{
+            input.value = it.getAttribute("data-val") || "";
+            closeMenu();
+          });
         });
-        clearInvalids();
-        setValidation("");
+      }
+      function openMenu(){
+        renderMenu(input.value);
+        menu.style.display = "block";
+      }
+      function closeMenu(){
+        menu.style.display = "none";
+      }
+      function toggle(){
+        if(menu.style.display === "block") closeMenu(); else openMenu();
+      }
+
+      // ✅ wichtig: Arrow ist der einzige "Dropdown-Opener" (mobile friendly)
+      btn.addEventListener("click", (e)=>{ e.stopPropagation(); toggle(); });
+
+      // Tippen/Schreiben filtert Liste (optional)
+      input.addEventListener("input", ()=>{ if(menu.style.display==="block") renderMenu(input.value); });
+
+      // Klick außerhalb schließt
+      document.addEventListener("click", ()=> closeMenu());
+
+      return { openMenu, closeMenu };
+    }
+
+    const dd = {
+      b_body: setupDropdown("b_body"),
+      b_ear: setupDropdown("b_ear"),
+      b_butt: setupDropdown("b_butt"),
+      b_single: setupDropdown("b_single"),
+      l_body: setupDropdown("l_body"),
+      l_wing: setupDropdown("l_wing"),
+      l_feel: setupDropdown("l_feel"),
+      o_color: setupDropdown("o_color"),
+    };
+
+    // ---------- UI select product ----------
+    function setActiveProduct(p){
+      currentProduct = p;
+      [btnBunny, btnLumi, btnOther].forEach(b=>b.classList.remove("active"));
+      if(p==="bunny") btnBunny.classList.add("active");
+      if(p==="lumi") btnLumi.classList.add("active");
+      if(p==="other") btnOther.classList.add("active");
+
+      // blocks
+      bunnySizeBlock.style.display = (p==="bunny") ? "block" : "none";
+      bunnyModeRow.style.display   = (p==="bunny") ? "block" : "none";
+      bunnyMulti.style.display     = "none";
+      bunnySingle.style.display    = "none";
+      lumiColors.style.display     = (p==="lumi") ? "grid" : "none";
+      otherColors.style.display    = (p==="other") ? "grid" : "none";
+
+      // reset product-specific selections
+      bunnySize = null;
+      bunnyMode = null;
+      // unselect size chips
+      document.querySelectorAll('[data-size]').forEach(x=>x.classList.remove("active"));
+      btnMulti.classList.remove("active");
+      btnSingle.classList.remove("active");
+
+      formTitle.textContent = p==="bunny" ? "Neue Bestellung: Hase" : p==="lumi" ? "Neue Bestellung: Lumi" : "Neue Bestellung: Weitere";
+      hideError();
+      refreshSaveEnabled();
+    }
+
+    btnBunny.addEventListener("click", ()=>setActiveProduct("bunny"));
+    btnLumi.addEventListener("click", ()=>setActiveProduct("lumi"));
+    btnOther.addEventListener("click", ()=>setActiveProduct("other"));
+
+    // size select
+    document.querySelectorAll('[data-size]').forEach(chip=>{
+      chip.addEventListener("click", ()=>{
+        bunnySize = chip.getAttribute("data-size");
+        document.querySelectorAll('[data-size]').forEach(x=>x.classList.remove("active"));
+        chip.classList.add("active");
+        // if size chosen, default show mode buttons but NOT auto select
+        showBunnyModeUI();
+        hideError();
+        refreshSaveEnabled();
       });
     });
 
-    // Priority buttons
+    function showBunnyModeUI(){
+      // show mode buttons; no auto selection
+      if(currentProduct!=="bunny") return;
+      // show nothing yet; user must pick Multi/Single
+      bunnyMulti.style.display = "none";
+      bunnySingle.style.display = "none";
+    }
+
+    btnMulti.addEventListener("click", ()=>{
+      bunnyMode = "multi";
+      btnMulti.classList.add("active"); btnSingle.classList.remove("active");
+      bunnyMulti.style.display = "grid";
+      bunnySingle.style.display = "none";
+      hideError();
+      refreshSaveEnabled();
+    });
+    btnSingle.addEventListener("click", ()=>{
+      bunnyMode = "single";
+      btnSingle.classList.add("active"); btnMulti.classList.remove("active");
+      bunnySingle.style.display = "block";
+      bunnyMulti.style.display = "none";
+      hideError();
+      refreshSaveEnabled();
+    });
+
+    // priority buttons (no auto select)
     function setPriority(p){
       priority = p;
-      pHigh.className = "prioBtn" + (priority==="sehr" ? " active" : "");
-      pMid.className  = "prioBtn big" + (priority==="wichtig" ? " active" : "");
-      pLow.className  = "prioBtn" + (priority==="nicht" ? " active" : "");
-      clearInvalids();
-      setValidation("");
+      [pVery,pNorm,pLow].forEach(x=>x.classList.remove("active"));
+      if(p==="very") pVery.classList.add("active");
+      if(p==="normal") pNorm.classList.add("active");
+      if(p==="low") pLow.classList.add("active");
+      hideError();
+      refreshSaveEnabled();
     }
-    pHigh.addEventListener("click", () => setPriority("sehr"));
-    pMid.addEventListener("click", () => setPriority("wichtig"));
-    pLow.addEventListener("click", () => setPriority("nicht"));
+    pVery.addEventListener("click", ()=>setPriority("very"));
+    pNorm.addEventListener("click", ()=>setPriority("normal"));
+    pLow.addEventListener("click",  ()=>setPriority("low"));
 
-    // Qty buttons 1..9
-    function renderQtyButtons(){
-      qtyButtonsEl.innerHTML = "";
-      for(let i=1;i<=9;i++){
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "qtyBtn" + (qtyPick===i ? " active" : "");
-        btn.textContent = String(i);
-        btn.addEventListener("click", ()=>{
-          qtyPick = i;
-          qtyCustomEl.value = "";
-          renderQtyButtons();
-          clearInvalids();
-          setValidation("");
-        });
-        qtyButtonsEl.appendChild(btn);
-      }
+    // quantity buttons (no auto select)
+    function setQty(n){
+      qty = n;
+      qtyBtns.forEach(b=>b.classList.remove("active"));
+      const btn = qtyBtns.find(b=>Number(b.getAttribute("data-q"))===n);
+      if(btn) btn.classList.add("active");
+      hideError();
+      refreshSaveEnabled();
     }
-    qtyCustomEl.addEventListener("input", ()=>{
-      const v = parseInt(qtyCustomEl.value || "", 10);
-      if(Number.isFinite(v) && v >= 1){
-        qtyPick = null;
-        renderQtyButtons();
-      }
-      clearInvalids();
-      setValidation("");
+    qtyBtns.forEach(b=>{
+      b.addEventListener("click", ()=> setQty(Number(b.getAttribute("data-q"))));
     });
-    renderQtyButtons();
+    qtyOther.addEventListener("input", ()=>{
+      // if user types custom qty, we unset buttons visually
+      qtyBtns.forEach(b=>b.classList.remove("active"));
+      qty = null;
+      hideError();
+      refreshSaveEnabled();
+    });
 
-    function getQty(){
-      const custom = parseInt(qtyCustomEl.value || "", 10);
-      if(Number.isFinite(custom) && custom >= 1) return custom;
-      if(Number.isFinite(qtyPick) && qtyPick >= 1) return qtyPick;
+    // ---------- validation helpers ----------
+    function showError(msg){
+      missingEl.textContent = msg;
+      formError.style.display = "flex";
+    }
+    function hideError(){
+      formError.style.display = "none";
+      // remove red borders
+      document.querySelectorAll(".field").forEach(el=>el.classList.remove("error"));
+    }
+
+    function getFinalQty(){
+      const other = Number(String(qtyOther.value||"").trim());
+      if(Number.isFinite(other) && other>0) return other;
+      if(Number.isFinite(qty) && qty>0) return qty;
       return null;
     }
 
-    // Validation styling helpers
-    const allInputs = [hBody,hEars,hButt,lBody,lWings,lFeelers,oName,oSize,oColor,qtyCustomEl];
-    function clearInvalids(){
-      productWrap.classList.remove("invalidGroup");
-      prioWrap.classList.remove("invalidGroup");
-      qtyWrap.classList.remove("invalidGroup");
-      sizeWrap?.classList.remove("invalidGroup");
-
-      allInputs.forEach(el => el?.classList.remove("invalid"));
-      [btnHase,btnLumi,btnOther,pHigh,pMid,pLow].forEach(b => b.classList.remove("invalidBtn"));
-      haseBlock.querySelectorAll("button[data-size]").forEach(b => b.classList.remove("invalidBtn"));
-      qtyButtonsEl.querySelectorAll("button").forEach(b => b.classList.remove("invalidBtn"));
+    function requiredColorField(el){
+      const v = (el.value||"").trim();
+      return v.length>0;
     }
 
-    function buildMissingMessage(missing){
-      return "❗ Bitte erst ausfüllen: " + missing.join(", ");
+    function markError(el){
+      el.classList.add("error");
     }
 
-    function validateAllRequired(){
-      clearInvalids();
-      const missing = [];
-
-      if(!mode){
-        missing.push("Produkt");
-        productWrap.classList.add("invalidGroup");
-        [btnHase,btnLumi,btnOther].forEach(b => b.classList.add("invalidBtn"));
+    // ---------- cart ----------
+    function refreshCart(){
+      cartList.innerHTML = "";
+      if(cart.length===0){
+        cartHint.style.display="block";
+      } else {
+        cartHint.style.display="none";
       }
 
-      if(!priority){
-        missing.push("Priorität");
-        prioWrap.classList.add("invalidGroup");
-        [pHigh,pMid,pLow].forEach(b => b.classList.add("invalidBtn"));
-      }
-
-      const qty = getQty();
-      if(!qty){
-        missing.push("Menge");
-        qtyWrap.classList.add("invalidGroup");
-        qtyButtonsEl.querySelectorAll("button").forEach(b => b.classList.add("invalidBtn"));
-        qtyCustomEl.classList.add("invalid");
-      }
-
-      if(mode === "hase"){
-        if(!haseSize){
-          missing.push("Größe");
-          sizeWrap.classList.add("invalidGroup");
-          haseBlock.querySelectorAll("button[data-size]").forEach(b => b.classList.add("invalidBtn"));
-        }
-        if(!(hBody.value||"").trim()){ missing.push("Körperfarbe"); hBody.classList.add("invalid"); }
-        if(!(hEars.value||"").trim()){ missing.push("Ohrenfarbe"); hEars.classList.add("invalid"); }
-        if(!(hButt.value||"").trim()){ missing.push("Popofarbe"); hButt.classList.add("invalid"); }
-      }
-
-      if(mode === "lumi"){
-        if(!(lBody.value||"").trim()){ missing.push("Körperfarbe"); lBody.classList.add("invalid"); }
-        if(!(lWings.value||"").trim()){ missing.push("Flügelfarbe"); lWings.classList.add("invalid"); }
-        if(!(lFeelers.value||"").trim()){ missing.push("Fühlerfarbe"); lFeelers.classList.add("invalid"); }
-      }
-
-      if(mode === "other"){
-        if(!(oName.value||"").trim()){ missing.push("Name"); oName.classList.add("invalid"); }
-        if(!(oSize.value||"").trim()){ missing.push("Größe"); oSize.classList.add("invalid"); }
-        if(!(oColor.value||"").trim()){ missing.push("Farbe"); oColor.classList.add("invalid"); }
-      }
-
-      if(missing.length){
-        setValidation(buildMissingMessage(missing));
-        return false;
-      }
-      setValidation("");
-      return true;
-    }
-
-    // Data load + render
-    async function loadOrders(){
-      const { data, error } = await supabase
-        .from("orders")
-        .select("id,product_type,size_cm,qty,body_color,part2_color,part3_color,created_at,archived")
-        .order("created_at", { ascending:false });
-
-      if(error){
-        setStatus("Fehler beim Laden: " + error.message, "error");
-        return;
-      }
-
-      const rows = data || [];
-      const open = rows.filter(x => !x.archived);
-      const arch = rows.filter(x => x.archived);
-
-      const openSorted = sortRows(open);
-      renderOpen(openSorted);
-
-      const archSorted = sortRows(arch);
-      renderArchiveByMonth(archSorted);
-
-      setStatus("");
-    }
-
-    function sortRows(rows){
-      const copy = [...rows];
-      copy.sort((a,b)=>{
-        const ea = unpackExtras(a.part3_color);
-        const eb = unpackExtras(b.part3_color);
-
-        if(sortMode === "prio"){
-          const wa = prioWeight(ea.prio);
-          const wb = prioWeight(eb.prio);
-          if(wa !== wb) return wa - wb;
-          return new Date(b.created_at) - new Date(a.created_at);
-        }
-        return new Date(b.created_at) - new Date(a.created_at);
-      });
-      return copy;
-    }
-
-    function renderOpen(rows){
-      let totalHase=0, totalLumi=0, totalOther=0;
-      for(const r of rows){
-        if (r.product_type==="hase") totalHase += (r.qty||0);
-        if (r.product_type==="lumi") totalLumi += (r.qty||0);
-        if (r.product_type==="other") totalOther += (r.qty||0);
-      }
-      totalsEl.textContent = `Hase: ${totalHase} • Lumi: ${totalLumi} • Weitere: ${totalOther}`;
-
-      listEl.innerHTML = "";
-      for(const r of rows){
-        const extras = unpackExtras(r.part3_color);
-        const p3Color = extras.baseColor;
-
-        let title = "", p2Label = "", p3Label = "";
-        if(r.product_type==="hase"){
-          title = `🐰 Hase ${r.size_cm || ""}cm`; p2Label = "Ohren"; p3Label = "Popo";
-        } else if (r.product_type==="lumi"){
-          title = `🪲 Lumi`; p2Label = "Flügel"; p3Label = "Fühler";
-        } else {
-          title = `➕ ${extras.otherName || "Weitere Produkt"}`; p2Label = "Größe"; p3Label = "Farbe";
-        }
-
-        const prio = prioText(extras.prio);
-
-        const badgesParts = [];
-        // ✅ CHANGE: only "Sehr wichtig" (no "Priorität:")
-        if(prio) badgesParts.push(`<span class="badge prio">${escapeHtml(prio)}</span>`);
-        if(r.qty) badgesParts.push(`<span class="badge qty"><b>Menge:</b> ${r.qty}</span>`);
-
-        if(r.product_type==="other"){
-          badgesParts.push(`<span class="badge"><b>${escapeHtml(p2Label)}:</b> ${escapeHtml(extras.otherSize || r.part2_color || "")}</span>`);
-          badgesParts.push(`<span class="badge"><b>${escapeHtml(p3Label)}:</b> ${escapeHtml(p3Color)}</span>`);
-        } else {
-          badgesParts.push(`<span class="badge"><b>Körper:</b> ${escapeHtml(r.body_color)}</span>`);
-          badgesParts.push(`<span class="badge"><b>${escapeHtml(p2Label)}:</b> ${escapeHtml(r.part2_color)}</span>`);
-          badgesParts.push(`<span class="badge"><b>${escapeHtml(p3Label)}:</b> ${escapeHtml(p3Color)}</span>`);
-        }
-
-        if(extras.note) badgesParts.push(`<span class="badge"><b>Beschreibung:</b> ${escapeHtml(extras.note)}</span>`);
-
-        const item = document.createElement("div");
-        item.className = "order";
-        item.innerHTML = `
-          <div>
-            <h3>${escapeHtml(title)}</h3>
-            <div class="meta">Datum: <b>${dateOnly(r.created_at)}</b></div>
-            <div class="badges">${badgesParts.join("")}</div>
-          </div>
-          <div class="right">
-            <button class="btn btn-outline" data-edit="${r.id}" type="button" title="Bearbeiten">✏️ Bearbeiten</button>
-            <button class="btn" data-archive="${r.id}" type="button">Archivieren</button>
+      cart.forEach((it, idx)=>{
+        const div = document.createElement("div");
+        div.className = "orderCard";
+        div.innerHTML = `
+          <div class="orderTop">
+            <div class="orderMeta">
+              <div class="orderDate">${renderItemTitle(it)}</div>
+              <div class="orderCustomer">${renderItemSubtitle(it)}</div>
+            </div>
+            <div class="inline">
+              <button class="iconBtn" data-edit="${idx}" title="Bearbeiten">✎</button>
+              <button class="iconBtn" data-del="${idx}" title="Entfernen">🗑️</button>
+            </div>
           </div>
         `;
-        listEl.appendChild(item);
-      }
+        cartList.appendChild(div);
+      });
 
-      listEl.querySelectorAll("button[data-archive]").forEach(btn => {
-        btn.addEventListener("click", async () => {
-          const id = btn.getAttribute("data-archive");
-          await archiveOrder(id);
+      cartList.querySelectorAll("[data-del]").forEach(b=>{
+        b.addEventListener("click", ()=>{
+          const i = Number(b.getAttribute("data-del"));
+          cart.splice(i,1);
+          refreshCart();
+          refreshSaveEnabled();
         });
       });
 
-      listEl.querySelectorAll("button[data-edit]").forEach(btn => {
-        btn.addEventListener("click", async () => {
-          const id = btn.getAttribute("data-edit");
-          const row = rows.find(x => x.id === id);
-          if(row) openEditModal(row);
+      cartList.querySelectorAll("[data-edit]").forEach(b=>{
+        b.addEventListener("click", ()=>{
+          const i = Number(b.getAttribute("data-edit"));
+          openEditModal(i);
         });
       });
+
+      refreshSaveEnabled();
     }
 
-    function renderArchiveByMonth(rows){
-      const groups = new Map();
-      for(const r of rows){
-        const k = monthKey(r.created_at);
-        if(!groups.has(k)) groups.set(k, []);
-        groups.get(k).push(r);
+    function renderItemTitle(it){
+      const pr = it.priority === "very" ? "Sehr wichtig" : it.priority==="normal" ? "Wichtig" : "Nicht wichtig";
+      let name = "";
+      if(it.product_type==="bunny"){
+        name = `🐰 Hase ${it.bunny_size}cm`;
+      } else if(it.product_type==="lumi"){
+        name = `✨🪲 Lumi`;
+      } else {
+        name = `➕ Weitere`;
       }
-      const keys = Array.from(groups.keys()).sort((a,b)=> b.localeCompare(a));
-      archiveListEl.innerHTML = "";
+      return `${name} • x${it.quantity} • ${pr}`;
+    }
 
-      for(const k of keys){
-        const monthRows = groups.get(k) || [];
-        const sorted = sortRows(monthRows);
+    function renderItemSubtitle(it){
+      if(it.product_type==="bunny"){
+        if(it.bunny_mode==="single"){
+          return `Einfarbig: ${it.bunny_single_color}`;
+        }
+        return `Körper: ${it.bunny_body_color} • Ohren: ${it.bunny_ear_color} • Popo: ${it.bunny_butt_color}`;
+      }
+      if(it.product_type==="lumi"){
+        return `Körper: ${it.lumi_body_color} • Flügel: ${it.lumi_wing_color} • Fühler: ${it.lumi_feeler_color}`;
+      }
+      return `Größe: ${it.other_size || "-"} • Farbe: ${it.other_color || "-"} • ${it.other_description || ""}`;
+    }
 
-        const wrap = document.createElement("div");
-        wrap.className = "monthGroup";
-        wrap.innerHTML = `<div class="monthTitle">${escapeHtml(monthTitleFromKey(k))}</div>`;
+    addItemBtn.addEventListener("click", ()=>{
+      hideError();
 
-        const list = document.createElement("div");
-        list.className = "list";
+      // Required fields (ALL außer Beschreibung in noteEl sind Pflicht für "Position hinzufügen")
+      const customer = (customerEl.value||"").trim();
+      if(!currentProduct){ showError("Produkt"); return; }
+      if(!customer){ markError(customerEl); showError("Kundenname"); return; }
+      if(!priority){ showError("Priorität"); return; }
+      const q = getFinalQty();
+      if(!q){ showError("Menge"); return; }
 
-        for(const r of sorted){
-          const extras = unpackExtras(r.part3_color);
-          const p3Color = extras.baseColor;
+      // product-specific required
+      if(currentProduct==="bunny"){
+        if(!bunnySize){ showError("Größe"); return; }
+        if(!bunnyMode){ showError("Mehrfarbig/Einfarbig"); return; }
+        if(bunnyMode==="single"){
+          const b_single = document.getElementById("b_single");
+          if(!requiredColorField(b_single)){ markError(b_single); showError("Einfarbig (Farbe)"); return; }
+        } else {
+          const b_body = document.getElementById("b_body");
+          const b_ear  = document.getElementById("b_ear");
+          const b_butt = document.getElementById("b_butt");
+          if(!requiredColorField(b_body)){ markError(b_body); showError("Körperfarbe"); return; }
+          if(!requiredColorField(b_ear)){ markError(b_ear); showError("Ohrenfarbe"); return; }
+          if(!requiredColorField(b_butt)){ markError(b_butt); showError("Popofarbe"); return; }
+        }
+      }
 
-          let title = "", p2Label = "", p3Label = "";
-          if(r.product_type==="hase"){
-            title = `🐰 Hase ${r.size_cm || ""}cm`; p2Label = "Ohren"; p3Label = "Popo";
-          } else if (r.product_type==="lumi"){
-            title = `🪲 Lumi`; p2Label = "Flügel"; p3Label = "Fühler";
-          } else {
-            title = `➕ ${extras.otherName || "Weitere Produkt"}`; p2Label = "Größe"; p3Label = "Farbe";
-          }
+      if(currentProduct==="lumi"){
+        const l_body = document.getElementById("l_body");
+        const l_wing = document.getElementById("l_wing");
+        const l_feel = document.getElementById("l_feel");
+        if(!requiredColorField(l_body)){ markError(l_body); showError("Körperfarbe"); return; }
+        if(!requiredColorField(l_wing)){ markError(l_wing); showError("Flügelfarbe"); return; }
+        if(!requiredColorField(l_feel)){ markError(l_feel); showError("Fühlerfarbe"); return; }
+      }
 
-          const prio = prioText(extras.prio);
+      if(currentProduct==="other"){
+        const o_size = document.getElementById("o_size");
+        const o_color = document.getElementById("o_color");
+        const o_desc = document.getElementById("o_desc");
+        if(!(o_size.value||"").trim()){ markError(o_size); showError("Größe"); return; }
+        if(!(o_color.value||"").trim()){ markError(o_color); showError("Farbe"); return; }
+        if(!(o_desc.value||"").trim()){ markError(o_desc); showError("Beschreibung (Weitere)"); return; }
+      }
 
-          const badgesParts = [];
-          if(prio) badgesParts.push(`<span class="badge prio">${escapeHtml(prio)}</span>`);
-          if(r.qty) badgesParts.push(`<span class="badge qty"><b>Menge:</b> ${r.qty}</span>`);
+      // build item
+      const item = {
+        product_type: currentProduct,
+        priority,
+        quantity: q,
+      };
 
-          if(r.product_type==="other"){
-            badgesParts.push(`<span class="badge"><b>${escapeHtml(p2Label)}:</b> ${escapeHtml(extras.otherSize || r.part2_color || "")}</span>`);
-            badgesParts.push(`<span class="badge"><b>${escapeHtml(p3Label)}:</b> ${escapeHtml(p3Color)}</span>`);
-          } else {
-            badgesParts.push(`<span class="badge"><b>Körper:</b> ${escapeHtml(r.body_color)}</span>`);
-            badgesParts.push(`<span class="badge"><b>${escapeHtml(p2Label)}:</b> ${escapeHtml(r.part2_color)}</span>`);
-            badgesParts.push(`<span class="badge"><b>${escapeHtml(p3Label)}:</b> ${escapeHtml(p3Color)}</span>`);
-          }
+      if(currentProduct==="bunny"){
+        item.bunny_size = bunnySize;
+        item.bunny_mode = bunnyMode;
+        if(bunnyMode==="single"){
+          const c = document.getElementById("b_single").value.trim();
+          item.bunny_single_color = c;
+          // convenience: also store in multi fields for display consistency
+          item.bunny_body_color = c;
+          item.bunny_ear_color = c;
+          item.bunny_butt_color = c;
+        } else {
+          item.bunny_body_color = document.getElementById("b_body").value.trim();
+          item.bunny_ear_color  = document.getElementById("b_ear").value.trim();
+          item.bunny_butt_color = document.getElementById("b_butt").value.trim();
+        }
+      } else if(currentProduct==="lumi"){
+        item.lumi_body_color   = document.getElementById("l_body").value.trim();
+        item.lumi_wing_color   = document.getElementById("l_wing").value.trim();
+        item.lumi_feeler_color = document.getElementById("l_feel").value.trim();
+      } else {
+        item.other_size = document.getElementById("o_size").value.trim();
+        item.other_color = document.getElementById("o_color").value.trim();
+        item.other_description = document.getElementById("o_desc").value.trim();
+      }
 
-          if(extras.note) badgesParts.push(`<span class="badge"><b>Beschreibung:</b> ${escapeHtml(extras.note)}</span>`);
+      cart.push(item);
+      refreshCart();
 
-          const item = document.createElement("div");
-          item.className = "order";
-          item.innerHTML = `
-            <div>
-              <h3>${escapeHtml(title)}</h3>
-              <div class="meta">Datum: <b>${dateOnly(r.created_at)}</b></div>
-              <div class="badges">${badgesParts.join("")}</div>
-            </div>
-            <div class="right">
-              <button class="btn btn-outline" data-restore="${r.id}" type="button">Zurückholen</button>
-              <button class="btn btn-danger" data-delete="${r.id}" type="button">Löschen</button>
+      // keep customer/note as order-level; don't reset them
+      // reset qty fields only
+      qty = null;
+      qtyBtns.forEach(b=>b.classList.remove("active"));
+      qtyOther.value = "";
+
+      // reset product fields to reduce mistakes
+      if(currentProduct==="bunny"){
+        // keep product selection but clear colors
+        ["b_body","b_ear","b_butt","b_single"].forEach(id=>document.getElementById(id).value="");
+      }
+      if(currentProduct==="lumi"){
+        ["l_body","l_wing","l_feel"].forEach(id=>document.getElementById(id).value="");
+      }
+      if(currentProduct==="other"){
+        ["o_size","o_color","o_desc"].forEach(id=>document.getElementById(id).value="");
+      }
+    });
+
+    function refreshSaveEnabled(){
+      const customer = (customerEl.value||"").trim();
+      saveOrderBtn.disabled = !(cart.length>0 && customer.length>0);
+    }
+    customerEl.addEventListener("input", refreshSaveEnabled);
+
+    // ---------- edit modal for cart items ----------
+    let editingIndex = null;
+
+    function openEditModal(idx){
+      editingIndex = idx;
+      const it = cart[idx];
+
+      // simple editor: quantity + priority + colors
+      const pr = it.priority;
+      const q = it.quantity;
+
+      modalBody.innerHTML = `
+        <div class="grid">
+          <div class="hint">${renderItemTitle(it)}</div>
+
+          <div class="label">Priorität</div>
+          <div class="prioRow">
+            <button class="prioBtn small" data-pr="very">Sehr wichtig</button>
+            <button class="prioBtn" data-pr="normal">Wichtig</button>
+            <button class="prioBtn small" data-pr="low">Nicht wichtig</button>
+          </div>
+
+          <div class="label">Menge</div>
+          <input class="field" id="editQty" value="${q}" inputmode="numeric" />
+
+          <div id="editFields"></div>
+
+          <button class="btn" id="saveEdit">Speichern</button>
+        </div>
+      `;
+
+      // set active prio
+      modalBody.querySelectorAll("[data-pr]").forEach(b=>{
+        if(b.getAttribute("data-pr")===pr) b.classList.add("active");
+        b.addEventListener("click", ()=>{
+          modalBody.querySelectorAll("[data-pr]").forEach(x=>x.classList.remove("active"));
+          b.classList.add("active");
+        });
+      });
+
+      const editFields = modalBody.querySelector("#editFields");
+      if(it.product_type==="bunny"){
+        if(it.bunny_mode==="single"){
+          editFields.innerHTML = `
+            <div class="label">Einfarbig</div>
+            <input class="field" id="editC1" value="${it.bunny_single_color || ""}" />
+          `;
+        } else {
+          editFields.innerHTML = `
+            <div class="grid grid-3">
+              <div><div class="label">Körper</div><input class="field" id="editC1" value="${it.bunny_body_color || ""}"></div>
+              <div><div class="label">Ohren</div><input class="field" id="editC2" value="${it.bunny_ear_color || ""}"></div>
+              <div><div class="label">Popo</div><input class="field" id="editC3" value="${it.bunny_butt_color || ""}"></div>
             </div>
           `;
-          list.appendChild(item);
+        }
+      } else if(it.product_type==="lumi"){
+        editFields.innerHTML = `
+          <div class="grid grid-3">
+            <div><div class="label">Körper</div><input class="field" id="editC1" value="${it.lumi_body_color || ""}"></div>
+            <div><div class="label">Flügel</div><input class="field" id="editC2" value="${it.lumi_wing_color || ""}"></div>
+            <div><div class="label">Fühler</div><input class="field" id="editC3" value="${it.lumi_feeler_color || ""}"></div>
+          </div>
+        `;
+      } else {
+        editFields.innerHTML = `
+          <div class="grid grid-2">
+            <div><div class="label">Größe</div><input class="field" id="editC1" value="${it.other_size || ""}"></div>
+            <div><div class="label">Farbe</div><input class="field" id="editC2" value="${it.other_color || ""}"></div>
+            <div style="grid-column:1/-1"><div class="label">Beschreibung</div><input class="field" id="editC3" value="${it.other_description || ""}"></div>
+          </div>
+        `;
+      }
+
+      modalBody.querySelector("#saveEdit").addEventListener("click", ()=>{
+        const newPr = modalBody.querySelector("[data-pr].active")?.getAttribute("data-pr") || it.priority;
+        const newQ = Number(modalBody.querySelector("#editQty").value);
+        if(!Number.isFinite(newQ) || newQ<=0) return;
+
+        it.priority = newPr;
+        it.quantity = newQ;
+
+        if(it.product_type==="bunny"){
+          if(it.bunny_mode==="single"){
+            const c = modalBody.querySelector("#editC1").value.trim();
+            it.bunny_single_color = c;
+            it.bunny_body_color = c; it.bunny_ear_color = c; it.bunny_butt_color = c;
+          } else {
+            it.bunny_body_color = modalBody.querySelector("#editC1").value.trim();
+            it.bunny_ear_color  = modalBody.querySelector("#editC2").value.trim();
+            it.bunny_butt_color = modalBody.querySelector("#editC3").value.trim();
+          }
+        } else if(it.product_type==="lumi"){
+          it.lumi_body_color = modalBody.querySelector("#editC1").value.trim();
+          it.lumi_wing_color = modalBody.querySelector("#editC2").value.trim();
+          it.lumi_feeler_color = modalBody.querySelector("#editC3").value.trim();
+        } else {
+          it.other_size = modalBody.querySelector("#editC1").value.trim();
+          it.other_color = modalBody.querySelector("#editC2").value.trim();
+          it.other_description = modalBody.querySelector("#editC3").value.trim();
         }
 
-        wrap.appendChild(list);
-        archiveListEl.appendChild(wrap);
-      }
-
-      archiveListEl.querySelectorAll("button[data-restore]").forEach(btn=>{
-        btn.addEventListener("click", async ()=>{
-          const id = btn.getAttribute("data-restore");
-          await restoreOrder(id);
-        });
+        cart[editingIndex] = it;
+        closeEditModal();
+        refreshCart();
       });
 
-      archiveListEl.querySelectorAll("button[data-delete]").forEach(btn=>{
-        btn.addEventListener("click", async ()=>{
-          const id = btn.getAttribute("data-delete");
-          if(!confirm("Bist du sicher, dass du diese Bestellung löschen willst?")) return;
-          await deleteOrder(id);
-        });
-      });
-    }
-
-    async function archiveOrder(id){
-      setStatus("Verschiebe ins Archiv…");
-      const { error } = await supabase.from("orders").update({ archived: true }).eq("id", id);
-      if(error){
-        setStatus("Archivieren fehlgeschlagen: " + error.message, "error");
-        return;
-      }
-      setStatus("Archiviert ✅", "ok");
-      await loadOrders();
-    }
-
-    async function restoreOrder(id){
-      setStatus("Hole zurück…");
-      const { error } = await supabase.from("orders").update({ archived: false }).eq("id", id);
-      if(error){
-        setStatus("Zurückholen fehlgeschlagen: " + error.message, "error");
-        return;
-      }
-      setStatus("Zurückgeholt ✅", "ok");
-      await loadOrders();
-    }
-
-    async function deleteOrder(id){
-      setStatus("Lösche…");
-      const { error } = await supabase.from("orders").delete().eq("id", id);
-      if(error){
-        setStatus("Löschen fehlgeschlagen: " + error.message, "error");
-        return;
-      }
-      setStatus("Gelöscht ✅", "ok");
-      await loadOrders();
-    }
-
-    async function addOrder(){
-      setStatus("");
-      if(!validateAllRequired()) return;
-
-      const qty = getQty();
-      const desc = (note.value || "").trim();
-
-      let payload;
-
-      if(mode === "hase"){
-        payload = {
-          product_type: "hase",
-          size_cm: haseSize,
-          qty,
-          body_color: (hBody.value||"").trim(),
-          part2_color: (hEars.value||"").trim(),
-          part3_color: packExtras((hButt.value||"").trim(), { note: desc, prio: priority, otherName:"", otherSize:"" }),
-          archived: false
-        };
-      }
-      if(mode === "lumi"){
-        payload = {
-          product_type: "lumi",
-          size_cm: null,
-          qty,
-          body_color: (lBody.value||"").trim(),
-          part2_color: (lWings.value||"").trim(),
-          part3_color: packExtras((lFeelers.value||"").trim(), { note: desc, prio: priority, otherName:"", otherSize:"" }),
-          archived: false
-        };
-      }
-      if(mode === "other"){
-        const name = (oName.value||"").trim();
-        const size = (oSize.value||"").trim();
-        const color = (oColor.value||"").trim();
-        payload = {
-          product_type: "other",
-          size_cm: null,
-          qty,
-          body_color: name,
-          part2_color: size,
-          part3_color: packExtras(color, { note: desc, prio: priority, otherName: name, otherSize: size }),
-          archived: false
-        };
-      }
-
-      setStatus("Speichere…");
-      const { error } = await supabase.from("orders").insert(payload);
-      if(error){
-        setStatus("Fehler: " + error.message, "error");
-        return;
-      }
-
-      note.value = "";
-      qtyPick = null;
-      qtyCustomEl.value = "";
-      renderQtyButtons();
-
-      hBody.value = ""; hEars.value = ""; hButt.value = "";
-      lBody.value = ""; lWings.value = ""; lFeelers.value = "";
-      oName.value = ""; oSize.value = ""; oColor.value = "";
-
-      priority = null;
-      pHigh.className = "prioBtn";
-      pMid.className  = "prioBtn big";
-      pLow.className  = "prioBtn";
-
-      haseSize = null;
-      haseBlock.querySelectorAll("button[data-size]").forEach(x => x.className = "btn btn-outline");
-
-      clearInvalids();
-      setValidation("");
-      setStatus("Gespeichert ✅", "ok");
-      await loadOrders();
-    }
-
-    addBtn.addEventListener("click", addOrder);
-
-    // ---- EDIT MODAL ----
-    function openEditModal(row){
-      editRow = row;
-      const extras = unpackExtras(row.part3_color);
-
-      editTitleEl.textContent = "Bestellung bearbeiten";
-      setEditStatus("");
-
-      // build form depending on type
-      const type = row.product_type;
-      let html = "";
-
-      const prio = extras.prio || "";
-      const noteVal = extras.note || "";
-
-      // priority buttons
-      html += `
-        <div class="grid">
-          <div>
-            <label>Priorität</label>
-            <div class="prioRow" id="editPrioRow">
-              <button class="prioBtn ${prio==="sehr"?"active":""}" data-prio="sehr" type="button">Sehr wichtig</button>
-              <button class="prioBtn big ${prio==="wichtig"?"active":""}" data-prio="wichtig" type="button">Wichtig</button>
-              <button class="prioBtn ${prio==="nicht"?"active":""}" data-prio="nicht" type="button">Nicht wichtig</button>
-            </div>
-          </div>
-        </div>
-        <div style="height:12px"></div>
-      `;
-
-      // qty
-      html += `
-        <div class="grid grid-2">
-          <div>
-            <label for="eQty">Menge</label>
-            <input id="eQty" type="number" min="1" value="${row.qty || 1}">
-          </div>
-          <div></div>
-        </div>
-        <div style="height:12px"></div>
-      `;
-
-      if(type==="hase"){
-        html += `
-          <div>
-            <label>Größe</label>
-            <div class="sizes" id="eSizeRow" style="margin-bottom:10px;">
-              <button class="btn ${row.size_cm===20?"btn-active":"btn-outline"}" data-size="20" type="button">20 cm</button>
-              <button class="btn ${row.size_cm===15?"btn-active":"btn-outline"}" data-size="15" type="button">15 cm</button>
-              <button class="btn ${row.size_cm===11?"btn-active":"btn-outline"}" data-size="11" type="button">11 cm</button>
-            </div>
-          </div>
-
-          <label>Farben</label>
-          <div class="grid grid-3">
-            <div>
-              <label for="eBody">Körperfarbe</label>
-              <div class="colorWrap">
-                <input id="eBody" list="colors" value="${escapeHtml(row.body_color||"")}">
-                <button class="arrowBtn" type="button" data-focus="eBody">▾</button>
-              </div>
-            </div>
-            <div>
-              <label for="eP2">Ohrenfarbe</label>
-              <div class="colorWrap">
-                <input id="eP2" list="colors" value="${escapeHtml(row.part2_color||"")}">
-                <button class="arrowBtn" type="button" data-focus="eP2">▾</button>
-              </div>
-            </div>
-            <div>
-              <label for="eP3">Popofarbe</label>
-              <div class="colorWrap">
-                <input id="eP3" list="colors" value="${escapeHtml(extras.baseColor||"")}">
-                <button class="arrowBtn" type="button" data-focus="eP3">▾</button>
-              </div>
-            </div>
-          </div>
-        `;
-      }
-
-      if(type==="lumi"){
-        html += `
-          <label>Farben</label>
-          <div class="grid grid-3">
-            <div>
-              <label for="eBody">Körperfarbe</label>
-              <div class="colorWrap">
-                <input id="eBody" list="colorsL" value="${escapeHtml(row.body_color||"")}">
-                <button class="arrowBtn" type="button" data-focus="eBody">▾</button>
-              </div>
-            </div>
-            <div>
-              <label for="eP2">Flügelfarbe</label>
-              <div class="colorWrap">
-                <input id="eP2" list="colorsL" value="${escapeHtml(row.part2_color||"")}">
-                <button class="arrowBtn" type="button" data-focus="eP2">▾</button>
-              </div>
-            </div>
-            <div>
-              <label for="eP3">Fühlerfarbe</label>
-              <div class="colorWrap">
-                <input id="eP3" list="colorsL" value="${escapeHtml(extras.baseColor||"")}">
-                <button class="arrowBtn" type="button" data-focus="eP3">▾</button>
-              </div>
-            </div>
-          </div>
-        `;
-      }
-
-      if(type==="other"){
-        html += `
-          <div class="grid grid-2">
-            <div>
-              <label for="eName">Name</label>
-              <input id="eName" value="${escapeHtml(extras.otherName||row.body_color||"")}">
-            </div>
-            <div>
-              <label for="eSize">Größe</label>
-              <input id="eSize" value="${escapeHtml(extras.otherSize||row.part2_color||"")}">
-            </div>
-          </div>
-
-          <div style="height:10px"></div>
-
-          <label for="eP3">Farbe</label>
-          <div class="colorWrap">
-            <input id="eP3" list="colorsO" value="${escapeHtml(extras.baseColor||"")}">
-            <button class="arrowBtn" type="button" data-focus="eP3">▾</button>
-          </div>
-        `;
-      }
-
-      html += `
-        <div style="height:12px"></div>
-        <div>
-          <label for="eNote">Beschreibung (optional)</label>
-          <textarea id="eNote" placeholder="Hinweis…">${escapeHtml(noteVal)}</textarea>
-        </div>
-      `;
-
-      editFormEl.innerHTML = html;
-
-      // attach arrow open behavior inside modal too
-      editFormEl.querySelectorAll("button.arrowBtn[data-focus]").forEach(b=>{
-        b.addEventListener("click", ()=>{
-          const id = b.getAttribute("data-focus");
-          openColorChooserFor(document.getElementById(id));
-        });
-      });
-
-      // priority toggle
-      const prioRow = document.getElementById("editPrioRow");
-      prioRow?.querySelectorAll("button[data-prio]").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
-          prioRow.querySelectorAll("button").forEach(x=>x.classList.remove("active"));
-          btn.classList.add("active");
-        });
-      });
-
-      // size toggle
-      const sizeRow = document.getElementById("eSizeRow");
-      sizeRow?.querySelectorAll("button[data-size]").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
-          sizeRow.querySelectorAll("button").forEach(x=>x.className = "btn btn-outline");
-          btn.className = "btn btn-active";
-        });
-      });
-
-      modalBackdrop.style.display = "flex";
+      modalBack.style.display = "flex";
     }
 
     function closeEditModal(){
-      editRow = null;
-      editFormEl.innerHTML = "";
-      modalBackdrop.style.display = "none";
-      setEditStatus("");
+      modalBack.style.display = "none";
+      editingIndex = null;
+      modalBody.innerHTML = "";
+    }
+    closeModal.addEventListener("click", closeEditModal);
+    modalBack.addEventListener("click", (e)=>{ if(e.target===modalBack) closeEditModal(); });
+
+    // ---------- pricing ----------
+    function priceForOrderItems(items){
+      let total = 0;
+
+      // bunny bundle
+      const b20 = items.filter(i=>i.product_type==="bunny" && i.bunny_size==="20").reduce((s,i)=>s+i.quantity,0);
+      const b15 = items.filter(i=>i.product_type==="bunny" && i.bunny_size==="15").reduce((s,i)=>s+i.quantity,0);
+      const b11 = items.filter(i=>i.product_type==="bunny" && i.bunny_size==="11").reduce((s,i)=>s+i.quantity,0);
+
+      const bundle = Math.min(b20,b15,b11);
+      total += bundle * 22.0;
+      total += (b20 - bundle) * 12.0;
+      total += (b15 - bundle) * 9.0;
+      total += (b11 - bundle) * 6.0;
+
+      // lumis
+      const lumis = items.filter(i=>i.product_type==="lumi").reduce((s,i)=>s+i.quantity,0);
+      total += lumis * 8.0;
+
+      // other: 0 (du kannst später Preise ergänzen)
+      return Number(total.toFixed(2));
     }
 
-    closeModalBtn.addEventListener("click", closeEditModal);
-    cancelEditBtn.addEventListener("click", closeEditModal);
-    modalBackdrop.addEventListener("click", (e)=>{
-      if(e.target === modalBackdrop) closeEditModal();
-    });
+    function prioRank(p){
+      if(p==="very") return 1;
+      if(p==="normal") return 2;
+      return 3;
+    }
 
-    saveEditBtn.addEventListener("click", async ()=>{
-      if(!editRow) return;
+    // ---------- save order ----------
+    saveOrderBtn.addEventListener("click", async ()=>{
+      const customer = (customerEl.value||"").trim();
+      if(!customer || cart.length===0) return;
 
-      const type = editRow.product_type;
-      const extrasOld = unpackExtras(editRow.part3_color);
+      saveOrderBtn.disabled = true;
+      saveStatus.style.display = "none";
 
-      // get prio from modal
-      let newPrio = "";
-      const prioBtn = editFormEl.querySelector("#editPrioRow .active");
-      if(prioBtn) newPrio = prioBtn.getAttribute("data-prio") || "";
+      const note = (noteEl.value||"").trim();
 
-      const qty = parseInt(editFormEl.querySelector("#eQty")?.value || "1", 10);
-      if(!Number.isFinite(qty) || qty < 1){
-        setEditStatus("Menge muss >= 1 sein.", "error");
+      const { data: order, error: oErr } = await supabase
+        .from("orders")
+        .insert({ customer_name: customer, note })
+        .select("id")
+        .single();
+
+      if(oErr){
+        alert("Order Fehler: " + oErr.message);
+        refreshSaveEnabled();
         return;
       }
 
-      let update = { qty };
-
-      // note
-      const newNote = (editFormEl.querySelector("#eNote")?.value || "").trim();
-
-      if(type==="hase"){
-        const sizeBtn = editFormEl.querySelector("#eSizeRow .btn-active");
-        const sizeCm = sizeBtn ? parseInt(sizeBtn.getAttribute("data-size"),10) : null;
-
-        const body = (editFormEl.querySelector("#eBody")?.value || "").trim();
-        const p2 = (editFormEl.querySelector("#eP2")?.value || "").trim();
-        const p3 = (editFormEl.querySelector("#eP3")?.value || "").trim();
-
-        if(!sizeCm || !body || !p2 || !p3 || !newPrio){
-          setEditStatus("Bitte alle Pflichtfelder ausfüllen (Größe, Farben, Priorität).", "error");
-          return;
-        }
-
-        update.size_cm = sizeCm;
-        update.body_color = body;
-        update.part2_color = p2;
-        update.part3_color = packExtras(p3, { note:newNote, prio:newPrio, otherName:"", otherSize:"" });
-      }
-
-      if(type==="lumi"){
-        const body = (editFormEl.querySelector("#eBody")?.value || "").trim();
-        const p2 = (editFormEl.querySelector("#eP2")?.value || "").trim();
-        const p3 = (editFormEl.querySelector("#eP3")?.value || "").trim();
-
-        if(!body || !p2 || !p3 || !newPrio){
-          setEditStatus("Bitte alle Pflichtfelder ausfüllen (Farben, Priorität).", "error");
-          return;
-        }
-
-        update.body_color = body;
-        update.part2_color = p2;
-        update.part3_color = packExtras(p3, { note:newNote, prio:newPrio, otherName:"", otherSize:"" });
-      }
-
-      if(type==="other"){
-        const name = (editFormEl.querySelector("#eName")?.value || "").trim();
-        const size = (editFormEl.querySelector("#eSize")?.value || "").trim();
-        const color = (editFormEl.querySelector("#eP3")?.value || "").trim();
-
-        if(!name || !size || !color || !newPrio){
-          setEditStatus("Bitte alle Pflichtfelder ausfüllen (Name, Größe, Farbe, Priorität).", "error");
-          return;
-        }
-
-        update.body_color = name;
-        update.part2_color = size;
-        update.part3_color = packExtras(color, { note:newNote, prio:newPrio, otherName:name, otherSize:size });
-      }
-
-      setEditStatus("Speichere…");
-      const { error } = await supabase.from("orders").update(update).eq("id", editRow.id);
-      if(error){
-        setEditStatus("Fehler: " + error.message, "error");
+      const rows = cart.map(it => ({ ...it, order_id: order.id }));
+      const { error: iErr } = await supabase.from("order_items").insert(rows);
+      if(iErr){
+        alert("Items Fehler: " + iErr.message);
+        refreshSaveEnabled();
         return;
       }
-      setEditStatus("Gespeichert ✅", "ok");
-      await loadOrders();
-      closeEditModal();
+
+      // reset cart only (customer & note keep? -> wir resetten beides für neue Bestellung)
+      cart = [];
+      customerEl.value = "";
+      noteEl.value = "";
+      priority = null;
+      [pVery,pNorm,pLow].forEach(x=>x.classList.remove("active"));
+
+      saveStatus.textContent = "Gespeichert ✅";
+      saveStatus.style.display = "block";
+
+      refreshCart();
+      await loadAll();
     });
 
-    // Start: nothing selected
-    setMode(null);
-    clearProductButtons();
-    haseBlock.style.display = "none";
-    lumiBlock.style.display = "none";
-    otherBlock.style.display = "none";
-    formTitle.textContent = "Neue Bestellung";
+    // ---------- archive / delete / restore ----------
+    async function archiveOrder(orderId){
+      await supabase.from("orders").update({ archived: true }).eq("id", orderId);
+      await loadAll();
+    }
+    async function restoreOrder(orderId){
+      await supabase.from("orders").update({ archived: false }).eq("id", orderId);
+      await loadAll();
+    }
+    async function deleteOrder(orderId){
+      const ok = confirm("Bist du sicher? Diese Bestellung wird endgültig gelöscht.");
+      if(!ok) return;
+      await supabase.from("orders").delete().eq("id", orderId);
+      await loadAll();
+    }
 
-    addBtn.addEventListener("click", addOrder);
+    // ---------- sold adjustments ----------
+    soldSumEl.addEventListener("click", ()=>{
+      adjMsg.style.display="none";
+      adjAmount.value = "";
+      adjNote.value = "";
+      adjBack.style.display="flex";
+    });
+    closeAdj.addEventListener("click", ()=> adjBack.style.display="none");
+    adjBack.addEventListener("click", (e)=>{ if(e.target===adjBack) adjBack.style.display="none"; });
 
-    // initial sort buttons
-    setSortMode("date");
-    await loadOrders();
+    addAdjBtn.addEventListener("click", async ()=>{
+      const a = Number(String(adjAmount.value).replace(",", "."));
+      if(!Number.isFinite(a)) return;
+      const n = (adjNote.value||"").trim();
+      const { error } = await supabase.from("adjustments").insert({ amount_eur: a, note: n });
+      if(error){ alert(error.message); return; }
+      adjMsg.textContent = "Gespeichert ✅";
+      adjMsg.style.display="block";
+      await loadAll();
+    });
+
+    // ---------- load + render ----------
+    function formatDateOnly(iso){
+      const d = new Date(iso);
+      const dd = String(d.getDate()).padStart(2,"0");
+      const mm = String(d.getMonth()+1).padStart(2,"0");
+      const yy = d.getFullYear();
+      return `${dd}.${mm}.${yy}`;
+    }
+
+    async function loadAll(){
+      // fetch orders + items
+      const { data: orders, error: oErr } = await supabase
+        .from("orders")
+        .select("id,created_at,customer_name,note,archived")
+        .order("created_at", { ascending:false });
+
+      if(oErr){
+        openSumEl.textContent = "Fehler: " + oErr.message;
+        return;
+      }
+
+      const { data: items, error: iErr } = await supabase
+        .from("order_items")
+        .select("*")
+        .order("created_at", { ascending:false });
+
+      if(iErr){
+        openSumEl.textContent = "Fehler: " + iErr.message;
+        return;
+      }
+
+      const { data: adjs } = await supabase.from("adjustments").select("*");
+      const adjSum = (adjs||[]).reduce((s,a)=> s + Number(a.amount_eur||0), 0);
+
+      // group items by order
+      const byOrder = new Map();
+      (items||[]).forEach(it=>{
+        const arr = byOrder.get(it.order_id) || [];
+        arr.push(it);
+        byOrder.set(it.order_id, arr);
+      });
+
+      const open = (orders||[]).filter(o=>!o.archived).map(o=>({ ...o, items: byOrder.get(o.id)||[] }));
+      const archived = (orders||[]).filter(o=>o.archived).map(o=>({ ...o, items: byOrder.get(o.id)||[] }));
+
+      // sorting open
+      if(sortMode==="prio"){
+        open.sort((a,b)=>{
+          const ap = Math.min(...a.items.map(x=>prioRank(x.priority)).concat([9]));
+          const bp = Math.min(...b.items.map(x=>prioRank(x.priority)).concat([9]));
+          if(ap!==bp) return ap-bp;
+          return new Date(b.created_at)-new Date(a.created_at);
+        });
+      } else {
+        open.sort((a,b)=> new Date(b.created_at)-new Date(a.created_at));
+      }
+
+      // sums
+      const openTotal = open.reduce((s,o)=> s + priceForOrderItems(o.items), 0);
+      openSumEl.textContent = `Summe offen: ${openTotal.toFixed(2)}€`;
+
+      const soldTotalRaw = archived.reduce((s,o)=> s + priceForOrderItems(o.items), 0);
+      const soldFinal = (soldTotalRaw + adjSum);
+      soldSumEl.textContent = `Verkauft gesamt: ${soldFinal.toFixed(2)}€ (klicken für Korrektur)`;
+
+      renderOrders(openOrdersEl, open, { archived:false });
+      renderArchive(archiveOrdersEl, archived);
+    }
+
+    function prioLabel(p){
+      if(p==="very") return "Sehr wichtig";
+      if(p==="normal") return "Wichtig";
+      return "Nicht wichtig";
+    }
+
+    function renderOrders(target, orders, { archived }){
+      target.innerHTML = "";
+      if(orders.length===0){
+        target.innerHTML = `<div class="hint">Keine ${archived?"Archiv":"offenen"} Bestellungen.</div>`;
+        return;
+      }
+
+      for(const o of orders){
+        const total = priceForOrderItems(o.items);
+        const bestPrio = Math.min(...o.items.map(x=>prioRank(x.priority)).concat([9]));
+        const prText = bestPrio===1 ? "Sehr wichtig" : bestPrio===2 ? "Wichtig" : "Nicht wichtig";
+
+        const wrap = document.createElement("div");
+        wrap.className = "orderCard";
+        wrap.innerHTML = `
+          <div class="orderTop">
+            <div class="orderMeta">
+              <div class="orderDate">${formatDateOnly(o.created_at)} • <span class="pill prio">${prText}</span></div>
+              <div class="orderCustomer">${escapeHtml(o.customer_name)}</div>
+            </div>
+            <div class="inline">
+              <div class="orderTotal">${total.toFixed(2)}€</div>
+              ${archived
+                ? `<button class="btn-small btn-ghost" data-restore="${o.id}">Zurückholen</button>
+                   <button class="btn-small btn-danger" data-del="${o.id}">Löschen</button>`
+                : `<button class="btn-small btn-soft" data-archive="${o.id}">Archivieren</button>`
+              }
+            </div>
+          </div>
+          ${o.note ? `<div class="hint" style="margin-top:6px">Hinweis: ${escapeHtml(o.note)}</div>` : ``}
+          <div class="items">
+            ${o.items.map(it=>renderItemRow(it, !archived)).join("")}
+          </div>
+        `;
+        target.appendChild(wrap);
+      }
+
+      // handlers
+      target.querySelectorAll("[data-archive]").forEach(b=>{
+        b.addEventListener("click", ()=> archiveOrder(b.getAttribute("data-archive")));
+      });
+      target.querySelectorAll("[data-restore]").forEach(b=>{
+        b.addEventListener("click", ()=> restoreOrder(b.getAttribute("data-restore")));
+      });
+      target.querySelectorAll("[data-del]").forEach(b=>{
+        b.addEventListener("click", ()=> deleteOrder(b.getAttribute("data-del")));
+      });
+
+      // edit open order items (pencil)
+      target.querySelectorAll("[data-edit-item]").forEach(b=>{
+        b.addEventListener("click", async ()=>{
+          const itemId = b.getAttribute("data-edit-item");
+          await openEditOpenItem(itemId);
+        });
+      });
+    }
+
+    function renderItemRow(it, allowEdit){
+      const pr = prioLabel(it.priority); // ✅ ohne "Priorität:"
+      let title = "";
+      let sub = "";
+      if(it.product_type==="bunny"){
+        title = `🐰 Hase ${it.bunny_size}cm • x${it.quantity}`;
+        if(it.bunny_mode==="single"){
+          sub = `Einfarbig: ${it.bunny_single_color || it.bunny_body_color || ""}`;
+        } else {
+          sub = `Körper: ${it.bunny_body_color} • Ohren: ${it.bunny_ear_color} • Popo: ${it.bunny_butt_color}`;
+        }
+      } else if(it.product_type==="lumi"){
+        title = `✨🪲 Lumi • x${it.quantity}`;
+        sub = `Körper: ${it.lumi_body_color} • Flügel: ${it.lumi_wing_color} • Fühler: ${it.lumi_feeler_color}`;
+      } else {
+        title = `➕ Weitere • x${it.quantity}`;
+        sub = `Größe: ${it.other_size} • Farbe: ${it.other_color} • ${it.other_description || ""}`;
+      }
+
+      return `
+        <div class="itemLine">
+          <div class="itemL">
+            <div class="itemT">${escapeHtml(title)} <span class="pill" style="margin-left:6px">${escapeHtml(pr)}</span></div>
+            <div class="itemS">${escapeHtml(sub)}</div>
+          </div>
+          ${allowEdit ? `<button class="iconBtn" data-edit-item="${it.id}" title="Bearbeiten">✎</button>` : ``}
+        </div>
+      `;
+    }
+
+    async function openEditOpenItem(itemId){
+      // load item
+      const { data: it, error } = await supabase.from("order_items").select("*").eq("id", itemId).single();
+      if(error){ alert(error.message); return; }
+
+      modalBody.innerHTML = `
+        <div class="grid">
+          <div class="hint">Bearbeiten: ${escapeHtml(it.product_type)} • x${it.quantity}</div>
+          <div class="label">Menge</div>
+          <input class="field" id="eoQty" value="${it.quantity}" inputmode="numeric" />
+          <div class="label">Priorität</div>
+          <div class="prioRow">
+            <button class="prioBtn small" data-pr="very">Sehr wichtig</button>
+            <button class="prioBtn" data-pr="normal">Wichtig</button>
+            <button class="prioBtn small" data-pr="low">Nicht wichtig</button>
+          </div>
+          <div id="eoFields"></div>
+          <button class="btn" id="eoSave">Speichern</button>
+        </div>
+      `;
+
+      modalBody.querySelectorAll("[data-pr]").forEach(b=>{
+        if(b.getAttribute("data-pr")===it.priority) b.classList.add("active");
+        b.addEventListener("click", ()=>{
+          modalBody.querySelectorAll("[data-pr]").forEach(x=>x.classList.remove("active"));
+          b.classList.add("active");
+        });
+      });
+
+      const f = modalBody.querySelector("#eoFields");
+      if(it.product_type==="bunny"){
+        if(it.bunny_mode==="single"){
+          f.innerHTML = `
+            <div class="label">Einfarbig</div>
+            <input class="field" id="eoC1" value="${it.bunny_single_color || it.bunny_body_color || ""}" />
+          `;
+        } else {
+          f.innerHTML = `
+            <div class="grid grid-3">
+              <div><div class="label">Körper</div><input class="field" id="eoC1" value="${it.bunny_body_color || ""}"></div>
+              <div><div class="label">Ohren</div><input class="field" id="eoC2" value="${it.bunny_ear_color || ""}"></div>
+              <div><div class="label">Popo</div><input class="field" id="eoC3" value="${it.bunny_butt_color || ""}"></div>
+            </div>
+          `;
+        }
+      } else if(it.product_type==="lumi"){
+        f.innerHTML = `
+          <div class="grid grid-3">
+            <div><div class="label">Körper</div><input class="field" id="eoC1" value="${it.lumi_body_color || ""}"></div>
+            <div><div class="label">Flügel</div><input class="field" id="eoC2" value="${it.lumi_wing_color || ""}"></div>
+            <div><div class="label">Fühler</div><input class="field" id="eoC3" value="${it.lumi_feeler_color || ""}"></div>
+          </div>
+        `;
+      } else {
+        f.innerHTML = `
+          <div class="grid grid-2">
+            <div><div class="label">Größe</div><input class="field" id="eoC1" value="${it.other_size || ""}"></div>
+            <div><div class="label">Farbe</div><input class="field" id="eoC2" value="${it.other_color || ""}"></div>
+            <div style="grid-column:1/-1"><div class="label">Beschreibung</div><input class="field" id="eoC3" value="${it.other_description || ""}"></div>
+          </div>
+        `;
+      }
+
+      modalBody.querySelector("#eoSave").addEventListener("click", async ()=>{
+        const newQty = Number(modalBody.querySelector("#eoQty").value);
+        if(!Number.isFinite(newQty) || newQty<=0) return;
+        const newPr = modalBody.querySelector("[data-pr].active")?.getAttribute("data-pr") || it.priority;
+
+        const patch = { quantity: newQty, priority: newPr };
+
+        if(it.product_type==="bunny"){
+          if(it.bunny_mode==="single"){
+            const c = modalBody.querySelector("#eoC1").value.trim();
+            patch.bunny_single_color = c;
+            patch.bunny_body_color = c;
+            patch.bunny_ear_color = c;
+            patch.bunny_butt_color = c;
+          } else {
+            patch.bunny_body_color = modalBody.querySelector("#eoC1").value.trim();
+            patch.bunny_ear_color  = modalBody.querySelector("#eoC2").value.trim();
+            patch.bunny_butt_color = modalBody.querySelector("#eoC3").value.trim();
+          }
+        } else if(it.product_type==="lumi"){
+          patch.lumi_body_color = modalBody.querySelector("#eoC1").value.trim();
+          patch.lumi_wing_color = modalBody.querySelector("#eoC2").value.trim();
+          patch.lumi_feeler_color = modalBody.querySelector("#eoC3").value.trim();
+        } else {
+          patch.other_size = modalBody.querySelector("#eoC1").value.trim();
+          patch.other_color = modalBody.querySelector("#eoC2").value.trim();
+          patch.other_description = modalBody.querySelector("#eoC3").value.trim();
+        }
+
+        const { error: uErr } = await supabase.from("order_items").update(patch).eq("id", itemId);
+        if(uErr){ alert(uErr.message); return; }
+        closeEditModal();
+        await loadAll();
+      });
+
+      modalBack.style.display = "flex";
+    }
+
+    function renderArchive(target, archived){
+      // group by month-year
+      const groups = new Map();
+      for(const o of archived){
+        const d = new Date(o.created_at);
+        const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
+        const name = d.toLocaleString("de-DE", { month:"long", year:"numeric" });
+        const arr = groups.get(key) || { name, orders: [] };
+        arr.orders.push(o);
+        groups.set(key, arr);
+      }
+
+      // newest month first
+      const keys = [...groups.keys()].sort((a,b)=> b.localeCompare(a));
+      target.innerHTML = "";
+
+      if(keys.length===0){
+        target.innerHTML = `<div class="hint">Archiv ist leer.</div>`;
+        return;
+      }
+
+      for(const k of keys){
+        const g = groups.get(k);
+        const title = document.createElement("div");
+        title.className = "monthTitle";
+        title.textContent = g.name;
+        target.appendChild(title);
+
+        renderOrders(target, g.orders, { archived:true });
+      }
+    }
+
+    function escapeHtml(str){
+      return String(str ?? "").replace(/[&<>"']/g, s => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+      }[s]));
+    }
+
+    // sorting toggle
+    sortDate.addEventListener("click", ()=>{
+      sortMode = "date";
+      sortDate.className = "btn-small btn";
+      sortPrio.className = "btn-small btn-soft";
+      loadAll();
+    });
+    sortPrio.addEventListener("click", ()=>{
+      sortMode = "prio";
+      sortPrio.className = "btn-small btn";
+      sortDate.className = "btn-small btn-soft";
+      loadAll();
+    });
+
+    // init defaults (NO auto selections)
+    setActiveProduct("bunny");
+    refreshCart();
+    refreshSaveEnabled();
+    await loadAll();
   </script>
 </body>
 </html>
