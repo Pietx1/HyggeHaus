@@ -3,83 +3,130 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Bestellungen – Hase & Lumi</title>
+  <title>Bestellungen – Hase, Lumi & Weitere</title>
+
   <style>
-    :root { --bg:#f6f7fb; --card:#fff; --text:#111827; --muted:#6b7280; --border:#e5e7eb; }
+    :root{
+      --bg:#f6f7fb; --card:#fff; --text:#111827; --muted:#6b7280; --border:#e5e7eb;
+      --dark:#111827; --shadow:0 6px 20px rgba(0,0,0,.06);
+    }
     *{ box-sizing:border-box; }
     body{ margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; background:var(--bg); color:var(--text); }
-    .container{ max-width:1100px; margin:0 auto; padding:24px; }
-    h1{ font-size:28px; margin:0; }
-    .topbar{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px; }
+    .container{ max-width:1100px; margin:0 auto; padding:18px; }
+    h1{ font-size:30px; margin:0; letter-spacing:-.3px; }
+    .topbar{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px; }
     .hint{ color:var(--muted); font-size:13px; }
 
-    .card{ background:var(--card); border:1px solid var(--border); border-radius:16px; box-shadow:0 6px 20px rgba(0,0,0,.06); }
+    .card{ background:var(--card); border:1px solid var(--border); border-radius:18px; box-shadow:var(--shadow); }
     .card-pad{ padding:16px; }
 
-    label{ font-weight:900; font-size:13px; display:block; margin-bottom:6px; }
-    input{
+    label{ font-weight:950; font-size:13px; display:block; margin-bottom:6px; }
+    input, textarea{
       width:100%;
       border:1px solid var(--border);
-      border-radius:12px;
-      padding:10px 12px;
-      font-size:14px;
+      border-radius:14px;
+      padding:12px 12px;
+      font-size:16px; /* mobile: iOS zoom vermeiden */
       outline:none;
       background:#fff;
     }
-
-    .btn{
-      display:inline-flex; align-items:center; justify-content:center;
-      gap:8px; border:0; cursor:pointer; border-radius:12px;
-      padding:10px 14px; font-weight:900; font-size:14px;
-      background:#111827; color:#fff;
-    }
-    .btn:disabled{ opacity:.5; cursor:not-allowed; }
-    .btn-outline{
-      background:#fff; color:var(--text);
-      border:1px solid var(--border);
-      box-shadow:0 1px 0 rgba(0,0,0,.02);
-    }
-    .btn-active{
-      background:#111827; color:#fff; border:1px solid #111827;
-    }
-    .btn-danger{ background:#b91c1c; }
-
-    .status{ margin-top:10px; font-size:13px; color:var(--muted); }
-    .error{ color:#b91c1c; }
-    .ok{ color:#047857; }
+    textarea{ min-height:90px; resize:vertical; }
 
     .grid{ display:grid; gap:12px; }
     .grid-2{ grid-template-columns:1fr; }
     .grid-3{ grid-template-columns:1fr; }
     @media(min-width:900px){
       .grid-2{ grid-template-columns:1fr 1fr; }
-      .grid-3{ grid-template-columns:repeat(3, 1fr); }
+      .grid-3{ grid-template-columns:repeat(3,1fr); }
     }
 
-    .switch{
-      display:flex; gap:10px; flex-wrap:wrap;
-      margin-bottom:12px;
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      gap:10px; border:0; cursor:pointer; border-radius:16px;
+      padding:12px 14px; font-weight:950; font-size:16px;
+      background:var(--dark); color:#fff;
     }
-    .switch .btn{ min-width:140px; }
+    .btn:disabled{ opacity:.55; cursor:not-allowed; }
 
+    .btn-outline{
+      background:#fff; color:var(--text);
+      border:1px solid var(--border);
+      box-shadow:0 1px 0 rgba(0,0,0,.02);
+    }
+    .btn-active{ background:var(--dark); color:#fff; border:1px solid var(--dark); }
+    .btn-danger{ background:#b91c1c; }
+
+    /* Produkt-Switch Buttons */
+    .switch{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
+    .switch .btn{ flex:1; min-width:140px; }
+
+    /* Größen-Buttons */
     .sizes{ display:flex; gap:10px; flex-wrap:wrap; }
     .sizes .btn{ min-width:90px; }
 
+    /* Priority Buttons (Sehr wichtig / Wichtig / Nicht wichtig) */
+    .prioRow{
+      display:grid;
+      grid-template-columns: 1fr 1.6fr 1fr;
+      gap:10px;
+      align-items:stretch;
+    }
+    .prioBtn{
+      border-radius:16px;
+      padding:10px 10px;
+      font-weight:950;
+      font-size:14px;
+      border:1px solid var(--border);
+      background:#fff;
+      cursor:pointer;
+    }
+    .prioBtn.big{ font-size:16px; padding:12px 10px; }
+    .prioBtn.active{ background:var(--dark); color:#fff; border:1px solid var(--dark); }
+
+    .status{ margin-top:10px; font-size:13px; color:var(--muted); }
+    .error{ color:#b91c1c; }
+    .ok{ color:#047857; }
+
+    /* Farben: “Dropdown sichtbar” */
+    .colorWrap{ position:relative; }
+    .colorWrap input{ padding-right:40px; }
+    .colorWrap .arrow{
+      position:absolute; right:12px; top:50%; transform:translateY(-50%);
+      width:26px; height:26px; border-radius:10px;
+      display:flex; align-items:center; justify-content:center;
+      border:1px solid var(--border);
+      color:var(--muted);
+      background:#fff;
+      pointer-events:none;
+      font-size:14px;
+    }
+    .subhint{ margin-top:6px; color:var(--muted); font-size:12px; }
+
+    /* Liste */
     .list{ display:grid; gap:12px; margin-top:16px; }
     .order{
       display:flex; gap:12px; align-items:flex-start; justify-content:space-between;
-      border:1px solid var(--border); border-radius:14px; padding:12px;
+      border:1px solid var(--border); border-radius:16px; padding:12px;
       background:#fff;
     }
-    .order h3{ margin:0 0 6px; font-size:15px; }
+    .order h3{ margin:0 0 6px; font-size:16px; }
     .meta{ color:var(--muted); font-size:13px; line-height:1.35; }
     .badges{ display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
     .badge{ border:1px solid var(--border); border-radius:999px; padding:4px 10px; font-size:12px; background:#f9fafb; }
     .right{ display:flex; flex-direction:column; gap:8px; align-items:flex-end; }
 
-    .section-title{ font-weight:1000; margin:10px 0 6px; }
+    .qtyPill{
+      font-size:18px;
+      font-weight:1000;
+      padding:6px 12px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:#111827;
+      color:#fff;
+    }
   </style>
 </head>
+
 <body>
   <div class="container">
     <div class="topbar">
@@ -89,90 +136,144 @@
 
     <div class="card">
       <div class="card-pad">
-
-        <!-- 1) Produktwahl als 2 Buttons -->
+        <!-- Produktwahl -->
         <div class="switch">
           <button id="btnHase" class="btn btn-active" type="button">🐰 Hase</button>
-          <button id="btnLumi" class="btn btn-outline" type="button">✨ Lumi</button>
+          <button id="btnLumi" class="btn btn-outline" type="button">🪲 Lumi</button>
+          <button id="btnOther" class="btn btn-outline" type="button">➕ Weitere Produkt</button>
         </div>
 
-        <h2 id="formTitle" style="margin:0 0 12px;font-size:18px;">Neue Bestellung: Hase</h2>
+        <h2 id="formTitle" style="margin:0 0 12px;font-size:20px;">Neue Bestellung: Hase</h2>
 
-        <!-- 2) Hase-Block -->
+        <!-- Priorität -->
+        <div class="grid">
+          <div>
+            <label>Priorität</label>
+            <div class="prioRow">
+              <button id="pHigh" class="prioBtn active" type="button">Sehr wichtig</button>
+              <button id="pMid" class="prioBtn big" type="button">Wichtig</button>
+              <button id="pLow" class="prioBtn" type="button">Nicht wichtig</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:12px"></div>
+
+        <!-- Hase -->
         <div id="haseBlock">
-          <div class="section-title">Größe</div>
-          <div class="sizes">
+          <label>Größe</label>
+          <div class="sizes" style="margin-bottom:10px;">
             <button class="btn btn-active" data-size="20" type="button">20 cm</button>
             <button class="btn btn-outline" data-size="15" type="button">15 cm</button>
             <button class="btn btn-outline" data-size="11" type="button">11 cm</button>
           </div>
 
-          <div style="height:12px"></div>
-
-          <div class="section-title">Farben</div>
-
-          <!-- Farben: Dropdown + frei tippen -->
+          <label>Farben</label>
           <datalist id="colors">
-            <option value="schwarz"></option>
-            <option value="weiß"></option>
-            <option value="grau"></option>
-            <option value="blau"></option>
-            <option value="rot"></option>
-            <option value="gelb"></option>
-            <option value="grün"></option>
-            <option value="orange"></option>
-            <option value="pink"></option>
-            <option value="lila"></option>
-            <option value="braun"></option>
+            <option value="schwarz"></option><option value="weiß"></option><option value="grau"></option>
+            <option value="blau"></option><option value="rot"></option><option value="gelb"></option>
+            <option value="grün"></option><option value="orange"></option><option value="pink"></option>
+            <option value="lila"></option><option value="braun"></option>
           </datalist>
 
           <div class="grid grid-3">
             <div>
               <label for="hBody">Körperfarbe</label>
-              <input id="hBody" list="colors" placeholder="z.B. schwarz (oder eigene Farbe tippen)" />
+              <div class="colorWrap">
+                <input id="hBody" list="colors" placeholder="Tippen oder auswählen…" />
+                <div class="arrow">▾</div>
+              </div>
+              <div class="subhint">Tipp: Tippe „sch…“ und wähle aus der Liste.</div>
             </div>
             <div>
               <label for="hEars">Ohrenfarbe</label>
-              <input id="hEars" list="colors" placeholder="z.B. weiß (oder eigene Farbe tippen)" />
+              <div class="colorWrap">
+                <input id="hEars" list="colors" placeholder="Tippen oder auswählen…" />
+                <div class="arrow">▾</div>
+              </div>
             </div>
             <div>
               <label for="hButt">Popofarbe</label>
-              <input id="hButt" list="colors" placeholder="z.B. blau (oder eigene Farbe tippen)" />
+              <div class="colorWrap">
+                <input id="hButt" list="colors" placeholder="Tippen oder auswählen…" />
+                <div class="arrow">▾</div>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- 3) Lumi-Block -->
+        <!-- Lumi -->
         <div id="lumiBlock" style="display:none;">
-          <div class="section-title">Farben</div>
+          <label>Farben</label>
 
-          <datalist id="colors2">
-            <option value="schwarz"></option>
-            <option value="weiß"></option>
-            <option value="grau"></option>
-            <option value="blau"></option>
-            <option value="rot"></option>
-            <option value="gelb"></option>
-            <option value="grün"></option>
-            <option value="orange"></option>
-            <option value="pink"></option>
-            <option value="lila"></option>
-            <option value="braun"></option>
+          <datalist id="colorsL">
+            <option value="schwarz"></option><option value="weiß"></option><option value="grau"></option>
+            <option value="blau"></option><option value="rot"></option><option value="gelb"></option>
+            <option value="grün"></option><option value="orange"></option><option value="pink"></option>
+            <option value="lila"></option><option value="braun"></option>
           </datalist>
 
           <div class="grid grid-3">
             <div>
               <label for="lBody">Körperfarbe</label>
-              <input id="lBody" list="colors2" placeholder="z.B. schwarz (oder eigene Farbe tippen)" />
+              <div class="colorWrap">
+                <input id="lBody" list="colorsL" placeholder="Tippen oder auswählen…" />
+                <div class="arrow">▾</div>
+              </div>
             </div>
             <div>
               <label for="lWings">Flügelfarbe</label>
-              <input id="lWings" list="colors2" placeholder="z.B. weiß (oder eigene Farbe tippen)" />
+              <div class="colorWrap">
+                <input id="lWings" list="colorsL" placeholder="Tippen oder auswählen…" />
+                <div class="arrow">▾</div>
+              </div>
             </div>
             <div>
               <label for="lFeelers">Fühlerfarbe</label>
-              <input id="lFeelers" list="colors2" placeholder="z.B. blau (oder eigene Farbe tippen)" />
+              <div class="colorWrap">
+                <input id="lFeelers" list="colorsL" placeholder="Tippen oder auswählen…" />
+                <div class="arrow">▾</div>
+              </div>
             </div>
+          </div>
+        </div>
+
+        <!-- Weitere Produkt -->
+        <div id="otherBlock" style="display:none;">
+          <div class="grid grid-2">
+            <div>
+              <label for="oName">Name</label>
+              <input id="oName" placeholder="z.B. Schlüsselanhänger" />
+            </div>
+            <div>
+              <label for="oSize">Größe</label>
+              <input id="oSize" placeholder="z.B. 8 cm / XL / 120mm" />
+            </div>
+          </div>
+
+          <div style="height:10px"></div>
+
+          <label for="oColor">Farbe</label>
+          <datalist id="colorsO">
+            <option value="schwarz"></option><option value="weiß"></option><option value="grau"></option>
+            <option value="blau"></option><option value="rot"></option><option value="gelb"></option>
+            <option value="grün"></option><option value="orange"></option><option value="pink"></option>
+            <option value="lila"></option><option value="braun"></option>
+          </datalist>
+
+          <div class="colorWrap">
+            <input id="oColor" list="colorsO" placeholder="Tippen oder auswählen…" />
+            <div class="arrow">▾</div>
+          </div>
+        </div>
+
+        <div style="height:12px"></div>
+
+        <!-- Beschreibung für ALLE -->
+        <div class="grid">
+          <div>
+            <label for="note">Beschreibung</label>
+            <textarea id="note" placeholder="z.B. Kunde: Max • Versand bis Freitag • Sonderwunsch …"></textarea>
           </div>
         </div>
 
@@ -212,12 +313,15 @@
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    // Elements
     const btnHase = document.getElementById("btnHase");
     const btnLumi = document.getElementById("btnLumi");
+    const btnOther = document.getElementById("btnOther");
     const formTitle = document.getElementById("formTitle");
 
     const haseBlock = document.getElementById("haseBlock");
     const lumiBlock = document.getElementById("lumiBlock");
+    const otherBlock = document.getElementById("otherBlock");
 
     const hBody = document.getElementById("hBody");
     const hEars = document.getElementById("hEars");
@@ -227,56 +331,72 @@
     const lWings = document.getElementById("lWings");
     const lFeelers = document.getElementById("lFeelers");
 
+    const oName = document.getElementById("oName");
+    const oSize = document.getElementById("oSize");
+    const oColor = document.getElementById("oColor");
+
+    const note = document.getElementById("note");
     const qtyEl = document.getElementById("qty");
     const addBtn = document.getElementById("addBtn");
     const statusEl = document.getElementById("status");
     const listEl = document.getElementById("list");
     const totalsEl = document.getElementById("totals");
 
-    let mode = "hase";      // "hase" | "lumi"
-    let haseSize = 20;      // 20 | 15 | 11
+    // Priority buttons
+    const pHigh = document.getElementById("pHigh");
+    const pMid = document.getElementById("pMid");
+    const pLow = document.getElementById("pLow");
+
+    let mode = "hase";     // hase | lumi | other
+    let haseSize = 20;     // 20 | 15 | 11
+    let priority = "sehr"; // sehr | wichtig | nicht
 
     function setStatus(msg, type="") {
       statusEl.className = "status " + type;
       statusEl.textContent = msg || "";
     }
-
     function escapeHtml(str) {
       return String(str).replace(/[&<>"']/g, s => ({
         "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
       }[s]));
     }
+    function dateOnly(iso) {
+      const d = new Date(iso);
+      return d.toLocaleDateString("de-DE");
+    }
 
-    function setMode(newMode) {
+    // MODE SWITCH
+    function setMode(newMode){
       mode = newMode;
 
-      if (mode === "hase") {
-        btnHase.className = "btn btn-active";
-        btnLumi.className = "btn btn-outline";
-        haseBlock.style.display = "";
-        lumiBlock.style.display = "none";
-        formTitle.textContent = "Neue Bestellung: Hase";
-      } else {
-        btnHase.className = "btn btn-outline";
-        btnLumi.className = "btn btn-active";
-        haseBlock.style.display = "none";
-        lumiBlock.style.display = "";
-        formTitle.textContent = "Neue Bestellung: Lumi";
-      }
+      // Buttons
+      btnHase.className = (mode==="hase") ? "btn btn-active" : "btn btn-outline";
+      btnLumi.className = (mode==="lumi") ? "btn btn-active" : "btn btn-outline";
+      btnOther.className = (mode==="other") ? "btn btn-active" : "btn btn-outline";
+
+      // Blocks
+      haseBlock.style.display = (mode==="hase") ? "" : "none";
+      lumiBlock.style.display = (mode==="lumi") ? "" : "none";
+      otherBlock.style.display = (mode==="other") ? "" : "none";
+
+      // Title
+      if(mode==="hase") formTitle.textContent = "Neue Bestellung: Hase";
+      if(mode==="lumi") formTitle.textContent = "Neue Bestellung: Lumi";
+      if(mode==="other") formTitle.textContent = "Neue Bestellung: Weitere Produkt";
+
       setStatus("");
     }
 
     btnHase.addEventListener("click", () => setMode("hase"));
     btnLumi.addEventListener("click", () => setMode("lumi"));
+    btnOther.addEventListener("click", () => setMode("other"));
 
-    // Größe Buttons (nur Hase)
+    // HASE SIZE BUTTONS
     haseBlock.querySelectorAll("button[data-size]").forEach(b => {
       b.addEventListener("click", () => {
         const s = parseInt(b.getAttribute("data-size"), 10);
         if (![11,15,20].includes(s)) return;
         haseSize = s;
-
-        // Active style umschalten
         haseBlock.querySelectorAll("button[data-size]").forEach(x => {
           x.className = (parseInt(x.getAttribute("data-size"),10) === haseSize)
             ? "btn btn-active"
@@ -285,13 +405,54 @@
       });
     });
 
-    async function loadOrders() {
+    // PRIORITY BUTTONS
+    function setPriority(p){
+      priority = p;
+      pHigh.className = "prioBtn" + (priority==="sehr" ? " active" : "");
+      pMid.className  = "prioBtn big" + (priority==="wichtig" ? " active" : "");
+      pLow.className  = "prioBtn" + (priority==="nicht" ? " active" : "");
+    }
+    pHigh.addEventListener("click", () => setPriority("sehr"));
+    pMid.addEventListener("click", () => setPriority("wichtig"));
+    pLow.addEventListener("click", () => setPriority("nicht"));
+    setPriority("sehr");
+
+    // DB HELPERS:
+    // Wir speichern zusätzliche Infos im Feld "part3_color" mit angehängtem Text.
+    // Damit du NICHT sofort Supabase ändern musst.
+    // Format: part3_color = "<color>|note=<...>|prio=<...>|otherName=<...>|otherSize=<...>"
+    function packExtras(part3Color, extras){
+      const safe = (v)=> String(v||"").replaceAll("|","/").replaceAll("\n"," ");
+      return [
+        part3Color,
+        `note=${safe(extras.note)}`,
+        `prio=${safe(extras.prio)}`,
+        `otherName=${safe(extras.otherName)}`,
+        `otherSize=${safe(extras.otherSize)}`
+      ].join("|");
+    }
+    function unpackExtras(p3){
+      const parts = String(p3||"").split("|");
+      const base = parts[0] || "";
+      const map = {};
+      for (const p of parts.slice(1)){
+        const idx = p.indexOf("=");
+        if(idx>0){
+          const k = p.slice(0,idx);
+          const v = p.slice(idx+1);
+          map[k] = v;
+        }
+      }
+      return { baseColor: base, note: map.note||"", prio: map.prio||"", otherName: map.otherName||"", otherSize: map.otherSize||"" };
+    }
+
+    async function loadOrders(){
       const { data, error } = await supabase
         .from("orders")
         .select("id,product_type,size_cm,qty,body_color,part2_color,part3_color,created_at")
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending:false });
 
-      if (error) {
+      if(error){
         setStatus("Fehler beim Laden: " + error.message, "error");
         return;
       }
@@ -299,19 +460,41 @@
       setStatus("");
     }
 
-    function renderOrders(rows) {
+    function renderOrders(rows){
       listEl.innerHTML = "";
 
-      let totalHase = 0;
-      let totalLumi = 0;
+      let totalHase=0, totalLumi=0, totalOther=0;
 
-      for (const r of rows) {
-        if (r.product_type === "hase") totalHase += (r.qty || 0);
-        if (r.product_type === "lumi") totalLumi += (r.qty || 0);
+      for(const r of rows){
+        const extras = unpackExtras(r.part3_color);
+        const p3Color = extras.baseColor;
 
-        const title = (r.product_type === "hase") ? `Hase ${r.size_cm || ""}cm` : "Lumi";
-        const p2Label = (r.product_type === "hase") ? "Ohren" : "Flügel";
-        const p3Label = (r.product_type === "hase") ? "Popo" : "Fühler";
+        if (r.product_type==="hase") totalHase += (r.qty||0);
+        if (r.product_type==="lumi") totalLumi += (r.qty||0);
+        if (r.product_type==="other") totalOther += (r.qty||0);
+
+        let title = "";
+        let p2Label = "";
+        let p3Label = "";
+
+        if(r.product_type==="hase"){
+          title = `🐰 Hase ${r.size_cm || ""}cm`;
+          p2Label = "Ohren";
+          p3Label = "Popo";
+        } else if (r.product_type==="lumi"){
+          title = `🪲 Lumi`;
+          p2Label = "Flügel";
+          p3Label = "Fühler";
+        } else {
+          title = `➕ ${extras.otherName || "Weitere Produkt"}`;
+          p2Label = "Größe";
+          p3Label = "Farbe";
+        }
+
+        const prioText =
+          extras.prio === "sehr" ? "Sehr wichtig" :
+          extras.prio === "wichtig" ? "Wichtig" :
+          extras.prio === "nicht" ? "Nicht wichtig" : "";
 
         const item = document.createElement("div");
         item.className = "order";
@@ -319,23 +502,38 @@
           <div>
             <h3>${escapeHtml(title)}</h3>
             <div class="meta">
-              Menge: <b>${r.qty}</b><br>
-              <span class="hint">erstellt: ${new Date(r.created_at).toLocaleString()}</span>
+              <span class="qtyPill">Menge: ${r.qty}</span>
+              <div style="height:6px"></div>
+              Datum: <b>${dateOnly(r.created_at)}</b>
             </div>
+
             <div class="badges">
-              <span class="badge"><b>Körper:</b> ${escapeHtml(r.body_color)}</span>
-              <span class="badge"><b>${escapeHtml(p2Label)}:</b> ${escapeHtml(r.part2_color)}</span>
-              <span class="badge"><b>${escapeHtml(p3Label)}:</b> ${escapeHtml(r.part3_color)}</span>
+              ${
+                r.product_type==="other"
+                ? `
+                  <span class="badge"><b>${escapeHtml(p2Label)}:</b> ${escapeHtml(extras.otherSize || r.part2_color || "")}</span>
+                  <span class="badge"><b>${escapeHtml(p3Label)}:</b> ${escapeHtml(p3Color)}</span>
+                `
+                : `
+                  <span class="badge"><b>Körper:</b> ${escapeHtml(r.body_color)}</span>
+                  <span class="badge"><b>${escapeHtml(p2Label)}:</b> ${escapeHtml(r.part2_color)}</span>
+                  <span class="badge"><b>${escapeHtml(p3Label)}:</b> ${escapeHtml(p3Color)}</span>
+                `
+              }
+              ${ prioText ? `<span class="badge"><b>Priorität:</b> ${escapeHtml(prioText)}</span>` : "" }
+              ${ extras.note ? `<span class="badge"><b>Beschreibung:</b> ${escapeHtml(extras.note)}</span>` : "" }
             </div>
           </div>
+
           <div class="right">
             <button class="btn btn-danger" data-del="${r.id}" type="button">Löschen</button>
           </div>
         `;
+
         listEl.appendChild(item);
       }
 
-      totalsEl.textContent = `Hase: ${totalHase} • Lumi: ${totalLumi}`;
+      totalsEl.textContent = `Hase: ${totalHase} • Lumi: ${totalLumi} • Weitere: ${totalOther}`;
 
       listEl.querySelectorAll("button[data-del]").forEach(btn => {
         btn.addEventListener("click", async () => {
@@ -345,20 +543,33 @@
       });
     }
 
-    async function addOrder() {
+    async function deleteOrder(id){
+      setStatus("Lösche…");
+      const { error } = await supabase.from("orders").delete().eq("id", id);
+      if(error){
+        setStatus("Löschen fehlgeschlagen: " + error.message, "error");
+        return;
+      }
+      setStatus("Gelöscht ✅", "ok");
+      await loadOrders();
+    }
+
+    async function addOrder(){
       const qty = parseInt(qtyEl.value || "1", 10);
-      if (!Number.isFinite(qty) || qty < 1) {
+      if(!Number.isFinite(qty) || qty < 1){
         setStatus("Menge muss >= 1 sein.", "error");
         return;
       }
 
+      const desc = (note.value || "").trim();
+
       let payload;
 
-      if (mode === "hase") {
+      if(mode === "hase"){
         const c1 = (hBody.value || "").trim();
         const c2 = (hEars.value || "").trim();
         const c3 = (hButt.value || "").trim();
-        if (!c1 || !c2 || !c3) {
+        if(!c1 || !c2 || !c3){
           setStatus("Bitte Körper/Ohren/Popo Farbe eintragen.", "error");
           return;
         }
@@ -368,13 +579,15 @@
           qty,
           body_color: c1,
           part2_color: c2,
-          part3_color: c3
+          part3_color: packExtras(c3, { note: desc, prio: priority, otherName:"", otherSize:"" })
         };
-      } else {
+      }
+
+      if(mode === "lumi"){
         const c1 = (lBody.value || "").trim();
         const c2 = (lWings.value || "").trim();
         const c3 = (lFeelers.value || "").trim();
-        if (!c1 || !c2 || !c3) {
+        if(!c1 || !c2 || !c3){
           setStatus("Bitte Körper/Flügel/Fühler Farbe eintragen.", "error");
           return;
         }
@@ -384,35 +597,49 @@
           qty,
           body_color: c1,
           part2_color: c2,
-          part3_color: c3
+          part3_color: packExtras(c3, { note: desc, prio: priority, otherName:"", otherSize:"" })
+        };
+      }
+
+      if(mode === "other"){
+        const name = (oName.value || "").trim();
+        const size = (oSize.value || "").trim();
+        const color = (oColor.value || "").trim();
+        if(!name || !size || !color){
+          setStatus("Bitte Name, Größe und Farbe ausfüllen.", "error");
+          return;
+        }
+        // Wir speichern:
+        // body_color = Name
+        // part2_color = Größe (fallback)
+        // part3_color = Farbe + extras
+        payload = {
+          product_type: "other",
+          size_cm: null,
+          qty,
+          body_color: name,
+          part2_color: size,
+          part3_color: packExtras(color, { note: desc, prio: priority, otherName: name, otherSize: size })
         };
       }
 
       setStatus("Speichere…");
 
       const { error } = await supabase.from("orders").insert(payload);
-      if (error) {
+      if(error){
         setStatus("Fehler: " + error.message, "error");
         return;
       }
 
-      // Reset Felder
+      // Reset Inputs
       qtyEl.value = "1";
+      note.value = "";
+
       hBody.value = ""; hEars.value = ""; hButt.value = "";
       lBody.value = ""; lWings.value = ""; lFeelers.value = "";
+      oName.value = ""; oSize.value = ""; oColor.value = "";
 
       setStatus("Gespeichert ✅", "ok");
-      await loadOrders();
-    }
-
-    async function deleteOrder(id) {
-      setStatus("Lösche…");
-      const { error } = await supabase.from("orders").delete().eq("id", id);
-      if (error) {
-        setStatus("Löschen fehlgeschlagen: " + error.message, "error");
-        return;
-      }
-      setStatus("Gelöscht ✅", "ok");
       await loadOrders();
     }
 
