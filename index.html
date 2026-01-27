@@ -297,6 +297,71 @@
     .modalBody{ padding:14px; }
     .dangerMsg{ color:var(--danger); font-weight:900; display:none; margin-top:8px; }
     .okMsg{ color:var(--ok); font-weight:900; display:none; margin-top:8px; }
+  
+  /* ===== DROPDOWN FIX (MOBILE + DESKTOP) ===== */
+
+.ddWrap{
+  position: relative;
+}
+
+.ddBtn{
+  position:absolute;
+  right:10px;
+  top:50%;
+  transform:translateY(-50%);
+  background:none;
+  border:none;
+  font-size:18px;
+  cursor:pointer;
+  z-index:3;
+}
+
+.ddInput{
+  padding-right:36px; /* Platz für Pfeil */
+}
+
+.ddMenu{
+  position:absolute;
+  top:100%;
+  left:0;
+  right:0;
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+  margin-top:4px;
+  max-height:200px;
+  overflow:auto;
+  display:none;
+  z-index:999;
+}
+
+.ddMenu.open{
+  display:block;
+}
+
+.ddItem{
+  padding:10px 12px;
+  cursor:pointer;
+}
+
+.ddItem:hover{
+  background:#f1f5f9;
+}
+
+.ddEmpty{
+  padding:10px;
+  color:#6b7280;
+}
+
+/* ===== FORCE: ausgewählte Chips schwarz ===== */
+.chip.chipActive,
+.chip.active{
+  background: linear-gradient(180deg, #0b1220, #0f172a) !important;
+  color: #fff !important;
+  border-color: #0f172a !important;
+}
+  
+
   </style>
 </head>
 
@@ -325,6 +390,11 @@
 
         <div class="sep"></div>
 
+       <!-- Farben direkt UNTER Priorität -->
+        <div id="colorArea"></div>
+
+        <div class="sep"></div>
+       
         <!-- Priorität kommt ÜBER Farben -->
         <label>Priorität</label>
         <div class="prioRow">
@@ -335,10 +405,7 @@
 
         <div class="sep"></div>
 
-        <!-- Farben direkt UNTER Priorität -->
-        <div id="colorArea"></div>
-
-        <div class="sep"></div>
+        
 
         <div class="grid grid-2">
           <div>
