@@ -632,8 +632,8 @@
 
     // Preise (änderbar)
     const PRICES = {
-      bunny: { "20": 12.0, "15": 9.0, "11": 6.0, comboAllThree: 22.0 },
-      lumi: 8.0
+      bunny: { "20": 12.0, "15": 9.0, "11": 6.0, comboAllThree: 22.50 },
+      lumi: 8.50
     };
 
     // ---------------- state ----------------
@@ -656,7 +656,7 @@
     let cart = [];
 
     // für Abzug/Korrektur UI
-    let adjPick = { kind:null, bunnySize:null, otherAmount:null };
+
 
     // ---------------- helpers ----------------
     const euro = (n)=> (Number(n)||0).toFixed(2).replace(".", ",") + " €";
@@ -1386,94 +1386,157 @@
       modalBack.classList.add("open");
     }
 
-    // ---------------- sold adjustments picker UI (Abzug) ----------------
-    function adjShowOk(msg){
-      adjErr.style.display="none";
-      adjMsg.textContent = msg || "Gespeichert ✅";
-      adjMsg.style.display="block";
+// ---------------- sold adjustments picker UI (Korrektur) ----------------
+// Erwartete HTML-IDs:
+// soldSum  (der klickbare Text "Verkauft gesamt …")
+// adjBack, closeAdj, adjPickArea, adjNote, addAdjBtn, adjMsg, adjErr
+// soldBtnBunny, soldBtnLumi, soldBtnCombo, soldBtnOther
+
+function adjShowOk(msg){
+  adjErr.style.display="none";
+  adjMsg.textContent = msg || "Gespeichert ✅";
+  adjMsg.style.display="block";
+}
+function adjShowErr(msg){
+  adjMsg.style.display="none";
+  adjErr.textContent = msg || "Fehler";
+  adjErr.style.display="block";
+}
+function adjClearMsgs(){
+  adjMsg.style.display="none";
+  adjErr.style.display="none";
+}
+
+let adjPick = { kind:null, bunnySize:null, otherAmount:null, sign:-1 };
+
+function renderAdjPick(){
+  adjPickArea.innerHTML = "";
+  adjClearMsgs();
+
+  // Buttons + Inhalt
+  if(adjPick.kind === "bunny"){
+    adjPickArea.innerHTML = `
+      <label>Hase: Größe wählen</label>
+      <div class="chips">
+        <div class="chip" id="adjS20">20 cm</div>
+        <div class="chip" id="adjS15">15 cm</div>
+        <div class="chip" id="adjS11">11 cm</div>
+      </div>
+      <div class="hint" style="margin-top:8px;">Danach „Korrektur speichern“ drücken.</div>
+    `;
+    ["20","15","11"].forEach(s=>{
+      const el = document.getElementById("adjS"+s);
+      el.addEventListener("click", ()=>{
+        adjPick.bunnySize = s;
+        ["20","15","11"].forEach(x=>setChipActive(document.getElementById("adjS"+x), x===s));
+      });
+    });
+  }
+
+  if(adjPick.kind === "combo"){
+    adjPickArea.innerHTML = `
+      <div class="hint">Hase-Combo (20+15+11) – danach „Korrektur speichern“.</div>
+    `;
+  }
+
+  if(adjPick.kind === "lumi"){
+    adjPickArea.innerHTML = `
+      <div class="hint">Lumi – danach „Korrektur speichern“.</div>
+    `;
+  }
+
+  if(adjPick.kind === "other"){
+    adjPickArea.innerHTML = `
+      <label>Beliebiger Betrag</label>
+      <input id="adjOtherAmount" inputmode="decimal" placeholder="z. B. 5,50" />
+      <div class="hint" style="margin-top:8px;">Vorzeichen stellst du über „Abziehen / Hinzufügen“ ein.</div>
+    `;
+    const inp = document.getElementById("adjOtherAmount");
+    inp.addEventListener("input", ()=> adjPick.otherAmount = inp.value );
+  }
+}
+
+// Modal öffnen
+soldSumEl.addEventListener("click", ()=>{
+  // Standard: abziehen
+  adjPick = { kind:null, bunnySize:null, otherAmount:null, sign:-1 };
+  adjNote.value = "";
+  adjPickArea.innerHTML = `<div class="hint">Wähle unten eine Option.</div>`;
+  adjClearMsgs();
+  adjBack.classList.add("open");
+});
+
+// Modal schließen
+closeAdj.addEventListener("click", ()=> adjBack.classList.remove("open"));
+adjBack.addEventListener("click", (e)=>{ if(e.target===adjBack) adjBack.classList.remove("open"); });
+
+// Button: Hase/Lumi/Combo/Other wählen
+soldBtnBunny.addEventListener("click", ()=>{
+  adjPick = { kind:"bunny", bunnySize:null, otherAmount:null, sign:adjPick.sign ?? -1 };
+  renderAdjPick();
+});
+soldBtnLumi.addEventListener("click", ()=>{
+  adjPick = { kind:"lumi", bunnySize:null, otherAmount:null, sign:adjPick.sign ?? -1 };
+  renderAdjPick();
+});
+soldBtnCombo.addEventListener("click", ()=>{
+  adjPick = { kind:"combo", bunnySize:null, otherAmount:null, sign:adjPick.sign ?? -1 };
+  renderAdjPick();
+});
+soldBtnOther.addEventListener("click", ()=>{
+  adjPick = { kind:"other", bunnySize:null, otherAmount:null, sign:adjPick.sign ?? -1 };
+  renderAdjPick();
+});
+
+// Speichern: Betrag aus Auswahl berechnen und in DB schreiben
+addAdjBtn.addEventListener("click", async ()=>{
+  try{
+    adjClearMsgs();
+
+    // sign: -1 = abziehen, +1 = hinzufügen
+    const sign = Number(adjPick.sign ?? -1);
+
+    let amount = null;
+
+    // feste Preise
+    const PRICE = {
+      bunny: { "20":12.00, "15":9.00, "11":6.00 },
+      combo: 22.00,
+      lumi: 8.00
+    };
+
+    if(adjPick.kind === "bunny"){
+      if(!adjPick.bunnySize) return adjShowErr("Bitte Größe wählen.");
+      amount = PRICE.bunny[adjPick.bunnySize];
+    } else if(adjPick.kind === "combo"){
+      amount = PRICE.combo;
+    } else if(adjPick.kind === "lumi"){
+      amount = PRICE.lumi;
+    } else if(adjPick.kind === "other"){
+      const raw = String(adjPick.otherAmount||"").trim().replace(",",".");
+      const num = Number(raw);
+      if(!Number.isFinite(num) || num<=0) return adjShowErr("Bitte gültigen Betrag eingeben.");
+      amount = num;
+    } else {
+      return adjShowErr("Bitte zuerst eine Option wählen.");
     }
-    function adjShowErr(msg){
-      adjMsg.style.display="none";
-      adjErr.textContent = msg || "Fehler";
-      adjErr.style.display="block";
-    }
-    function adjClearMsgs(){
-      adjMsg.style.display="none";
-      adjErr.style.display="none";
-    }
 
-    function renderAdjPick(){
-      adjPickArea.innerHTML = "";
+    const signed = sign * amount;
+    const note = (adjNote.value||"").trim();
 
-      if(adjPick.kind === "bunny"){
-        adjPickArea.innerHTML = `
-          <label>Hase: Größe wählen</label>
-          <div class="chips">
-            <div class="chip" id="adjS20">20 cm</div>
-            <div class="chip" id="adjS15">15 cm</div>
-            <div class="chip" id="adjS11">11 cm</div>
-          </div>
-        `;
-        ["20","15","11"].forEach(s=>{
-          const el = document.getElementById("adjS"+s);
-          el.addEventListener("click", ()=>{
-            adjPick.bunnySize = s;
-            ["20","15","11"].forEach(x=>setChipActive(document.getElementById("adjS"+x), x===s));
-          });
-        });
-      }
+    const { error } = await supabase
+      .from("adjustments")
+      .insert({ amount_eur: signed, note });
 
-      if(adjPick.kind === "combo"){
-        adjPickArea.innerHTML = `
-          <div class="subTitle">Hase Combo: Set aus 20 + 15 + 11 cm</div>
-        `;
-      }
+    if(error) return adjShowErr(error.message);
 
-      if(adjPick.kind === "lumi"){
-        adjPickArea.innerHTML = `<div class="subTitle">Lumi Abzug: 1× Lumi</div>`;
-      }
+    adjShowOk(`Gespeichert (${signed.toFixed(2)} €) ✅`);
+    await loadAll();
+  } catch(err){
+    adjShowErr(String(err?.message || err));
+  }
+});
 
-      if(adjPick.kind === "other"){
-        adjPickArea.innerHTML = `
-          <label>Weitere Produkt: Betrag eingeben</label>
-          <input id="adjOtherAmount" inputmode="decimal" placeholder="z. B. 5,50" />
-        `;
-        const inp = document.getElementById("adjOtherAmount");
-        inp.addEventListener("input", ()=>{ adjPick.otherAmount = inp.value; });
-      }
-    }
-
-    soldSumEl.addEventListener("click", ()=>{
-      adjPick = { kind:null, bunnySize:null, otherAmount:null };
-      adjNote.value = "";
-      adjClearMsgs();
-      adjPickArea.innerHTML = `<div class="muted">Wähle oben eine Option.</div>`;
-      adjBack.classList.add("open");
-    });
-
-    closeAdj.addEventListener("click", ()=>adjBack.classList.remove("open"));
-    adjBack.addEventListener("click", (e)=>{ if(e.target===adjBack) adjBack.classList.remove("open"); });
-
-    soldBtnBunny.addEventListener("click", ()=>{
-      adjPick = { kind:"bunny", bunnySize:null, otherAmount:null };
-      renderAdjPick();
-      adjClearMsgs();
-    });
-    soldBtnLumi.addEventListener("click", ()=>{
-      adjPick = { kind:"lumi", bunnySize:null, otherAmount:null };
-      renderAdjPick();
-      adjClearMsgs();
-    });
-    soldBtnCombo.addEventListener("click", ()=>{
-      adjPick = { kind:"combo", bunnySize:null, otherAmount:null };
-      renderAdjPick();
-      adjClearMsgs();
-    });
-    soldBtnOther.addEventListener("click", ()=>{
-      adjPick = { kind:"other", bunnySize:null, otherAmount:null };
-      renderAdjPick();
-      adjClearMsgs();
-    });
 
     // Sort toggle buttons (UI only here; render in Teil 4)
     sortDate.addEventListener("click", ()=>{
