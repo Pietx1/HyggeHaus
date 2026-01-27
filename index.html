@@ -892,9 +892,10 @@
 
       // UI
       [btnBunny,btnLumi,btnOther].forEach(b=>b.classList.remove("btnDark"));
-      btnBunny.classList.add(currentProduct==="bunny" ? "btnDark" : "");
-      btnLumi.classList.add(currentProduct==="lumi" ? "btnDark" : "");
-      btnOther.classList.add(currentProduct==="other" ? "btnDark" : "");
+      btnBunny.classList.toggle("btnDark", currentProduct === "bunny");
+btnLumi.classList.toggle("btnDark",  currentProduct === "lumi");
+btnOther.classList.toggle("btnDark", currentProduct === "other");
+
 
       // priority buttons reset (no auto active)
       [pVery,pNorm,pLow].forEach(x=>x.classList.remove("active"));
