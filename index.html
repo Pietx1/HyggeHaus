@@ -816,16 +816,26 @@
 
       } else if(currentProduct === "lumi"){
         productArea.innerHTML = `<div class="subTitle">Lumi hat keine Größe – wähle Farben.</div>`;
-      } else if(currentProduct === "other"){
-        productArea.innerHTML = `
-          <div class="grid grid-2">
-            <div class="field">
-              <label for="other_size">Größe</label>
-              <input id="other_size" placeholder="z. B. groß / 10 cm / XL" />
-            </div>
-            <div class="subTitle">Weitere Produkt: Größe + Farbe</div>
-          </div>
-        `;
+     } else if(currentProduct === "other"){
+  productArea.innerHTML = `
+    <div class="grid grid-1">
+      <div class="field">
+        <label for="other_name">Produktname *</label>
+        <input id="other_name" placeholder="z. B. Schlüsselanhänger" />
+      </div>
+    </div>
+
+    <div class="sep"></div>
+
+    <div class="grid grid-2">
+      <div class="field">
+        <label for="other_size">Größe *</label>
+        <input id="other_size" placeholder="z. B. groß / 10 cm / XL" />
+      </div>
+      <div class="subTitle">Weitere Produkt: frei definierbar</div>
+    </div>
+  `;
+
         const os = document.getElementById("other_size");
         os.addEventListener("input", ()=>{ fields.other_size = os.value||""; validateForAdd(); });
       }
@@ -1583,7 +1593,7 @@
         priority: it.priority,
         qty: it.qty,
         colors: it.colors,
-        customer_name: it.customer_name ?? null,
+        
         note: it.note ?? null,
         price_override: it.price_override ?? null
       }));
