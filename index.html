@@ -362,82 +362,15 @@
 }
   
 
-.topbar{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px; }
-.topbar-left{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
-
-.tabBtn{
-  border:1px solid var(--border);
-  background:#fff;
-  color:#111827;
-  border-radius:999px;
-  padding:8px 12px;
-  font-weight:700;
-  cursor:pointer;
-}
-.tabBtn.active{
-  background:#111827;
-  color:#fff;
-  border-color:#111827;
-}
-
-.workSectionTitle{
-  margin:16px 0 8px;
-  font-weight:900;
-  font-size:16px;
-}
-.workRow{
-  display:grid;
-  grid-template-columns: 1fr 110px 1fr 42px;
-  gap:10px;
-  align-items:center;
-  padding:10px 12px;
-  border:1px solid var(--border);
-  border-radius:12px;
-  background:#fff;
-  margin-bottom:8px;
-}
-.workMain{ font-weight:800; }
-.workSub{ color:var(--muted); font-size:13px; margin-top:2px; }
-.workQty{ text-align:right; font-weight:900; }
-.workNote input{
-  width:100%;
-  border:1px solid var(--border);
-  border-radius:10px;
-  padding:8px 10px;
-}
-.workDone{
-  width:26px; height:26px;
-  border-radius:8px;
-  border:2px solid #cbd5e1;
-  display:flex; align-items:center; justify-content:center;
-  cursor:pointer;
-  user-select:none;
-}
-.workDone.checked{
-  background:#111827;
-  border-color:#111827;
-  color:#fff;
-}
-@media(max-width:700px){
-  .workRow{ grid-template-columns: 1fr 80px; grid-template-rows:auto auto; }
-  .workNote{ grid-column: 1 / -1; }
-  .workDone{ justify-self:end; }
-}
-
-
   </style>
 </head>
 
 <body>
- <div class="topbar">
-  <div class="topbar-left">
-    <h1>Bestellungen</h1>
-    <button id="pageOrders" class="tabBtn active">Bestellungen</button>
-    <button id="pageWork" class="tabBtn">Arbeitsliste</button>
-  </div>
-  <div class="hint">GitHub Pages • Supabase</div>
-</div>
-
+  <div class="container">
+    <div class="topbar">
+      <h1>Bestellungen</h1>
+      <div class="hint">GitHub Pages • Supabase</div>
+    </div>
 
     <!-- NEUE BESTELLUNG -->
     <div class="card">
@@ -568,27 +501,6 @@
 
         <div class="sep"></div>
 
-        <!-- Seite 1: Bestellungen (dein bisheriger Inhalt sollte in #ordersPage liegen) -->
-<div id="ordersPage">
-  <!-- HIER bleibt dein kompletter bisheriger Bestellungen-Code -->
-</div>
-
-<!-- Seite 2: Arbeitsliste -->
-<div id="workPage" style="display:none">
-  <div class="card">
-    <div class="pad">
-      <div class="title2" style="margin:0">Arbeitsliste (nur offen)</div>
-      <div class="hint" style="margin-top:6px">Zeigt nur offene Bestellungen. Archivierte verschwinden hier automatisch.</div>
-
-      <div class="sep"></div>
-
-      <div id="workList"></div>
-      <div id="workEmpty" class="hint" style="display:none">Keine offenen Positionen.</div>
-    </div>
-  </div>
-</div>
-
-
         <!-- Verkauft gesamt: am Ende von Offene Bestellungen, größer -->
         <div class="sumBox sumBig" id="soldSum" title="Klicken für Korrektur / Abzug">
           Verkauft gesamt: 0,00 €
@@ -712,26 +624,6 @@
     const soldBtnLumi  = document.getElementById("soldBtnLumi");
     const soldBtnCombo = document.getElementById("soldBtnCombo");
     const soldBtnOther = document.getElementById("soldBtnOther");
-
-    const pageOrdersBtn = document.getElementById("pageOrders");
-const pageWorkBtn = document.getElementById("pageWork");
-const ordersPage = document.getElementById("ordersPage");
-const workPage = document.getElementById("workPage");
-const workListEl = document.getElementById("workList");
-const workEmptyEl = document.getElementById("workEmpty");
-
-function setPage(which){
-  const isOrders = which === "orders";
-  ordersPage.style.display = isOrders ? "block" : "none";
-  workPage.style.display   = isOrders ? "none" : "block";
-
-  pageOrdersBtn.classList.toggle("active", isOrders);
-  pageWorkBtn.classList.toggle("active", !isOrders);
-}
-
-pageOrdersBtn.addEventListener("click", ()=>setPage("orders"));
-pageWorkBtn.addEventListener("click", ()=>setPage("work"));
-
 
     // ---------------- constants ----------------
     const COLOR_SUGGESTIONS = [
@@ -871,164 +763,6 @@ pageWorkBtn.addEventListener("click", ()=>setPage("work"));
       // initial
       fields[inputId] = input.value || "";
     }
-
-function norm(s){ return (s ?? "").toString().trim(); }
-
-// Key für localStorage pro Zeile
-function workKey(group, label){
-  return `work:${group}:${label}`;
-}
-
-function loadWorkState(group, label){
-  try{
-    const raw = localStorage.getItem(workKey(group,label));
-    return raw ? JSON.parse(raw) : { note:"", done:false };
-  }catch{
-    return { note:"", done:false };
-  }
-}
-
-function saveWorkState(group, label, state){
-  localStorage.setItem(workKey(group,label), JSON.stringify(state));
-}
-
-// formatiert Farben je nach Produkt/Mode
-function colorsLabel(item){
-  // item.colors ist bei dir meist ein Objekt (z.B. { body:"rot", ears:"weiß", butt:"blau" } oder { single:"grau" })
-  const c = item.colors || {};
-  if(item.product === "bunny"){
-    if(item.mode === "single"){
-      return `Farbe: ${norm(c.single)}`;
-    }
-    return `Körper: ${norm(c.body)} · Ohren: ${norm(c.ears)} · Popo: ${norm(c.butt)}`;
-  }
-  if(item.product === "lumi"){
-    return `Körper: ${norm(c.body)} · Flügel: ${norm(c.wings)} · Fühler: ${norm(c.feelers)}`;
-  }
-  if(item.product === "other"){
-    return `Farbe: ${norm(c.color)}`;
-  }
-  return "";
-}
-
-function groupTitleFor(item){
-  if(item.product === "bunny"){
-    if(item.size === "20") return "Hase 20";
-    if(item.size === "15") return "Hase 15";
-    if(item.size === "11") return "Hase 11";
-    return "Hase";
-  }
-  if(item.product === "lumi") return "Lumi";
-  if(item.product === "other") return "Weitere Produkte";
-  return "Andere";
-}
-
-function itemNameForOther(item){
-  // falls du beim "Weitere Produkt" einen freien Namen speicherst (z.B. item.other_name oder item.name)
-  // passe ggf. den Feldnamen an, je nachdem wie du es gespeichert hast:
-  return norm(item.other_name || item.name || "Unbenannt");
-}
-
-function renderWorklist(openOrders){
-  // openOrders: array of orders, jeder order hat items: [...]
-  const items = [];
-  for(const o of (openOrders || [])){
-    for(const it of (o.items || [])){
-      items.push(it);
-    }
-  }
-
-  // Nur wenn wirklich offene Items da sind
-  workListEl.innerHTML = "";
-  workEmptyEl.style.display = items.length ? "none" : "block";
-  if(!items.length) return;
-
-  // Aggregation: group -> label -> qtySum
-  // label besteht aus (bei other zusätzlich name) + colors
-  const map = new Map();
-
-  for(const it of items){
-    const group = groupTitleFor(it);
-    const col = colorsLabel(it);
-
-    let label = col;
-    if(it.product === "other"){
-      label = `${itemNameForOther(it)} · ${col}`;
-    }
-
-    const qty = Number(it.qty || 0) || 0;
-    const k = `${group}|||${label}`;
-    map.set(k, (map.get(k) || 0) + qty);
-  }
-
-  // gewünschte Reihenfolge der Gruppen
-  const order = ["Hase 20","Hase 15","Hase 11","Lumi","Weitere Produkte"];
-
-  // gruppieren
-  const grouped = {};
-  for(const [k, qty] of map.entries()){
-    const [group, label] = k.split("|||");
-    grouped[group] ||= [];
-    grouped[group].push({ label, qty });
-  }
-
-  // Gruppen in Reihenfolge rendern, aber nur wenn vorhanden
-  for(const g of order){
-    const rows = grouped[g];
-    if(!rows || !rows.length) continue;
-
-    // Sort optional: alphabetisch
-    rows.sort((a,b)=>a.label.localeCompare(b.label, "de"));
-
-    const title = document.createElement("div");
-    title.className = "workSectionTitle";
-    title.textContent = g;
-    workListEl.appendChild(title);
-
-    for(const r of rows){
-      const state = loadWorkState(g, r.label);
-
-      const row = document.createElement("div");
-      row.className = "workRow";
-
-      row.innerHTML = `
-        <div>
-          <div class="workMain">${escapeHtml(r.label)}</div>
-        </div>
-
-        <div class="workQty">x ${r.qty}</div>
-
-        <div class="workNote">
-          <input type="text" value="${escapeHtml(state.note)}" placeholder="Notiz…" />
-        </div>
-
-        <div class="workDone ${state.done ? "checked" : ""}" title="Fertig">
-          ${state.done ? "✓" : ""}
-        </div>
-      `;
-
-      // Note speichern
-      const noteInput = row.querySelector("input");
-      noteInput.addEventListener("input", ()=>{
-        saveWorkState(g, r.label, { note: noteInput.value, done: loadWorkState(g,r.label).done });
-      });
-
-      // Checkbox togglen
-      const doneBox = row.querySelector(".workDone");
-      doneBox.addEventListener("click", ()=>{
-        const cur = loadWorkState(g, r.label);
-        const next = { note: cur.note, done: !cur.done };
-        saveWorkState(g, r.label, next);
-        doneBox.classList.toggle("checked", next.done);
-        doneBox.textContent = next.done ? "✓" : "";
-      });
-
-      workListEl.appendChild(row);
-    }
-  }
-}
-
-
 
     // ---------------- UI builders ----------------
     function renderProductArea(){
@@ -2214,11 +1948,7 @@ addAdjBtn.addEventListener("click", async ()=>{
       const all = Array.from(map.values());
 
       const open = all.filter(x=>!x.archived);
-      
       const archived = all.filter(x=>x.archived);
-
-      renderWorkList(open);
-
 
       // sorting open
       if(sortMode==="prio"){
