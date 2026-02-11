@@ -6,333 +6,449 @@
   <title>Bestellungen</title>
   <style>
     :root{
-      --bg:#f6f7fb; --card:#fff; --text:#0f172a; --muted:#64748b; --border:#e2e8f0;
-      --accent:#0b1220; --danger:#b91c1c; --ok:#047857; --chip:#eef2ff;
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --border:#e5e7eb;
+      --soft:#f1f5f9;
+      --dark:#0b1220;
+      --dark2:#121a2b;
+      --danger:#b91c1c;
+      --ok:#047857;
+      --shadow:0 10px 26px rgba(0,0,0,.08);
+      --r:18px;
     }
     *{box-sizing:border-box}
-    body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; background:var(--bg); color:var(--text);}
-    .container{max-width:1100px; margin:0 auto; padding:18px;}
-    h1{margin:8px 0 6px; font-size:34px; letter-spacing:-.5px}
-    .hint{color:var(--muted); font-size:13px}
-    .row{display:flex; gap:12px; align-items:center; justify-content:space-between}
-    .card{background:var(--card); border:1px solid var(--border); border-radius:18px; box-shadow:0 10px 25px rgba(2,6,23,.06);}
+    body{
+      margin:0;
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+    }
+    .container{max-width:1100px;margin:0 auto;padding:18px}
+    .topbar{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:14px}
+    .title{font-size:42px;letter-spacing:-.02em;margin:0}
+    .hint{color:var(--muted);font-size:14px;white-space:nowrap}
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+    }
     .pad{padding:16px}
     .sep{height:14px}
-    .grid{display:grid; gap:12px}
+    .grid{display:grid;gap:12px}
     @media(min-width:900px){ .grid-2{grid-template-columns:1fr 1fr} }
     @media(min-width:900px){ .grid-3{grid-template-columns:repeat(3,1fr)} }
 
+    .sectionTitle{font-size:20px;margin:0 0 10px}
+    .subTitle{font-size:14px;color:var(--muted);margin:0 0 10px}
+    label{display:block;font-weight:700;font-size:13px;margin-bottom:6px}
+    input, textarea{
+      width:100%;
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:12px 12px;
+      font-size:14px;
+      outline:none;
+      background:#fff;
+    }
+    textarea{min-height:90px;resize:vertical}
+
+    /* buttons */
+    .rowBtns{display:flex;gap:10px;flex-wrap:wrap}
     .btn{
-      border:0; cursor:pointer; border-radius:14px; padding:10px 14px; font-weight:800;
-      background:var(--accent); color:#fff; display:inline-flex; align-items:center; justify-content:center; gap:8px;
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:16px;
+      padding:12px 14px;
+      font-weight:800;
+      cursor:pointer;
+      min-width:120px;
+      box-shadow:0 6px 14px rgba(0,0,0,.04);
     }
-    .btn:disabled{opacity:.5; cursor:not-allowed}
-    .btn-soft{
-      background:#fff; color:var(--accent); border:1px solid var(--border);
+    .btn:active{transform:translateY(1px)}
+    .btnDark{
+      background:linear-gradient(180deg,var(--dark2),var(--dark));
+      color:#fff;
+      border-color:transparent;
     }
-    .btn-danger{background:var(--danger)}
-    .btn-small{padding:8px 10px; border-radius:12px; font-weight:800}
-    .btn-ghost{background:transparent; border:1px solid var(--border); color:var(--accent)}
-    .toggleRow{display:flex; gap:10px}
-    .toggle{
-      flex:1; border-radius:16px; padding:12px 14px; font-weight:900; border:1px solid var(--border);
-      background:#fff; color:var(--accent); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px;
+    .btnSoft{
+      background:var(--soft);
+      border-color:transparent;
+      color:var(--text);
     }
-    .toggle.active{background:var(--accent); color:#fff; border-color:transparent}
-    .title2{font-size:22px; margin:0 0 10px; font-weight:900}
-    .label{font-size:13px; font-weight:900; color:var(--text); margin:2px 0 6px}
-    .muted{color:var(--muted)}
-    .err{color:var(--danger); font-weight:800; font-size:13px; margin-top:8px; display:flex; align-items:center; gap:8px}
-    .ok{color:var(--ok); font-weight:800; font-size:13px; margin-top:8px}
-    .field{border:1px solid var(--border); border-radius:14px; padding:10px 12px; width:100%; font-size:15px; outline:none; background:#fff}
-    textarea.field{min-height:86px; resize:vertical}
-    .field.error{border-color:var(--danger); box-shadow:0 0 0 3px rgba(185,28,28,.12)}
-    .chipRow{display:flex; gap:10px; flex-wrap:wrap}
-    .chip{
-      border:1px solid var(--border); background:#fff; padding:10px 14px; border-radius:16px; font-weight:900; cursor:pointer;
-      min-width:84px; text-align:center;
-    }
-    .chip.active{background:var(--accent); color:#fff; border-color:transparent}
-    .prioRow{display:grid; grid-template-columns:1fr 1.2fr 1fr; gap:10px}
-    .prioBtn{border:1px solid var(--border); background:#fff; border-radius:16px; padding:12px 10px; font-weight:950; cursor:pointer}
-    .prioBtn.active{background:var(--accent); color:#fff; border-color:transparent}
-    .prioBtn.small{transform:scale(.92)}
-    .qtyRow{display:flex; gap:8px; flex-wrap:wrap}
-    .qtyBtn{width:44px; height:40px; border-radius:14px; border:1px solid var(--border); background:#fff; font-weight:950; cursor:pointer}
-    .qtyBtn.active{background:var(--accent); color:#fff; border-color:transparent}
-    .inline{display:flex; gap:10px; align-items:center}
-    .grow{flex:1}
+    .btnSmall{padding:9px 12px;border-radius:14px;font-weight:800;min-width:auto}
+    .btnDanger{background:#fff;color:var(--danger);border-color:#fecaca}
+    .btnDanger:hover{background:#fff5f5}
+    .btnOk{background:#fff;border-color:#bbf7d0;color:var(--ok)}
+    .btnWide{width:100%;justify-content:center;text-align:center}
+    .btnDisabled{opacity:.45;cursor:not-allowed}
 
-    /* ---- Custom dropdown (mobile friendly) ---- */
-    .ddWrap{position:relative; display:flex; gap:10px; align-items:center}
-    .ddInput{flex:1}
-    .ddArrow{
-      width:44px; height:42px; border-radius:14px; border:1px solid var(--border); background:#fff;
-      display:flex; align-items:center; justify-content:center; cursor:pointer; user-select:none;
+    /* Priority buttons */
+    .prioWrap{display:flex;gap:10px;align-items:stretch}
+    .prioSmall{flex:1}
+    .prioBig{flex:1.35}
+    .prioBtn{
+      width:100%;
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:16px;
+      padding:12px 10px;
+      font-weight:900;
+      cursor:pointer;
+      box-shadow:0 6px 14px rgba(0,0,0,.04);
     }
+    .prioBtn.active{
+      background:linear-gradient(180deg,var(--dark2),var(--dark));
+      color:#fff;border-color:transparent;
+    }
+
+    /* quantity */
+    .qtyRow{display:flex;gap:10px;flex-wrap:wrap}
+    .qtyBtn{
+      width:62px;
+      height:42px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:#fff;
+      font-weight:900;
+      cursor:pointer;
+    }
+    .qtyBtn.active{background:linear-gradient(180deg,var(--dark2),var(--dark));color:#fff;border-color:transparent}
+    .qtyOtherWrap{display:flex;gap:10px;align-items:center}
+    .qtyOtherWrap input{max-width:180px}
+
+    /* form error */
+    .formError{
+      margin-top:10px;
+      font-weight:900;
+      color:var(--danger);
+      display:none;
+      align-items:center;
+      gap:8px;
+    }
+    .errorOutline{border-color:var(--danger) !important; box-shadow:0 0 0 3px rgba(185,28,28,.15)}
+    .errorLabel{color:var(--danger)}
+
+    /* dropdown (custom) */
+    .ddWrap{position:relative}
+    .ddInputWrap{
+      display:flex;align-items:center;gap:10px;
+    }
+    .ddInputWrap input{
+      padding-right:44px;
+    }
+    .ddArrowBtn{
+      position:absolute;
+      right:10px;
+      top:50%;
+      transform:translateY(-50%);
+      width:34px;height:34px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:#fff;
+      cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .ddArrowBtn:active{transform:translateY(-50%) translateY(1px)}
+    .ddArrowBtn svg{width:18px;height:18px;opacity:.8}
     .ddMenu{
-      position:absolute; left:0; right:0; top:50px;
-      background:#fff; border:1px solid var(--border); border-radius:14px; box-shadow:0 16px 30px rgba(2,6,23,.10);
-      overflow:hidden; z-index:50; max-height:240px; overflow-y:auto;
+      position:absolute;
+      left:0; right:0;
+      top:calc(100% + 8px);
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:14px;
+      box-shadow:var(--shadow);
+      padding:8px;
+      display:none;
+      z-index:50;
+      max-height:260px;
+      overflow:auto;
     }
-    .ddItem{padding:10px 12px; cursor:pointer; font-weight:800}
-    .ddItem:hover{background:#f1f5f9}
+    .ddMenu.open{display:block}
+    .ddItem{
+      padding:10px 10px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:800;
+      color:var(--text);
+    }
+    .ddItem:hover{background:var(--soft)}
+    .ddNote{
+      padding:8px 10px;
+      color:var(--muted);
+      font-size:12px;
+    }
 
-    /* Orders list */
-    .ordersHead{display:flex; align-items:center; justify-content:space-between; gap:12px}
-    .sortBtns{display:flex; gap:10px}
-    .orderCard{border:1px solid var(--border); border-radius:16px; padding:12px; background:#fff}
-    .orderTop{display:flex; align-items:flex-start; justify-content:space-between; gap:10px}
-    .orderMeta{display:flex; flex-direction:column; gap:4px}
-    .orderDate{font-weight:950}
-    .orderCustomer{color:var(--muted); font-weight:800}
-    .orderTotal{font-weight:950}
-    .pill{display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; border:1px solid var(--border); font-weight:900; background:#fff}
-    .pill.prio{background:var(--chip)}
-    .items{margin-top:10px; display:grid; gap:8px}
-    .itemLine{display:flex; align-items:flex-start; justify-content:space-between; gap:10px; padding:10px; border:1px solid var(--border); border-radius:14px; background:#fff}
-    .itemL{display:flex; flex-direction:column; gap:4px}
-    .itemT{font-weight:950}
-    .itemS{color:var(--muted); font-weight:800; font-size:13px}
-    .iconBtn{width:40px; height:40px; border-radius:14px; border:1px solid var(--border); background:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center}
-    .iconBtn:hover{background:#f8fafc}
+    /* layout helpers */
+    .twoCols{display:grid;gap:12px}
+    @media(min-width:900px){ .twoCols{grid-template-columns:1fr 1fr} }
+
+    .chips{display:flex;gap:10px;flex-wrap:wrap}
+    .chip{
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:10px 14px;
+      font-weight:900;
+      cursor:pointer;
+      background:#fff;
+      min-width:110px;
+      text-align:center;
+    }
+    .chip.active{
+      background:linear-gradient(180deg,var(--dark2),var(--dark));
+      color:#fff;
+      border-color:transparent;
+    }
+
+    .cartCard{
+      border:1px dashed #cbd5e1;
+      background:#fff;
+      border-radius:16px;
+      padding:12px;
+    }
+    .cartHead{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .cartTitle{font-weight:1000}
+    .cartList{display:grid;gap:8px;margin-top:10px}
+    .cartItem{
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:10px;
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      justify-content:space-between;
+      background:#fff;
+    }
+    .cartMeta{color:var(--muted);font-size:13px;margin-top:3px;line-height:1.25}
+    .iconBtn{
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:12px;
+      width:38px;height:38px;
+      cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .iconBtn:hover{background:var(--soft)}
+    .iconBtn svg{width:18px;height:18px}
+
+    /* orders */
+    .ordersHead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+    .ordersHead .left .title2{font-weight:1000;font-size:18px}
+    .ordersHead .left .sum{color:var(--muted);font-weight:900;margin-top:4px}
+    .sortBtns{display:flex;gap:10px;align-items:center}
+    .orderBox{
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:12px;
+      background:#fff;
+      box-shadow:0 6px 14px rgba(0,0,0,.04);
+    }
+    .orderTop{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+    .orderDate{color:var(--muted);font-size:13px;font-weight:900}
+    .orderCustomer{font-weight:1000}
+    .orderBadge{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:7px 10px;border-radius:999px;
+      background:var(--soft);font-weight:1000;font-size:13px
+    }
+    .badgeVery{background:#ffe4e6;color:#9f1239}
+    .badgeNorm{background:#ffedd5;color:#9a3412}
+    .badgeLow{background:#e0f2fe;color:#075985}
+
+    .orderItems{margin-top:10px;display:grid;gap:8px}
+    .orderLine{
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:10px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .lineLeft{min-width:0}
+    .lineName{font-weight:1000}
+    .lineMeta{color:var(--muted);font-size:13px;margin-top:4px;line-height:1.25}
+    .lineRight{display:flex;gap:8px;align-items:center}
+    .lineQty{
+      font-weight:1000;
+      font-size:14px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:#fff;
+      color:var(--text);
+      white-space:nowrap;
+    }
 
     details.archive{margin-top:10px}
-    summary{cursor:pointer; color:var(--muted); font-weight:900}
-    .archiveWrap{margin-top:10px; display:grid; gap:10px}
-    .monthTitle{font-weight:950; color:var(--muted); margin-top:8px}
+    details.archive summary{cursor:pointer;font-weight:1000;color:var(--muted)}
+    .archiveWrap{margin-top:10px}
 
-    /* Modal */
-    .modalBack{position:fixed; inset:0; background:rgba(2,6,23,.45); display:none; align-items:center; justify-content:center; padding:16px; z-index:100}
-    .modal{max-width:680px; width:100%; background:#fff; border-radius:18px; border:1px solid var(--border); box-shadow:0 30px 60px rgba(2,6,23,.25)}
-    .modalHead{display:flex; justify-content:space-between; align-items:center; padding:14px 14px 0}
-    .modalBody{padding:14px}
-    .xBtn{border:1px solid var(--border); background:#fff; border-radius:14px; width:40px; height:40px; cursor:pointer; font-weight:950}
-
-    @media (max-width:520px){
-      h1{font-size:30px}
-      .toggle{padding:10px 10px}
-      .prioBtn{padding:10px 8px}
-      .ddMenu{top:48px}
+    .soldBigBtn{
+      width:100%;
+      border-radius:18px;
+      padding:14px;
+      margin-top:12px;
+      background:#fff;
+      border:1px solid var(--border);
+      cursor:pointer;
+      font-weight:1000;
+      text-align:center;
     }
+    .soldBigBtn strong{font-size:16px}
+    .soldBigBtn .small{display:block;color:var(--muted);font-weight:900;font-size:12px;margin-top:4px}
+
+    /* modal */
+    .modalBack{
+      position:fixed;inset:0;
+      background:rgba(15,23,42,.55);
+      display:none;
+      align-items:center;justify-content:center;
+      padding:18px;
+      z-index:200;
+    }
+    .modal{
+      width:min(720px,100%);
+      background:#fff;
+      border-radius:18px;
+      border:1px solid var(--border);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .modalHead{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:14px 14px;
+      border-bottom:1px solid var(--border);
+      background:var(--soft);
+      gap:10px;
+    }
+    .modalTitle{font-weight:1000;font-size:18px;margin:0}
+    .modalBody{padding:14px}
+    .modalFoot{padding:14px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end}
+    .okMsg{color:var(--ok);font-weight:1000;display:none;margin-top:8px}
+    .dangerMsg{color:var(--danger);font-weight:1000;display:none;margin-top:8px}
+
+    /* icons */
+    .ico{display:inline-flex;align-items:center;gap:8px}
   </style>
 </head>
+
 <body>
   <div class="container">
-    <div class="row">
-      <div>
-        <h1>Bestellungen</h1>
-      </div>
+    <div class="topbar">
+      <h1 class="title">Bestellungen</h1>
       <div class="hint">GitHub Pages • Supabase</div>
     </div>
 
-    <div class="sep"></div>
-
-    <!-- Neue Bestellung -->
+    <!-- ============ NEUE BESTELLUNG ============ -->
     <div class="card">
       <div class="pad">
-        <div class="toggleRow" style="margin-bottom:12px">
-          <button id="btnBunny" class="toggle">🐰 Hase</button>
-          <button id="btnLumi" class="toggle">✨🪲 Lumi</button>
-          <button id="btnOther" class="toggle">➕ Weitere</button>
-        </div>
-
-        <div class="title2" id="formTitle">Neue Bestellung</div>
-
-        <!-- Größe (nur Hase) -->
-        <div id="bunnySizeBlock" style="display:none; margin-bottom:10px">
-          <div class="label">Größe</div>
-          <div class="chipRow">
-            <button class="chip" data-size="20">20 cm</button>
-            <button class="chip" data-size="15">15 cm</button>
-            <button class="chip" data-size="11">11 cm</button>
-          </div>
-        </div>
-
-        <!-- Farben -->
-        <div id="colorsBlock" style="margin-top:6px">
-          <div class="label">Farben</div>
-
-          <!-- Hase: Einfarbig -->
-          <div id="bunnyModeRow" style="display:none; margin:6px 0 10px">
-            <div class="chipRow">
-              <button id="btnMulti" class="chip">Mehrfarbig</button>
-              <button id="btnSingle" class="chip">Einfarbig</button>
-            </div>
-          </div>
-
-          <!-- Hase Multi -->
-          <div id="bunnyMulti" class="grid grid-3" style="display:none">
-            <div>
-              <div class="label">Körperfarbe</div>
-              <div class="ddWrap" data-dd="b_body">
-                <input class="field ddInput" id="b_body" placeholder="Tippen oder auswählen..." autocomplete="off">
-                <div class="ddArrow" data-dd-btn="b_body">▼</div>
-                <div class="ddMenu" data-dd-menu="b_body" style="display:none"></div>
-              </div>
-            </div>
-            <div>
-              <div class="label">Ohrenfarbe</div>
-              <div class="ddWrap" data-dd="b_ear">
-                <input class="field ddInput" id="b_ear" placeholder="Tippen oder auswählen..." autocomplete="off">
-                <div class="ddArrow" data-dd-btn="b_ear">▼</div>
-                <div class="ddMenu" data-dd-menu="b_ear" style="display:none"></div>
-              </div>
-            </div>
-            <div>
-              <div class="label">Popofarbe</div>
-              <div class="ddWrap" data-dd="b_butt">
-                <input class="field ddInput" id="b_butt" placeholder="Tippen oder auswählen..." autocomplete="off">
-                <div class="ddArrow" data-dd-btn="b_butt">▼</div>
-                <div class="ddMenu" data-dd-menu="b_butt" style="display:none"></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Hase Single -->
-          <div id="bunnySingle" style="display:none">
-            <div class="label">Einfarbig</div>
-            <div class="ddWrap" data-dd="b_single">
-              <input class="field ddInput" id="b_single" placeholder="Tippen oder auswählen..." autocomplete="off">
-              <div class="ddArrow" data-dd-btn="b_single">▼</div>
-              <div class="ddMenu" data-dd-menu="b_single" style="display:none"></div>
-            </div>
-            <div class="hint" style="margin-top:6px">Setzt Körper, Ohren und Popo automatisch auf dieselbe Farbe.</div>
-          </div>
-
-          <!-- Lumi -->
-          <div id="lumiColors" class="grid grid-3" style="display:none">
-            <div>
-              <div class="label">Körperfarbe</div>
-              <div class="ddWrap" data-dd="l_body">
-                <input class="field ddInput" id="l_body" placeholder="Tippen oder auswählen..." autocomplete="off">
-                <div class="ddArrow" data-dd-btn="l_body">▼</div>
-                <div class="ddMenu" data-dd-menu="l_body" style="display:none"></div>
-              </div>
-            </div>
-            <div>
-              <div class="label">Flügelfarbe</div>
-              <div class="ddWrap" data-dd="l_wing">
-                <input class="field ddInput" id="l_wing" placeholder="Tippen oder auswählen..." autocomplete="off">
-                <div class="ddArrow" data-dd-btn="l_wing">▼</div>
-                <div class="ddMenu" data-dd-menu="l_wing" style="display:none"></div>
-              </div>
-            </div>
-            <div>
-              <div class="label">Fühlerfarbe</div>
-              <div class="ddWrap" data-dd="l_feel">
-                <input class="field ddInput" id="l_feel" placeholder="Tippen oder auswählen..." autocomplete="off">
-                <div class="ddArrow" data-dd-btn="l_feel">▼</div>
-                <div class="ddMenu" data-dd-menu="l_feel" style="display:none"></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Other -->
-          <div id="otherColors" class="grid grid-2" style="display:none">
-            <div>
-              <div class="label">Größe</div>
-              <input class="field" id="o_size" placeholder="z.B. 10cm / XL / ..." />
-            </div>
-            <div>
-              <div class="label">Farbe</div>
-              <div class="ddWrap" data-dd="o_color">
-                <input class="field ddInput" id="o_color" placeholder="Tippen oder auswählen..." autocomplete="off">
-                <div class="ddArrow" data-dd-btn="o_color">▼</div>
-                <div class="ddMenu" data-dd-menu="o_color" style="display:none"></div>
-              </div>
-            </div>
-            <div style="grid-column:1/-1">
-              <div class="label">Beschreibung (für „Weitere“)</div>
-              <input class="field" id="o_desc" placeholder="z.B. Sonderform, eigenes Produkt..." />
-            </div>
-          </div>
+        <div class="rowBtns">
+          <button id="btnBunny" class="btn">🐰 Hase</button>
+          <button id="btnLumi" class="btn">✨🪲 Lumi</button>
+          <button id="btnOther" class="btn">➕ Weitere Produkt</button>
         </div>
 
         <div class="sep"></div>
 
-        <!-- Kunde (neu) -->
-        <div class="grid grid-2">
+        <div id="newTitle" class="sectionTitle">Neue Bestellung</div>
+
+        <!-- Produkt-spezifische Auswahl -->
+        <div id="productArea" class="grid"></div>
+
+        <div class="sep"></div>
+
+        <!-- Priorität -->
+        <label>Priorität</label>
+        <div class="prioWrap">
+          <div class="prioSmall"><button id="pVery" class="prioBtn">Sehr wichtig</button></div>
+          <div class="prioBig"><button id="pNorm" class="prioBtn">Wichtig</button></div>
+          <div class="prioSmall"><button id="pLow"  class="prioBtn">Nicht wichtig</button></div>
+        </div>
+
+        <div class="sep"></div>
+
+        <!-- Farben + Kunde -->
+        <div id="colorArea" class="grid"></div>
+
+        <div class="sep"></div>
+
+        <div class="twoCols">
           <div>
-            <div class="label">Kundenname</div>
-            <input class="field" id="customer" placeholder="z.B. Max Mustermann" />
+            <label for="customer">Kundenname</label>
+            <input id="customer" placeholder="z. B. Max Mustermann" />
           </div>
-
           <div>
-            <div class="label">Priorität</div>
-            <div class="prioRow">
-              <button id="pVery" class="prioBtn small">Sehr wichtig</button>
-              <button id="pNorm" class="prioBtn">Wichtig</button>
-              <button id="pLow" class="prioBtn small">Nicht wichtig</button>
-            </div>
+            <label for="note">Beschreibung (optional)</label>
+            <textarea id="note" placeholder="z. B. Sonderwunsch, Hinweis …"></textarea>
           </div>
         </div>
 
         <div class="sep"></div>
 
-        <!-- Beschreibung -->
-        <div>
-          <div class="label">Beschreibung (optional)</div>
-          <textarea class="field" id="note" placeholder="z.B. Sonderwunsch, Kunde, Hinweis ..."></textarea>
+        <!-- Menge -->
+        <label>Menge</label>
+        <div class="qtyRow" id="qtyBtns">
+          <button class="qtyBtn" data-qty="1">1</button>
+          <button class="qtyBtn" data-qty="2">2</button>
+          <button class="qtyBtn" data-qty="3">3</button>
+          <button class="qtyBtn" data-qty="4">4</button>
+          <button class="qtyBtn" data-qty="5">5</button>
+          <button class="qtyBtn" data-qty="6">6</button>
+          <button class="qtyBtn" data-qty="7">7</button>
+          <button class="qtyBtn" data-qty="8">8</button>
+          <button class="qtyBtn" data-qty="9">9</button>
         </div>
 
         <div class="sep"></div>
 
-        <!-- Menge Buttons -->
-        <div class="label">Menge</div>
-        <div class="qtyRow">
-          <button class="qtyBtn" data-q="1">1</button>
-          <button class="qtyBtn" data-q="2">2</button>
-          <button class="qtyBtn" data-q="3">3</button>
-          <button class="qtyBtn" data-q="4">4</button>
-          <button class="qtyBtn" data-q="5">5</button>
-          <button class="qtyBtn" data-q="6">6</button>
-          <button class="qtyBtn" data-q="7">7</button>
-          <button class="qtyBtn" data-q="8">8</button>
-          <button class="qtyBtn" data-q="9">9</button>
-        </div>
-
-        <div class="sep"></div>
-
-        <div class="grid grid-2">
-          <div>
-            <div class="label">Andere Menge (optional)</div>
-            <input class="field" id="qtyOther" placeholder="z.B. 12" inputmode="numeric" />
+        <div class="qtyOtherWrap">
+          <div style="flex:1">
+            <label for="qtyOther">Andere Menge (optional)</label>
+            <input id="qtyOther" placeholder="z. B. 12" inputmode="numeric" />
           </div>
-          <div class="inline" style="align-items:flex-end">
-            <button id="addItemBtn" class="btn grow">+ Zur Bestellung hinzufügen</button>
+          <div style="flex:1; display:flex; align-items:flex-end;">
+            <button id="addItemBtn" class="btn btnDark btnWide">+ Position hinzufügen</button>
           </div>
         </div>
 
-        <div id="formError" class="err" style="display:none">⚠️ Bitte erst ausfüllen: <span id="missing"></span></div>
+        <div id="formError" class="formError">❗ Bitte erst alles ausfüllen.</div>
 
         <div class="sep"></div>
 
         <!-- Warenkorb / Positionen -->
-        <div class="title2" style="margin-top:4px">Positionen in dieser Bestellung</div>
-        <div id="cartList" class="grid" style="margin-top:10px"></div>
-        <div class="hint" id="cartHint">Noch keine Positionen hinzugefügt.</div>
+        <div class="cartCard">
+          <div class="cartHead">
+            <div class="cartTitle">Positionen in dieser Bestellung</div>
+            <div class="subTitle" id="cartSum">Summe: 0,00 €</div>
+          </div>
+          <div id="cartList" class="cartList"></div>
+          <div class="subTitle" id="cartHint">Noch keine Position hinzugefügt.</div>
 
-        <div class="sep"></div>
+          <div class="sep"></div>
 
-        <button id="saveOrderBtn" class="btn" disabled>✅ Bestellung speichern</button>
-        <div id="saveStatus" class="ok" style="display:none"></div>
+          <button id="saveOrderBtn" class="btn btnDark btnWide btnDisabled" disabled>✅ Bestellung speichern</button>
+          <div id="saveStatus" class="okMsg">Gespeichert ✅</div>
+        </div>
       </div>
     </div>
 
     <div class="sep"></div>
 
-    <!-- Offene Bestellungen -->
+    <!-- ============ OFFENE BESTELLUNGEN ============ -->
     <div class="card">
       <div class="pad">
         <div class="ordersHead">
-          <div>
-            <div class="title2" style="margin:0">Offene Bestellungen</div>
-            <div class="hint" id="openSum">Summe offen: –</div>
+          <div class="left">
+            <div class="title2">Offene Bestellungen</div>
+            <div class="sum" id="openSum">Summe offen: 0,00 €</div>
           </div>
           <div class="sortBtns">
-            <button id="sortDate" class="btn-small btn">Sort: Datum</button>
-            <button id="sortPrio" class="btn-small btn-soft">Sort: Priorität</button>
+            <button id="sortDate" class="btnSmall btn btnDark">Sort: Datum</button>
+            <button id="sortPrio" class="btnSmall btn btnSoft">Sort: Priorität</button>
           </div>
         </div>
 
@@ -343,99 +459,108 @@
         <details class="archive">
           <summary>Archiv (alte Bestellungen anzeigen)</summary>
           <div class="archiveWrap">
-            <div class="row" style="align-items:flex-end">
-              <div class="hint" id="soldSum" style="cursor:pointer; text-decoration:underline">Verkauft gesamt: – (klicken für Korrektur)</div>
-            </div>
             <div id="archiveOrders" class="grid"></div>
           </div>
         </details>
+
+        <!-- großer Button: verkauft gesamt (Korrektur per Klick) -->
+        <button id="soldBtn" class="soldBigBtn" type="button">
+          <strong id="soldSum">Verkauft gesamt: 0,00 €</strong>
+          <span class="small">Klicken für Korrektur / Abzug</span>
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- Modal: Edit Item -->
+  <!-- ================= MODAL: Position bearbeiten ================= -->
   <div class="modalBack" id="modalBack">
     <div class="modal">
       <div class="modalHead">
-        <div class="title2" style="margin:0; font-size:18px">Position bearbeiten</div>
-        <button class="xBtn" id="closeModal">✕</button>
+        <h3 class="modalTitle">Position bearbeiten</h3>
+        <button class="iconBtn" id="closeModal" title="Schließen">✕</button>
       </div>
       <div class="modalBody" id="modalBody"></div>
+      <div class="modalFoot">
+        <button class="btn btnSoft" id="cancelEditBtn">Abbrechen</button>
+        <button class="btn btnDark" id="saveEditBtn">Speichern</button>
+      </div>
     </div>
   </div>
 
-  <!-- Modal: Sold adjustments -->
+  <!-- ================= MODAL: verkauft gesamt – Abzüge ================= -->
   <div class="modalBack" id="adjBack">
     <div class="modal">
       <div class="modalHead">
-        <div class="title2" style="margin:0; font-size:18px">Korrektur (verkauft gesamt)</div>
-        <button class="xBtn" id="closeAdj">✕</button>
+        <h3 class="modalTitle">Korrektur (verkauft gesamt)</h3>
+        <button class="iconBtn" id="closeAdj" title="Schließen">✕</button>
       </div>
       <div class="modalBody">
-        <div class="hint">Hier kannst du Beträge abziehen (negativ) oder hinzufügen (positiv).</div>
-        <div class="sep"></div>
-        <div class="grid grid-2">
-          <div>
-            <div class="label">Betrag in €</div>
-            <input class="field" id="adjAmount" placeholder="-2.00" />
+        <div class="subTitle">Wähle, was du abziehen willst (wird als negativer Betrag gespeichert).</div>
+
+        <div class="grid">
+          <div class="rowBtns">
+            <button class="btn btnSoft" id="adjChooseBunny">🐰 Hase</button>
+            <button class="btn btnSoft" id="adjChooseLumi">✨🪲 Lumi</button>
+            <button class="btn btnSoft" id="adjChooseCombo">🐰🐰🐰 Hase Combo</button>
+            <button class="btn btnSoft" id="adjChooseOther">➕ Weiteres Produkt</button>
           </div>
-          <div>
-            <div class="label">Notiz</div>
-            <input class="field" id="adjNote" placeholder="z.B. Reklamation / Rabatt" />
+
+          <div id="adjStep2" style="display:none">
+            <div class="sep"></div>
+            <div id="adjPickArea"></div>
           </div>
+
+          <div class="sep"></div>
+          <label for="adjNote">Notiz (optional)</label>
+          <input id="adjNote" placeholder="z. B. Rabatt / Fehler / Kunde …" />
+
+          <div class="sep"></div>
+          <button class="btn btnDark btnWide" id="addAdjBtn">Abzug speichern</button>
+          <div class="okMsg" id="adjMsg">Gespeichert ✅</div>
+          <div class="dangerMsg" id="adjErr">Fehler</div>
         </div>
-        <div class="sep"></div>
-        <button class="btn" id="addAdjBtn">+ Korrektur speichern</button>
-        <div id="adjMsg" class="ok" style="display:none"></div>
       </div>
     </div>
   </div>
 
+  <!-- Script kommt in Teil 2/4 -->
+
+  <!-- Supabase + App Script -->
   <script type="module">
     import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-    // ✅ HIER EINTRAGEN:
+    // ✅ HIER EINTRAGEN (Supabase → Project Settings → Data API → URL / anon public key)
     const SUPABASE_URL = "https://htgrzmlcdolxxzvkppon.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0Z3J6bWxjZG9seHh6dmtwcG9uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0MzM2ODIsImV4cCI6MjA4NTAwOTY4Mn0.B0PxMAzmuvsHNd2n_mgNspjlPkaBpQlkrNzGu7p78fY";
-
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // ---------- UI refs ----------
+    // ---------- DOM ----------
     const btnBunny = document.getElementById("btnBunny");
-    const btnLumi = document.getElementById("btnLumi");
+    const btnLumi  = document.getElementById("btnLumi");
     const btnOther = document.getElementById("btnOther");
-    const formTitle = document.getElementById("formTitle");
-
-    const bunnySizeBlock = document.getElementById("bunnySizeBlock");
-    const colorsBlock = document.getElementById("colorsBlock");
-
-    const bunnyModeRow = document.getElementById("bunnyModeRow");
-    const btnMulti = document.getElementById("btnMulti");
-    const btnSingle = document.getElementById("btnSingle");
-    const bunnyMulti = document.getElementById("bunnyMulti");
-    const bunnySingle = document.getElementById("bunnySingle");
-
-    const lumiColors = document.getElementById("lumiColors");
-    const otherColors = document.getElementById("otherColors");
-
-    const customerEl = document.getElementById("customer");
-    const noteEl = document.getElementById("note");
+    const newTitle = document.getElementById("newTitle");
+    const productArea = document.getElementById("productArea");
+    const colorArea = document.getElementById("colorArea");
 
     const pVery = document.getElementById("pVery");
     const pNorm = document.getElementById("pNorm");
     const pLow  = document.getElementById("pLow");
 
-    const qtyBtns = [...document.querySelectorAll(".qtyBtn")];
+    const customer = document.getElementById("customer");
+    const noteEl = document.getElementById("note");
+
+    const qtyBtns = [...document.querySelectorAll("#qtyBtns .qtyBtn")];
     const qtyOther = document.getElementById("qtyOther");
 
     const addItemBtn = document.getElementById("addItemBtn");
-    const cartList = document.getElementById("cartList");
-    const cartHint = document.getElementById("cartHint");
     const saveOrderBtn = document.getElementById("saveOrderBtn");
     const saveStatus = document.getElementById("saveStatus");
 
     const formError = document.getElementById("formError");
-    const missingEl = document.getElementById("missing");
+
+    const cartList = document.getElementById("cartList");
+    const cartHint = document.getElementById("cartHint");
+    const cartSum  = document.getElementById("cartSum");
 
     const openOrdersEl = document.getElementById("openOrders");
     const archiveOrdersEl = document.getElementById("archiveOrders");
@@ -445,622 +570,102 @@
     const sortDate = document.getElementById("sortDate");
     const sortPrio = document.getElementById("sortPrio");
 
+    // Edit modal
     const modalBack = document.getElementById("modalBack");
     const modalBody = document.getElementById("modalBody");
     const closeModal = document.getElementById("closeModal");
+    const cancelEditBtn = document.getElementById("cancelEditBtn");
+    const saveEditBtn = document.getElementById("saveEditBtn");
 
+    // sold adjustments modal
+    const soldBtn = document.getElementById("soldBtn");
     const adjBack = document.getElementById("adjBack");
     const closeAdj = document.getElementById("closeAdj");
     const addAdjBtn = document.getElementById("addAdjBtn");
-    const adjAmount = document.getElementById("adjAmount");
     const adjNote = document.getElementById("adjNote");
     const adjMsg = document.getElementById("adjMsg");
+    const adjErr = document.getElementById("adjErr");
+    const adjChooseBunny = document.getElementById("adjChooseBunny");
+    const adjChooseLumi = document.getElementById("adjChooseLumi");
+    const adjChooseCombo = document.getElementById("adjChooseCombo");
+    const adjChooseOther = document.getElementById("adjChooseOther");
+    const adjStep2 = document.getElementById("adjStep2");
+    const adjPickArea = document.getElementById("adjPickArea");
 
-    // ---------- constants ----------
+    // ---------- Consts ----------
     const COLOR_SUGGESTIONS = ["weiß","schwarz","grau","rot","blau","gelb","grün","orange","pink","lila","braun","beige","gold","silber"];
 
-    // ---------- state ----------
-    let currentProduct = null; // 'bunny' | 'lumi' | 'other'
-    let bunnySize = null;      // '20'|'15'|'11'
-    let bunnyMode = null;      // 'multi'|'single'
-    let priority = null;       // 'very'|'normal'|'low'
-    let qty = null;            // number
-    let cart = [];             // items before saving order
-    let sortMode = "date";     // 'date'|'prio'
-
-    // dropdown helpers
-    function setupDropdown(inputId){
-      const input = document.getElementById(inputId);
-      const menu = document.querySelector(`[data-dd-menu="${inputId}"]`);
-      const btn  = document.querySelector(`[data-dd-btn="${inputId}"]`);
-
-      function renderMenu(filter=""){
-        const f = filter.trim().toLowerCase();
-        const list = COLOR_SUGGESTIONS
-          .filter(c => !f || c.toLowerCase().includes(f))
-          .slice(0, 30);
-
-        menu.innerHTML = list.map(c => `<div class="ddItem" data-val="${c}">${c}</div>`).join("") || `<div class="ddItem" data-val="${filter}">"${filter}" übernehmen</div>`;
-        menu.querySelectorAll(".ddItem").forEach(it=>{
-          it.addEventListener("click", ()=>{
-            input.value = it.getAttribute("data-val") || "";
-            closeMenu();
-          });
-        });
-      }
-      function openMenu(){
-        renderMenu(input.value);
-        menu.style.display = "block";
-      }
-      function closeMenu(){
-        menu.style.display = "none";
-      }
-      function toggle(){
-        if(menu.style.display === "block") closeMenu(); else openMenu();
-      }
-
-      // ✅ wichtig: Arrow ist der einzige "Dropdown-Opener" (mobile friendly)
-      btn.addEventListener("click", (e)=>{ e.stopPropagation(); toggle(); });
-
-      // Tippen/Schreiben filtert Liste (optional)
-      input.addEventListener("input", ()=>{ if(menu.style.display==="block") renderMenu(input.value); });
-
-      // Klick außerhalb schließt
-      document.addEventListener("click", ()=> closeMenu());
-
-      return { openMenu, closeMenu };
-    }
-
-    const dd = {
-      b_body: setupDropdown("b_body"),
-      b_ear: setupDropdown("b_ear"),
-      b_butt: setupDropdown("b_butt"),
-      b_single: setupDropdown("b_single"),
-      l_body: setupDropdown("l_body"),
-      l_wing: setupDropdown("l_wing"),
-      l_feel: setupDropdown("l_feel"),
-      o_color: setupDropdown("o_color"),
+    // Preise (DU kannst später die Werte ändern)
+    const PRICES = {
+      bunny: { "20": 12.0, "15": 9.0, "11": 6.0, combo: 22.0 }, // <- combo Preis
+      lumi: 8.0, // <- lumi Preis
     };
 
-    // ---------- UI select product ----------
-    function setActiveProduct(p){
-      currentProduct = p;
-      [btnBunny, btnLumi, btnOther].forEach(b=>b.classList.remove("active"));
-      if(p==="bunny") btnBunny.classList.add("active");
-      if(p==="lumi") btnLumi.classList.add("active");
-      if(p==="other") btnOther.classList.add("active");
+    const PRIORITY = {
+      very: "Sehr wichtig",
+      normal: "Wichtig",
+      low: "Nicht wichtig"
+    };
+    const priorRank = (p) => p==="very" ? 0 : p==="normal" ? 1 : 2;
 
-      // blocks
-      bunnySizeBlock.style.display = (p==="bunny") ? "block" : "none";
-      bunnyModeRow.style.display   = (p==="bunny") ? "block" : "none";
-      bunnyMulti.style.display     = "none";
-      bunnySingle.style.display    = "none";
-      lumiColors.style.display     = (p==="lumi") ? "grid" : "none";
-      otherColors.style.display    = (p==="other") ? "grid" : "none";
+    // ---------- State ----------
+    let currentProduct = null; // 'bunny' | 'lumi' | 'other'
+    let bunnySize = null;      // '20'|'15'|'11'
+    let bunnyMode = null;      // 'single'|'multi' (Einfarbig)
+    let priority = null;       // 'very'|'normal'|'low'
+    let qty = null;            // number (from 1-9 buttons)
+    let cart = [];             // items before saving order
 
-      // reset product-specific selections
-      bunnySize = null;
-      bunnyMode = null;
-      // unselect size chips
-      document.querySelectorAll('[data-size]').forEach(x=>x.classList.remove("active"));
-      btnMulti.classList.remove("active");
-      btnSingle.classList.remove("active");
+    let sortMode = "date";     // 'date' | 'prio'
 
-      formTitle.textContent = p==="bunny" ? "Neue Bestellung: Hase" : p==="lumi" ? "Neue Bestellung: Lumi" : "Neue Bestellung: Weitere";
-      hideError();
-      refreshSaveEnabled();
+    // dropdown state (inputs)
+    let fields = {
+      // bunny
+      bunny_body: "",
+      bunny_ears: "",
+      bunny_butt: "",
+      bunny_single: "",
+
+      // lumi
+      lumi_body: "",
+      lumi_wings: "",
+      lumi_feelers: "",
+
+      // other
+      other_size: "",
+      other_color: ""
+    };
+
+    // editing
+    let editing = null; // { orderId, itemId, itemData }
+
+    // ---------- Helpers ----------
+    function euro(n){ return (Number(n)||0).toFixed(2).replace(".", ",") + " €"; }
+
+    function setBtnActive(btn, on){
+      btn.classList.toggle("btnDark", on);
+      btn.classList.toggle("btnSoft", !on);
     }
-
-    btnBunny.addEventListener("click", ()=>setActiveProduct("bunny"));
-    btnLumi.addEventListener("click", ()=>setActiveProduct("lumi"));
-    btnOther.addEventListener("click", ()=>setActiveProduct("other"));
-
-    // size select
-    document.querySelectorAll('[data-size]').forEach(chip=>{
-      chip.addEventListener("click", ()=>{
-        bunnySize = chip.getAttribute("data-size");
-        document.querySelectorAll('[data-size]').forEach(x=>x.classList.remove("active"));
-        chip.classList.add("active");
-        // if size chosen, default show mode buttons but NOT auto select
-        showBunnyModeUI();
-        hideError();
-        refreshSaveEnabled();
-      });
-    });
-
-    function showBunnyModeUI(){
-      // show mode buttons; no auto selection
-      if(currentProduct!=="bunny") return;
-      // show nothing yet; user must pick Multi/Single
-      bunnyMulti.style.display = "none";
-      bunnySingle.style.display = "none";
-    }
-
-    btnMulti.addEventListener("click", ()=>{
-      bunnyMode = "multi";
-      btnMulti.classList.add("active"); btnSingle.classList.remove("active");
-      bunnyMulti.style.display = "grid";
-      bunnySingle.style.display = "none";
-      hideError();
-      refreshSaveEnabled();
-    });
-    btnSingle.addEventListener("click", ()=>{
-      bunnyMode = "single";
-      btnSingle.classList.add("active"); btnMulti.classList.remove("active");
-      bunnySingle.style.display = "block";
-      bunnyMulti.style.display = "none";
-      hideError();
-      refreshSaveEnabled();
-    });
-
-    // priority buttons (no auto select)
-    function setPriority(p){
-      priority = p;
-      [pVery,pNorm,pLow].forEach(x=>x.classList.remove("active"));
-      if(p==="very") pVery.classList.add("active");
-      if(p==="normal") pNorm.classList.add("active");
-      if(p==="low") pLow.classList.add("active");
-      hideError();
-      refreshSaveEnabled();
-    }
-    pVery.addEventListener("click", ()=>setPriority("very"));
-    pNorm.addEventListener("click", ()=>setPriority("normal"));
-    pLow.addEventListener("click",  ()=>setPriority("low"));
-
-    // quantity buttons (no auto select)
-    function setQty(n){
-      qty = n;
-      qtyBtns.forEach(b=>b.classList.remove("active"));
-      const btn = qtyBtns.find(b=>Number(b.getAttribute("data-q"))===n);
-      if(btn) btn.classList.add("active");
-      hideError();
-      refreshSaveEnabled();
-    }
-    qtyBtns.forEach(b=>{
-      b.addEventListener("click", ()=> setQty(Number(b.getAttribute("data-q"))));
-    });
-    qtyOther.addEventListener("input", ()=>{
-      // if user types custom qty, we unset buttons visually
-      qtyBtns.forEach(b=>b.classList.remove("active"));
-      qty = null;
-      hideError();
-      refreshSaveEnabled();
-    });
-
-    // ---------- validation helpers ----------
-    function showError(msg){
-      missingEl.textContent = msg;
-      formError.style.display = "flex";
-    }
-    function hideError(){
+    function setChipActive(el, on){ el.classList.toggle("active", on); }
+    function clearErrorUI(){
       formError.style.display = "none";
-      // remove red borders
-      document.querySelectorAll(".field").forEach(el=>el.classList.remove("error"));
+      document.querySelectorAll(".errorOutline").forEach(x=>x.classList.remove("errorOutline"));
+      document.querySelectorAll(".errorLabel").forEach(x=>x.classList.remove("errorLabel"));
     }
-
-    function getFinalQty(){
-      const other = Number(String(qtyOther.value||"").trim());
-      if(Number.isFinite(other) && other>0) return other;
-      if(Number.isFinite(qty) && qty>0) return qty;
-      return null;
-    }
-
-    function requiredColorField(el){
-      const v = (el.value||"").trim();
-      return v.length>0;
-    }
-
-    function markError(el){
-      el.classList.add("error");
-    }
-
-    // ---------- cart ----------
-    function refreshCart(){
-      cartList.innerHTML = "";
-      if(cart.length===0){
-        cartHint.style.display="block";
-      } else {
-        cartHint.style.display="none";
-      }
-
-      cart.forEach((it, idx)=>{
-        const div = document.createElement("div");
-        div.className = "orderCard";
-        div.innerHTML = `
-          <div class="orderTop">
-            <div class="orderMeta">
-              <div class="orderDate">${renderItemTitle(it)}</div>
-              <div class="orderCustomer">${renderItemSubtitle(it)}</div>
-            </div>
-            <div class="inline">
-              <button class="iconBtn" data-edit="${idx}" title="Bearbeiten">✎</button>
-              <button class="iconBtn" data-del="${idx}" title="Entfernen">🗑️</button>
-            </div>
-          </div>
-        `;
-        cartList.appendChild(div);
+    function showError(missingIds = [], msg="❗ Bitte erst alles ausfüllen."){
+      formError.textContent = msg;
+      formError.style.display = "flex";
+      // mark fields red
+      missingIds.forEach(id=>{
+        const el = document.getElementById(id);
+        if(el) el.classList.add("errorOutline");
+        const lab = document.querySelector(`label[for="${id}"]`);
+        if(lab) lab.classList.add("errorLabel");
       });
-
-      cartList.querySelectorAll("[data-del]").forEach(b=>{
-        b.addEventListener("click", ()=>{
-          const i = Number(b.getAttribute("data-del"));
-          cart.splice(i,1);
-          refreshCart();
-          refreshSaveEnabled();
-        });
-      });
-
-      cartList.querySelectorAll("[data-edit]").forEach(b=>{
-        b.addEventListener("click", ()=>{
-          const i = Number(b.getAttribute("data-edit"));
-          openEditModal(i);
-        });
-      });
-
-      refreshSaveEnabled();
+      // auto scroll a bit to make it visible
+      formError.scrollIntoView({ behavior:"smooth", block:"nearest" });
     }
 
-    function renderItemTitle(it){
-      const pr = it.priority === "very" ? "Sehr wichtig" : it.priority==="normal" ? "Wichtig" : "Nicht wichtig";
-      let name = "";
-      if(it.product_type==="bunny"){
-        name = `🐰 Hase ${it.bunny_size}cm`;
-      } else if(it.product_type==="lumi"){
-        name = `✨🪲 Lumi`;
-      } else {
-        name = `➕ Weitere`;
-      }
-      return `${name} • x${it.quantity} • ${pr}`;
-    }
-
-    function renderItemSubtitle(it){
-      if(it.product_type==="bunny"){
-        if(it.bunny_mode==="single"){
-          return `Einfarbig: ${it.bunny_single_color}`;
-        }
-        return `Körper: ${it.bunny_body_color} • Ohren: ${it.bunny_ear_color} • Popo: ${it.bunny_butt_color}`;
-      }
-      if(it.product_type==="lumi"){
-        return `Körper: ${it.lumi_body_color} • Flügel: ${it.lumi_wing_color} • Fühler: ${it.lumi_feeler_color}`;
-      }
-      return `Größe: ${it.other_size || "-"} • Farbe: ${it.other_color || "-"} • ${it.other_description || ""}`;
-    }
-
-    addItemBtn.addEventListener("click", ()=>{
-      hideError();
-
-      // Required fields (ALL außer Beschreibung in noteEl sind Pflicht für "Position hinzufügen")
-      const customer = (customerEl.value||"").trim();
-      if(!currentProduct){ showError("Produkt"); return; }
-      if(!customer){ markError(customerEl); showError("Kundenname"); return; }
-      if(!priority){ showError("Priorität"); return; }
-      const q = getFinalQty();
-      if(!q){ showError("Menge"); return; }
-
-      // product-specific required
-      if(currentProduct==="bunny"){
-        if(!bunnySize){ showError("Größe"); return; }
-        if(!bunnyMode){ showError("Mehrfarbig/Einfarbig"); return; }
-        if(bunnyMode==="single"){
-          const b_single = document.getElementById("b_single");
-          if(!requiredColorField(b_single)){ markError(b_single); showError("Einfarbig (Farbe)"); return; }
-        } else {
-          const b_body = document.getElementById("b_body");
-          const b_ear  = document.getElementById("b_ear");
-          const b_butt = document.getElementById("b_butt");
-          if(!requiredColorField(b_body)){ markError(b_body); showError("Körperfarbe"); return; }
-          if(!requiredColorField(b_ear)){ markError(b_ear); showError("Ohrenfarbe"); return; }
-          if(!requiredColorField(b_butt)){ markError(b_butt); showError("Popofarbe"); return; }
-        }
-      }
-
-      if(currentProduct==="lumi"){
-        const l_body = document.getElementById("l_body");
-        const l_wing = document.getElementById("l_wing");
-        const l_feel = document.getElementById("l_feel");
-        if(!requiredColorField(l_body)){ markError(l_body); showError("Körperfarbe"); return; }
-        if(!requiredColorField(l_wing)){ markError(l_wing); showError("Flügelfarbe"); return; }
-        if(!requiredColorField(l_feel)){ markError(l_feel); showError("Fühlerfarbe"); return; }
-      }
-
-      if(currentProduct==="other"){
-        const o_size = document.getElementById("o_size");
-        const o_color = document.getElementById("o_color");
-        const o_desc = document.getElementById("o_desc");
-        if(!(o_size.value||"").trim()){ markError(o_size); showError("Größe"); return; }
-        if(!(o_color.value||"").trim()){ markError(o_color); showError("Farbe"); return; }
-        if(!(o_desc.value||"").trim()){ markError(o_desc); showError("Beschreibung (Weitere)"); return; }
-      }
-
-      // build item
-      const item = {
-        product_type: currentProduct,
-        priority,
-        quantity: q,
-      };
-
-      if(currentProduct==="bunny"){
-        item.bunny_size = bunnySize;
-        item.bunny_mode = bunnyMode;
-        if(bunnyMode==="single"){
-          const c = document.getElementById("b_single").value.trim();
-          item.bunny_single_color = c;
-          // convenience: also store in multi fields for display consistency
-          item.bunny_body_color = c;
-          item.bunny_ear_color = c;
-          item.bunny_butt_color = c;
-        } else {
-          item.bunny_body_color = document.getElementById("b_body").value.trim();
-          item.bunny_ear_color  = document.getElementById("b_ear").value.trim();
-          item.bunny_butt_color = document.getElementById("b_butt").value.trim();
-        }
-      } else if(currentProduct==="lumi"){
-        item.lumi_body_color   = document.getElementById("l_body").value.trim();
-        item.lumi_wing_color   = document.getElementById("l_wing").value.trim();
-        item.lumi_feeler_color = document.getElementById("l_feel").value.trim();
-      } else {
-        item.other_size = document.getElementById("o_size").value.trim();
-        item.other_color = document.getElementById("o_color").value.trim();
-        item.other_description = document.getElementById("o_desc").value.trim();
-      }
-
-      cart.push(item);
-      refreshCart();
-
-      // keep customer/note as order-level; don't reset them
-      // reset qty fields only
-      qty = null;
-      qtyBtns.forEach(b=>b.classList.remove("active"));
-      qtyOther.value = "";
-
-      // reset product fields to reduce mistakes
-      if(currentProduct==="bunny"){
-        // keep product selection but clear colors
-        ["b_body","b_ear","b_butt","b_single"].forEach(id=>document.getElementById(id).value="");
-      }
-      if(currentProduct==="lumi"){
-        ["l_body","l_wing","l_feel"].forEach(id=>document.getElementById(id).value="");
-      }
-      if(currentProduct==="other"){
-        ["o_size","o_color","o_desc"].forEach(id=>document.getElementById(id).value="");
-      }
-    });
-
-    function refreshSaveEnabled(){
-      const customer = (customerEl.value||"").trim();
-      saveOrderBtn.disabled = !(cart.length>0 && customer.length>0);
-    }
-    customerEl.addEventListener("input", refreshSaveEnabled);
-
-    // ---------- edit modal for cart items ----------
-    let editingIndex = null;
-
-    function openEditModal(idx){
-      editingIndex = idx;
-      const it = cart[idx];
-
-      // simple editor: quantity + priority + colors
-      const pr = it.priority;
-      const q = it.quantity;
-
-      modalBody.innerHTML = `
-        <div class="grid">
-          <div class="hint">${renderItemTitle(it)}</div>
-
-          <div class="label">Priorität</div>
-          <div class="prioRow">
-            <button class="prioBtn small" data-pr="very">Sehr wichtig</button>
-            <button class="prioBtn" data-pr="normal">Wichtig</button>
-            <button class="prioBtn small" data-pr="low">Nicht wichtig</button>
-          </div>
-
-          <div class="label">Menge</div>
-          <input class="field" id="editQty" value="${q}" inputmode="numeric" />
-
-          <div id="editFields"></div>
-
-          <button class="btn" id="saveEdit">Speichern</button>
-        </div>
-      `;
-
-      // set active prio
-      modalBody.querySelectorAll("[data-pr]").forEach(b=>{
-        if(b.getAttribute("data-pr")===pr) b.classList.add("active");
-        b.addEventListener("click", ()=>{
-          modalBody.querySelectorAll("[data-pr]").forEach(x=>x.classList.remove("active"));
-          b.classList.add("active");
-        });
-      });
-
-      const editFields = modalBody.querySelector("#editFields");
-      if(it.product_type==="bunny"){
-        if(it.bunny_mode==="single"){
-          editFields.innerHTML = `
-            <div class="label">Einfarbig</div>
-            <input class="field" id="editC1" value="${it.bunny_single_color || ""}" />
-          `;
-        } else {
-          editFields.innerHTML = `
-            <div class="grid grid-3">
-              <div><div class="label">Körper</div><input class="field" id="editC1" value="${it.bunny_body_color || ""}"></div>
-              <div><div class="label">Ohren</div><input class="field" id="editC2" value="${it.bunny_ear_color || ""}"></div>
-              <div><div class="label">Popo</div><input class="field" id="editC3" value="${it.bunny_butt_color || ""}"></div>
-            </div>
-          `;
-        }
-      } else if(it.product_type==="lumi"){
-        editFields.innerHTML = `
-          <div class="grid grid-3">
-            <div><div class="label">Körper</div><input class="field" id="editC1" value="${it.lumi_body_color || ""}"></div>
-            <div><div class="label">Flügel</div><input class="field" id="editC2" value="${it.lumi_wing_color || ""}"></div>
-            <div><div class="label">Fühler</div><input class="field" id="editC3" value="${it.lumi_feeler_color || ""}"></div>
-          </div>
-        `;
-      } else {
-        editFields.innerHTML = `
-          <div class="grid grid-2">
-            <div><div class="label">Größe</div><input class="field" id="editC1" value="${it.other_size || ""}"></div>
-            <div><div class="label">Farbe</div><input class="field" id="editC2" value="${it.other_color || ""}"></div>
-            <div style="grid-column:1/-1"><div class="label">Beschreibung</div><input class="field" id="editC3" value="${it.other_description || ""}"></div>
-          </div>
-        `;
-      }
-
-      modalBody.querySelector("#saveEdit").addEventListener("click", ()=>{
-        const newPr = modalBody.querySelector("[data-pr].active")?.getAttribute("data-pr") || it.priority;
-        const newQ = Number(modalBody.querySelector("#editQty").value);
-        if(!Number.isFinite(newQ) || newQ<=0) return;
-
-        it.priority = newPr;
-        it.quantity = newQ;
-
-        if(it.product_type==="bunny"){
-          if(it.bunny_mode==="single"){
-            const c = modalBody.querySelector("#editC1").value.trim();
-            it.bunny_single_color = c;
-            it.bunny_body_color = c; it.bunny_ear_color = c; it.bunny_butt_color = c;
-          } else {
-            it.bunny_body_color = modalBody.querySelector("#editC1").value.trim();
-            it.bunny_ear_color  = modalBody.querySelector("#editC2").value.trim();
-            it.bunny_butt_color = modalBody.querySelector("#editC3").value.trim();
-          }
-        } else if(it.product_type==="lumi"){
-          it.lumi_body_color = modalBody.querySelector("#editC1").value.trim();
-          it.lumi_wing_color = modalBody.querySelector("#editC2").value.trim();
-          it.lumi_feeler_color = modalBody.querySelector("#editC3").value.trim();
-        } else {
-          it.other_size = modalBody.querySelector("#editC1").value.trim();
-          it.other_color = modalBody.querySelector("#editC2").value.trim();
-          it.other_description = modalBody.querySelector("#editC3").value.trim();
-        }
-
-        cart[editingIndex] = it;
-        closeEditModal();
-        refreshCart();
-      });
-
-      modalBack.style.display = "flex";
-    }
-
-    function closeEditModal(){
-      modalBack.style.display = "none";
-      editingIndex = null;
-      modalBody.innerHTML = "";
-    }
-    closeModal.addEventListener("click", closeEditModal);
-    modalBack.addEventListener("click", (e)=>{ if(e.target===modalBack) closeEditModal(); });
-
-    // ---------- pricing ----------
-    function priceForOrderItems(items){
-      let total = 0;
-
-      // bunny bundle
-      const b20 = items.filter(i=>i.product_type==="bunny" && i.bunny_size==="20").reduce((s,i)=>s+i.quantity,0);
-      const b15 = items.filter(i=>i.product_type==="bunny" && i.bunny_size==="15").reduce((s,i)=>s+i.quantity,0);
-      const b11 = items.filter(i=>i.product_type==="bunny" && i.bunny_size==="11").reduce((s,i)=>s+i.quantity,0);
-
-      const bundle = Math.min(b20,b15,b11);
-      total += bundle * 22.50;
-      total += (b20 - bundle) * 12.0;
-      total += (b15 - bundle) * 9.0;
-      total += (b11 - bundle) * 6.0;
-
-      // lumis
-      const lumis = items.filter(i=>i.product_type==="lumi").reduce((s,i)=>s+i.quantity,0);
-      total += lumis * 8.50;
-
-      // other: 0 (du kannst später Preise ergänzen)
-      return Number(total.toFixed(2));
-    }
-
-    function prioRank(p){
-      if(p==="very") return 1;
-      if(p==="normal") return 2;
-      return 3;
-    }
-
-    // ---------- save order ----------
-    saveOrderBtn.addEventListener("click", async ()=>{
-      const customer = (customerEl.value||"").trim();
-      if(!customer || cart.length===0) return;
-
-      saveOrderBtn.disabled = true;
-      saveStatus.style.display = "none";
-
-      const note = (noteEl.value||"").trim();
-
-      const { data: order, error: oErr } = await supabase
-        .from("orders")
-        .insert({ customer_name: customer, note })
-        .select("id")
-        .single();
-
-      if(oErr){
-        alert("Order Fehler: " + oErr.message);
-        refreshSaveEnabled();
-        return;
-      }
-
-      const rows = cart.map(it => ({ ...it, order_id: order.id }));
-      const { error: iErr } = await supabase.from("order_items").insert(rows);
-      if(iErr){
-        alert("Items Fehler: " + iErr.message);
-        refreshSaveEnabled();
-        return;
-      }
-
-      // reset cart only (customer & note keep? -> wir resetten beides für neue Bestellung)
-      cart = [];
-      customerEl.value = "";
-      noteEl.value = "";
-      priority = null;
-      [pVery,pNorm,pLow].forEach(x=>x.classList.remove("active"));
-
-      saveStatus.textContent = "Gespeichert ✅";
-      saveStatus.style.display = "block";
-
-      refreshCart();
-      await loadAll();
-    });
-
-    // ---------- archive / delete / restore ----------
-    async function archiveOrder(orderId){
-      await supabase.from("orders").update({ archived: true }).eq("id", orderId);
-      await loadAll();
-    }
-    async function restoreOrder(orderId){
-      await supabase.from("orders").update({ archived: false }).eq("id", orderId);
-      await loadAll();
-    }
-    async function deleteOrder(orderId){
-      const ok = confirm("Bist du sicher? Diese Bestellung wird endgültig gelöscht.");
-      if(!ok) return;
-      await supabase.from("orders").delete().eq("id", orderId);
-      await loadAll();
-    }
-
-    // ---------- sold adjustments ----------
-    soldSumEl.addEventListener("click", ()=>{
-      adjMsg.style.display="none";
-      adjAmount.value = "";
-      adjNote.value = "";
-      adjBack.style.display="flex";
-    });
-    closeAdj.addEventListener("click", ()=> adjBack.style.display="none");
-    adjBack.addEventListener("click", (e)=>{ if(e.target===adjBack) adjBack.style.display="none"; });
-
-    addAdjBtn.addEventListener("click", async ()=>{
-      const a = Number(String(adjAmount.value).replace(",", "."));
-      if(!Number.isFinite(a)) return;
-      const n = (adjNote.value||"").trim();
-      const { error } = await supabase.from("adjustments").insert({ amount_eur: a, note: n });
-      if(error){ alert(error.message); return; }
-      adjMsg.textContent = "Gespeichert ✅";
-      adjMsg.style.display="block";
-      await loadAll();
-    });
-
-    // ---------- load + render ----------
     function formatDateOnly(iso){
       const d = new Date(iso);
       const dd = String(d.getDate()).padStart(2,"0");
@@ -1069,317 +674,1238 @@
       return `${dd}.${mm}.${yy}`;
     }
 
-    async function loadAll(){
-      // fetch orders + items
-      const { data: orders, error: oErr } = await supabase
-        .from("orders")
-        .select("id,created_at,customer_name,note,archived")
-        .order("created_at", { ascending:false });
-
-      if(oErr){
-        openSumEl.textContent = "Fehler: " + oErr.message;
-        return;
-      }
-
-      const { data: items, error: iErr } = await supabase
-        .from("order_items")
-        .select("*")
-        .order("created_at", { ascending:false });
-
-      if(iErr){
-        openSumEl.textContent = "Fehler: " + iErr.message;
-        return;
-      }
-
-      const { data: adjs } = await supabase.from("adjustments").select("*");
-      const adjSum = (adjs||[]).reduce((s,a)=> s + Number(a.amount_eur||0), 0);
-
-      // group items by order
-      const byOrder = new Map();
-      (items||[]).forEach(it=>{
-        const arr = byOrder.get(it.order_id) || [];
-        arr.push(it);
-        byOrder.set(it.order_id, arr);
-      });
-
-      const open = (orders||[]).filter(o=>!o.archived).map(o=>({ ...o, items: byOrder.get(o.id)||[] }));
-      const archived = (orders||[]).filter(o=>o.archived).map(o=>({ ...o, items: byOrder.get(o.id)||[] }));
-
-      // sorting open
-      if(sortMode==="prio"){
-        open.sort((a,b)=>{
-          const ap = Math.min(...a.items.map(x=>prioRank(x.priority)).concat([9]));
-          const bp = Math.min(...b.items.map(x=>prioRank(x.priority)).concat([9]));
-          if(ap!==bp) return ap-bp;
-          return new Date(b.created_at)-new Date(a.created_at);
-        });
-      } else {
-        open.sort((a,b)=> new Date(b.created_at)-new Date(a.created_at));
-      }
-
-      // sums
-      const openTotal = open.reduce((s,o)=> s + priceForOrderItems(o.items), 0);
-      openSumEl.textContent = `Summe offen: ${openTotal.toFixed(2)}€`;
-
-      const soldTotalRaw = archived.reduce((s,o)=> s + priceForOrderItems(o.items), 0);
-      const soldFinal = (soldTotalRaw + adjSum);
-      soldSumEl.textContent = `Verkauft gesamt: ${soldFinal.toFixed(2)}€ (klicken für Korrektur)`;
-
-      renderOrders(openOrdersEl, open, { archived:false });
-      renderArchive(archiveOrdersEl, archived);
-    }
-
-    function prioLabel(p){
-      if(p==="very") return "Sehr wichtig";
-      if(p==="normal") return "Wichtig";
-      return "Nicht wichtig";
-    }
-
-    function renderOrders(target, orders, { archived }){
-      target.innerHTML = "";
-      if(orders.length===0){
-        target.innerHTML = `<div class="hint">Keine ${archived?"Archiv":"offenen"} Bestellungen.</div>`;
-        return;
-      }
-
-      for(const o of orders){
-        const total = priceForOrderItems(o.items);
-        const bestPrio = Math.min(...o.items.map(x=>prioRank(x.priority)).concat([9]));
-        const prText = bestPrio===1 ? "Sehr wichtig" : bestPrio===2 ? "Wichtig" : "Nicht wichtig";
-
-        const wrap = document.createElement("div");
-        wrap.className = "orderCard";
-        wrap.innerHTML = `
-          <div class="orderTop">
-            <div class="orderMeta">
-              <div class="orderDate">${formatDateOnly(o.created_at)} • <span class="pill prio">${prText}</span></div>
-              <div class="orderCustomer">${escapeHtml(o.customer_name)}</div>
-            </div>
-            <div class="inline">
-              <div class="orderTotal">${total.toFixed(2)}€</div>
-              ${archived
-                ? `<button class="btn-small btn-ghost" data-restore="${o.id}">Zurückholen</button>
-                   <button class="btn-small btn-danger" data-del="${o.id}">Löschen</button>`
-                : `<button class="btn-small btn-soft" data-archive="${o.id}">Archivieren</button>`
-              }
-            </div>
-          </div>
-          ${o.note ? `<div class="hint" style="margin-top:6px">Hinweis: ${escapeHtml(o.note)}</div>` : ``}
-          <div class="items">
-            ${o.items.map(it=>renderItemRow(it, !archived)).join("")}
-          </div>
-        `;
-        target.appendChild(wrap);
-      }
-
-      // handlers
-      target.querySelectorAll("[data-archive]").forEach(b=>{
-        b.addEventListener("click", ()=> archiveOrder(b.getAttribute("data-archive")));
-      });
-      target.querySelectorAll("[data-restore]").forEach(b=>{
-        b.addEventListener("click", ()=> restoreOrder(b.getAttribute("data-restore")));
-      });
-      target.querySelectorAll("[data-del]").forEach(b=>{
-        b.addEventListener("click", ()=> deleteOrder(b.getAttribute("data-del")));
-      });
-
-      // edit open order items (pencil)
-      target.querySelectorAll("[data-edit-item]").forEach(b=>{
-        b.addEventListener("click", async ()=>{
-          const itemId = b.getAttribute("data-edit-item");
-          await openEditOpenItem(itemId);
-        });
-      });
-    }
-
-    function renderItemRow(it, allowEdit){
-      const pr = prioLabel(it.priority); // ✅ ohne "Priorität:"
-      let title = "";
-      let sub = "";
-      if(it.product_type==="bunny"){
-        title = `🐰 Hase ${it.bunny_size}cm • x${it.quantity}`;
-        if(it.bunny_mode==="single"){
-          sub = `Einfarbig: ${it.bunny_single_color || it.bunny_body_color || ""}`;
-        } else {
-          sub = `Körper: ${it.bunny_body_color} • Ohren: ${it.bunny_ear_color} • Popo: ${it.bunny_butt_color}`;
-        }
-      } else if(it.product_type==="lumi"){
-        title = `✨🪲 Lumi • x${it.quantity}`;
-        sub = `Körper: ${it.lumi_body_color} • Flügel: ${it.lumi_wing_color} • Fühler: ${it.lumi_feeler_color}`;
-      } else {
-        title = `➕ Weitere • x${it.quantity}`;
-        sub = `Größe: ${it.other_size} • Farbe: ${it.other_color} • ${it.other_description || ""}`;
-      }
-
+    function iconChevronDown(){
       return `
-        <div class="itemLine">
-          <div class="itemL">
-            <div class="itemT">${escapeHtml(title)} <span class="pill" style="margin-left:6px">${escapeHtml(pr)}</span></div>
-            <div class="itemS">${escapeHtml(sub)}</div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M6 9l6 6 6-6"></path>
+        </svg>`;
+    }
+    function iconPencil(){
+      return `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 20h9"></path>
+          <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"></path>
+        </svg>`;
+    }
+
+    // ---------- Custom Dropdown (Fix: Arrow always clickable, mobile OK) ----------
+    function buildDropdown({ id, label, placeholder }){
+      return `
+        <div class="ddWrap">
+          <label for="${id}">${label}</label>
+          <div class="ddInputWrap">
+            <input id="${id}" placeholder="${placeholder}" autocomplete="off" />
+            <button type="button" class="ddArrowBtn" data-dd-btn="${id}" aria-label="Dropdown öffnen">
+              ${iconChevronDown()}
+            </button>
           </div>
-          ${allowEdit ? `<button class="iconBtn" data-edit-item="${it.id}" title="Bearbeiten">✎</button>` : ``}
+          <div class="ddMenu" data-dd-menu="${id}">
+            <div class="ddNote">Tippen oder auswählen</div>
+            ${COLOR_SUGGESTIONS.map(c=>`<div class="ddItem" data-dd-item="${id}" data-value="${c}">${c}</div>`).join("")}
+          </div>
         </div>
       `;
     }
 
-    async function openEditOpenItem(itemId){
-      // load item
-      const { data: it, error } = await supabase.from("order_items").select("*").eq("id", itemId).single();
-      if(error){ alert(error.message); return; }
+    function setupDropdown(inputId){
+      const input = document.getElementById(inputId);
+      const btn = document.querySelector(`[data-dd-btn="${inputId}"]`);
+      const menu = document.querySelector(`[data-dd-menu="${inputId}"]`);
 
-      modalBody.innerHTML = `
-        <div class="grid">
-          <div class="hint">Bearbeiten: ${escapeHtml(it.product_type)} • x${it.quantity}</div>
-          <div class="label">Menge</div>
-          <input class="field" id="eoQty" value="${it.quantity}" inputmode="numeric" />
-          <div class="label">Priorität</div>
-          <div class="prioRow">
-            <button class="prioBtn small" data-pr="very">Sehr wichtig</button>
-            <button class="prioBtn" data-pr="normal">Wichtig</button>
-            <button class="prioBtn small" data-pr="low">Nicht wichtig</button>
-          </div>
-          <div id="eoFields"></div>
-          <button class="btn" id="eoSave">Speichern</button>
-        </div>
-      `;
+      function open(){
+        menu.classList.add("open");
+      }
+      function close(){
+        menu.classList.remove("open");
+      }
+      function toggle(){
+        menu.classList.toggle("open");
+      }
 
-      modalBody.querySelectorAll("[data-pr]").forEach(b=>{
-        if(b.getAttribute("data-pr")===it.priority) b.classList.add("active");
-        b.addEventListener("click", ()=>{
-          modalBody.querySelectorAll("[data-pr]").forEach(x=>x.classList.remove("active"));
-          b.classList.add("active");
+      // IMPORTANT: clicking arrow opens (works on mobile)
+      btn.addEventListener("click", (e)=>{ e.preventDefault(); toggle(); input.focus(); });
+
+      // click on input also opens
+      input.addEventListener("focus", ()=>open());
+      input.addEventListener("click", ()=>open());
+
+      // select item
+      menu.querySelectorAll(`[data-dd-item="${inputId}"]`).forEach(it=>{
+        it.addEventListener("click", ()=>{
+          const v = it.getAttribute("data-value") || "";
+          input.value = v;
+          fields[inputId] = v;
+          close();
+          validateForAdd();
         });
       });
 
-      const f = modalBody.querySelector("#eoFields");
-      if(it.product_type==="bunny"){
-        if(it.bunny_mode==="single"){
-          f.innerHTML = `
-            <div class="label">Einfarbig</div>
-            <input class="field" id="eoC1" value="${it.bunny_single_color || it.bunny_body_color || ""}" />
-          `;
-        } else {
-          f.innerHTML = `
-            <div class="grid grid-3">
-              <div><div class="label">Körper</div><input class="field" id="eoC1" value="${it.bunny_body_color || ""}"></div>
-              <div><div class="label">Ohren</div><input class="field" id="eoC2" value="${it.bunny_ear_color || ""}"></div>
-              <div><div class="label">Popo</div><input class="field" id="eoC3" value="${it.bunny_butt_color || ""}"></div>
-            </div>
-          `;
-        }
-      } else if(it.product_type==="lumi"){
-        f.innerHTML = `
-          <div class="grid grid-3">
-            <div><div class="label">Körper</div><input class="field" id="eoC1" value="${it.lumi_body_color || ""}"></div>
-            <div><div class="label">Flügel</div><input class="field" id="eoC2" value="${it.lumi_wing_color || ""}"></div>
-            <div><div class="label">Fühler</div><input class="field" id="eoC3" value="${it.lumi_feeler_color || ""}"></div>
-          </div>
-        `;
-      } else {
-        f.innerHTML = `
-          <div class="grid grid-2">
-            <div><div class="label">Größe</div><input class="field" id="eoC1" value="${it.other_size || ""}"></div>
-            <div><div class="label">Farbe</div><input class="field" id="eoC2" value="${it.other_color || ""}"></div>
-            <div style="grid-column:1/-1"><div class="label">Beschreibung</div><input class="field" id="eoC3" value="${it.other_description || ""}"></div>
-          </div>
-        `;
-      }
-
-      modalBody.querySelector("#eoSave").addEventListener("click", async ()=>{
-        const newQty = Number(modalBody.querySelector("#eoQty").value);
-        if(!Number.isFinite(newQty) || newQty<=0) return;
-        const newPr = modalBody.querySelector("[data-pr].active")?.getAttribute("data-pr") || it.priority;
-
-        const patch = { quantity: newQty, priority: newPr };
-
-        if(it.product_type==="bunny"){
-          if(it.bunny_mode==="single"){
-            const c = modalBody.querySelector("#eoC1").value.trim();
-            patch.bunny_single_color = c;
-            patch.bunny_body_color = c;
-            patch.bunny_ear_color = c;
-            patch.bunny_butt_color = c;
-          } else {
-            patch.bunny_body_color = modalBody.querySelector("#eoC1").value.trim();
-            patch.bunny_ear_color  = modalBody.querySelector("#eoC2").value.trim();
-            patch.bunny_butt_color = modalBody.querySelector("#eoC3").value.trim();
-          }
-        } else if(it.product_type==="lumi"){
-          patch.lumi_body_color = modalBody.querySelector("#eoC1").value.trim();
-          patch.lumi_wing_color = modalBody.querySelector("#eoC2").value.trim();
-          patch.lumi_feeler_color = modalBody.querySelector("#eoC3").value.trim();
-        } else {
-          patch.other_size = modalBody.querySelector("#eoC1").value.trim();
-          patch.other_color = modalBody.querySelector("#eoC2").value.trim();
-          patch.other_description = modalBody.querySelector("#eoC3").value.trim();
-        }
-
-        const { error: uErr } = await supabase.from("order_items").update(patch).eq("id", itemId);
-        if(uErr){ alert(uErr.message); return; }
-        closeEditModal();
-        await loadAll();
+      // typing custom
+      input.addEventListener("input", ()=>{
+        fields[inputId] = input.value.trim();
+        validateForAdd();
       });
 
-      modalBack.style.display = "flex";
+      // close on outside click
+      document.addEventListener("click", (e)=>{
+        const inside = menu.contains(e.target) || input.contains(e.target) || btn.contains(e.target);
+        if(!inside) close();
+      });
     }
 
-    function renderArchive(target, archived){
-      // group by month-year
-      const groups = new Map();
-      for(const o of archived){
-        const d = new Date(o.created_at);
-        const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
-        const name = d.toLocaleString("de-DE", { month:"long", year:"numeric" });
-        const arr = groups.get(key) || { name, orders: [] };
-        arr.orders.push(o);
-        groups.set(key, arr);
+    // ---------- Product UI Builders ----------
+    function renderProductArea(){
+      // buttons should NOT auto-select. user must click.
+      productArea.innerHTML = "";
+
+      if(currentProduct === "bunny"){
+        productArea.innerHTML = `
+          <div>
+            <label>Größe</label>
+            <div class="chips">
+              <div class="chip" id="size20">20 cm</div>
+              <div class="chip" id="size15">15 cm</div>
+              <div class="chip" id="size11">11 cm</div>
+            </div>
+          </div>
+
+          <div class="sep"></div>
+
+          <div>
+            <label>Farbmodus</label>
+            <div class="chips">
+              <div class="chip" id="modeMulti">Mehrfarbig</div>
+              <div class="chip" id="modeSingle">Einfarbig</div>
+            </div>
+          </div>
+        `;
+
+        // size buttons
+        const s20 = document.getElementById("size20");
+        const s15 = document.getElementById("size15");
+        const s11 = document.getElementById("size11");
+        [s20,s15,s11].forEach(el=>{
+          el.addEventListener("click", ()=>{
+            bunnySize = el.id==="size20" ? "20" : el.id==="size15" ? "15" : "11";
+            [s20,s15,s11].forEach(x=>setChipActive(x, x===el));
+            validateForAdd();
+          });
+        });
+
+        // mode buttons
+        const mMulti = document.getElementById("modeMulti");
+        const mSingle = document.getElementById("modeSingle");
+        [mMulti,mSingle].forEach(el=>{
+          el.addEventListener("click", ()=>{
+            bunnyMode = (el.id==="modeSingle") ? "single" : "multi";
+            [mMulti,mSingle].forEach(x=>setChipActive(x, x===el));
+            // reset fields for bunny colors when switching
+            fields.bunny_body=""; fields.bunny_ears=""; fields.bunny_butt=""; fields.bunny_single="";
+            renderColorArea();
+            validateForAdd();
+          });
+        });
+
+      } else if(currentProduct === "lumi"){
+        productArea.innerHTML = `
+          <div class="subTitle">Lumi hat keine Größe – wähle Farben.</div>
+        `;
+      } else if(currentProduct === "other"){
+        productArea.innerHTML = `
+          <div class="twoCols">
+            <div>
+              <label for="other_size">Größe</label>
+              <input id="other_size" placeholder="z. B. 30 cm / S / XL …" />
+            </div>
+            <div></div>
+          </div>
+        `;
+        const os = document.getElementById("other_size");
+        os.addEventListener("input", ()=>{ fields.other_size = os.value.trim(); validateForAdd(); });
+      }
+    }
+
+    function renderColorArea(){
+      colorArea.innerHTML = "";
+
+      if(currentProduct === "bunny"){
+        if(bunnyMode === "single"){
+          colorArea.innerHTML = `
+            <div class="grid">
+              ${buildDropdown({ id:"bunny_single", label:"Einfarbig", placeholder:"Tippen oder auswählen…" })}
+            </div>
+          `;
+          setupDropdown("bunny_single");
+        } else if(bunnyMode === "multi"){
+          colorArea.innerHTML = `
+            <div class="grid grid-3">
+              ${buildDropdown({ id:"bunny_body", label:"Körperfarbe", placeholder:"Tippen oder auswählen…" })}
+              ${buildDropdown({ id:"bunny_ears", label:"Ohrenfarbe", placeholder:"Tippen oder auswählen…" })}
+              ${buildDropdown({ id:"bunny_butt", label:"Popofarbe", placeholder:"Tippen oder auswählen…" })}
+            </div>
+          `;
+          setupDropdown("bunny_body");
+          setupDropdown("bunny_ears");
+          setupDropdown("bunny_butt");
+        } else {
+          colorArea.innerHTML = `<div class="subTitle">Bitte zuerst <b>Farbmodus</b> wählen.</div>`;
+        }
       }
 
-      // newest month first
-      const keys = [...groups.keys()].sort((a,b)=> b.localeCompare(a));
-      target.innerHTML = "";
-
-      if(keys.length===0){
-        target.innerHTML = `<div class="hint">Archiv ist leer.</div>`;
-        return;
+      if(currentProduct === "lumi"){
+        colorArea.innerHTML = `
+          <div class="grid grid-3">
+            ${buildDropdown({ id:"lumi_body", label:"Körperfarbe", placeholder:"Tippen oder auswählen…" })}
+            ${buildDropdown({ id:"lumi_wings", label:"Flügelfarbe", placeholder:"Tippen oder auswählen…" })}
+            ${buildDropdown({ id:"lumi_feelers", label:"Fühlerfarbe", placeholder:"Tippen oder auswählen…" })}
+          </div>
+        `;
+        setupDropdown("lumi_body");
+        setupDropdown("lumi_wings");
+        setupDropdown("lumi_feelers");
       }
 
-      for(const k of keys){
-        const g = groups.get(k);
-        const title = document.createElement("div");
-        title.className = "monthTitle";
-        title.textContent = g.name;
-        target.appendChild(title);
-
-        renderOrders(target, g.orders, { archived:true });
+      if(currentProduct === "other"){
+        colorArea.innerHTML = `
+          <div class="grid grid-2">
+            ${buildDropdown({ id:"other_color", label:"Farbe", placeholder:"Tippen oder auswählen…" })}
+          </div>
+        `;
+        setupDropdown("other_color");
       }
+    }
+
+    // ---------- Selection handlers ----------
+    function setProduct(p){
+      currentProduct = p;
+      bunnySize = null;
+      bunnyMode = null;
+      priority = null;
+      qty = null;
+      qtyOther.value = "";
+      // clear color fields
+      fields.bunny_body=""; fields.bunny_ears=""; fields.bunny_butt=""; fields.bunny_single="";
+      fields.lumi_body=""; fields.lumi_wings=""; fields.lumi_feelers="";
+      fields.other_size=""; fields.other_color="";
+
+      // UI
+      [btnBunny,btnLumi,btnOther].forEach(b=>b.classList.remove("btnDark"));
+      btnBunny.classList.add(currentProduct==="bunny" ? "btnDark" : "");
+      btnLumi.classList.add(currentProduct==="lumi" ? "btnDark" : "");
+      btnOther.classList.add(currentProduct==="other" ? "btnDark" : "");
+
+      // priority buttons reset (no auto active)
+      [pVery,pNorm,pLow].forEach(x=>x.classList.remove("active"));
+
+      // qty reset
+      qtyBtns.forEach(b=>b.classList.remove("active"));
+
+      newTitle.textContent =
+        currentProduct==="bunny" ? "Neue Bestellung: Hase"
+        : currentProduct==="lumi" ? "Neue Bestellung: Lumi"
+        : "Neue Bestellung: Weitere Produkt";
+
+      renderProductArea();
+      renderColorArea();
+      clearErrorUI();
+      validateForAdd();
+      validateSaveEnabled();
+    }
+
+    btnBunny.addEventListener("click", ()=>setProduct("bunny"));
+    btnLumi.addEventListener("click", ()=>setProduct("lumi"));
+    btnOther.addEventListener("click", ()=>setProduct("other"));
+
+    // Priority (no auto select)
+    function setPriority(p){
+      priority = p;
+      [pVery,pNorm,pLow].forEach(x=>x.classList.remove("active"));
+      (p==="very" ? pVery : p==="normal" ? pNorm : pLow).classList.add("active");
+      validateForAdd();
+    }
+    pVery.addEventListener("click", ()=>setPriority("very"));
+    pNorm.addEventListener("click", ()=>setPriority("normal"));
+    pLow.addEventListener("click", ()=>setPriority("low"));
+
+    // qty
+    qtyBtns.forEach(b=>{
+      b.addEventListener("click", ()=>{
+        qtyBtns.forEach(x=>x.classList.remove("active"));
+        b.classList.add("active");
+        qty = Number(b.getAttribute("data-qty"));
+        validateForAdd();
+      });
+    });
+    qtyOther.addEventListener("input", ()=>validateForAdd());
+
+    // ---------- Validation for adding an item ----------
+    function getQty(){
+      const other = Number(String(qtyOther.value||"").replace(",", "."));
+      if(Number.isFinite(other) && other>0) return Math.floor(other);
+      return qty;
+    }
+
+    function validateForAdd(){
+      clearErrorUI();
+      const missing = [];
+
+      if(!currentProduct) missing.push("btnBunny"); // dummy
+      if(!priority) missing.push("pNorm");         // dummy
+      if(!getQty()) missing.push("qtyOther");      // highlight other field if none selected
+
+      if(currentProduct==="bunny"){
+        if(!bunnySize) missing.push("size20");
+        if(!bunnyMode) missing.push("modeMulti");
+        if(bunnyMode==="single"){
+          if(!fields.bunny_single) missing.push("bunny_single");
+        }else if(bunnyMode==="multi"){
+          if(!fields.bunny_body) missing.push("bunny_body");
+          if(!fields.bunny_ears) missing.push("bunny_ears");
+          if(!fields.bunny_butt) missing.push("bunny_butt");
+        }
+      }
+
+      if(currentProduct==="lumi"){
+        if(!fields.lumi_body) missing.push("lumi_body");
+        if(!fields.lumi_wings) missing.push("lumi_wings");
+        if(!fields.lumi_feelers) missing.push("lumi_feelers");
+      }
+
+      if(currentProduct==="other"){
+        if(!fields.other_size) missing.push("other_size");
+        if(!fields.other_color) missing.push("other_color");
+      }
+
+      // customer optional? you wanted it free; not required, so not in missing.
+      // description optional too.
+
+      return missing.length===0;
+    }
+
+    // ---------- Cart pricing ----------
+    function priceForItem(it){
+      // it: { product, bunny_size, bunny_mode, qty, ... , price_override? }
+      const q = Number(it.qty||1);
+
+      if(it.price_override != null && Number.isFinite(Number(it.price_override))){
+        return Number(it.price_override) * q;
+      }
+
+      if(it.product === "bunny"){
+        const p = PRICES.bunny[it.bunny_size] ?? 0;
+        return p * q;
+      }
+      if(it.product === "lumi"){
+        return PRICES.lumi * q;
+      }
+      if(it.product === "other"){
+        // other price not defined -> 0 (you can override later in edit)
+        return 0;
+      }
+      return 0;
+    }
+
+    function cartTotal(){
+      return cart.reduce((s,it)=>s + priceForItem(it), 0);
+    }
+
+    function validateSaveEnabled(){
+      const ok = cart.length > 0;
+      saveOrderBtn.disabled = !ok;
+      saveOrderBtn.classList.toggle("btnDisabled", !ok);
+    }
+
+    // ---------- Cart render ----------
+    function renderCart(){
+      cartList.innerHTML = "";
+      cartHint.style.display = cart.length ? "none" : "block";
+      cartSum.textContent = "Summe: " + euro(cartTotal());
+
+      cart.forEach((it, idx)=>{
+        const name =
+          it.product==="bunny" ? `Hase ${it.bunny_size} cm`
+          : it.product==="lumi" ? `Lumi`
+          : `Weitere Produkt`;
+
+        const pr = PRIORITY[it.priority] || "";
+        const qtyTxt = `Menge: ${it.qty}`;
+
+        const colors = (() => {
+          if(it.product==="bunny"){
+            if(it.bunny_mode==="single"){
+              return `Farbe: ${it.colors.single}`;
+            }
+            return `Körper: ${it.colors.body} • Ohren: ${it.colors.ears} • Popo: ${it.colors.butt}`;
+          }
+          if(it.product==="lumi"){
+            return `Körper: ${it.colors.body} • Flügel: ${it.colors.wings} • Fühler: ${it.colors.feelers}`;
+          }
+          return `Größe: ${it.other_size} • Farbe: ${it.other_color}`;
+        })();
+
+        const customerTxt = it.customer_name ? `Kunde: ${it.customer_name}` : "";
+
+        const meta = [pr, colors, qtyTxt, customerTxt].filter(Boolean).join("<br>");
+
+        const row = document.createElement("div");
+        row.className = "cartItem";
+        row.innerHTML = `
+          <div class="lineLeft">
+            <div class="lineName">${escapeHtml(name)}</div>
+            <div class="cartMeta">${meta}</div>
+            ${it.note ? `<div class="cartMeta">Hinweis: ${escapeHtml(it.note)}</div>` : ``}
+            <div class="cartMeta"><b>Preis:</b> ${euro(priceForItem(it))}${it.price_override!=null ? " (angepasst)" : ""}</div>
+          </div>
+          <div class="lineRight">
+            <button class="iconBtn" title="Bearbeiten" data-edit="${idx}">${iconPencil()}</button>
+            <button class="iconBtn" title="Entfernen" data-del="${idx}">🗑</button>
+          </div>
+        `;
+        cartList.appendChild(row);
+      });
+
+      cartList.querySelectorAll("[data-del]").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          const idx = Number(btn.getAttribute("data-del"));
+          cart.splice(idx,1);
+          renderCart();
+          validateSaveEnabled();
+        });
+      });
+      cartList.querySelectorAll("[data-edit]").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          const idx = Number(btn.getAttribute("data-edit"));
+          openEditCartItem(idx);
+        });
+      });
     }
 
     function escapeHtml(str){
-      return String(str ?? "").replace(/[&<>"']/g, s => ({
+      return String(str).replace(/[&<>"']/g, s => ({
         "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
       }[s]));
     }
 
-    // sorting toggle
+    // ---------- Add item ----------
+    addItemBtn.addEventListener("click", ()=>{
+      clearErrorUI();
+      const missingOk = validateForAdd();
+      if(!missingOk){
+        // show message + red outlines on missing required fields
+        // we can't know exact ids from validateForAdd without returning them,
+        // so we compute them again quickly:
+        const missing = [];
+        if(!currentProduct) missing.push("btnBunny");
+        if(!priority) missing.push("pNorm");
+        if(!getQty()) missing.push("qtyOther");
+
+        if(currentProduct==="bunny"){
+          if(!bunnySize) missing.push("size20");
+          if(!bunnyMode) missing.push("modeMulti");
+          if(bunnyMode==="single"){
+            if(!fields.bunny_single) missing.push("bunny_single");
+          }else if(bunnyMode==="multi"){
+            if(!fields.bunny_body) missing.push("bunny_body");
+            if(!fields.bunny_ears) missing.push("bunny_ears");
+            if(!fields.bunny_butt) missing.push("bunny_butt");
+          }
+        }
+        if(currentProduct==="lumi"){
+          if(!fields.lumi_body) missing.push("lumi_body");
+          if(!fields.lumi_wings) missing.push("lumi_wings");
+          if(!fields.lumi_feelers) missing.push("lumi_feelers");
+        }
+        if(currentProduct==="other"){
+          if(!fields.other_size) missing.push("other_size");
+          if(!fields.other_color) missing.push("other_color");
+        }
+
+        showError(missing, "❗ Bitte erst ausfüllen: " + missingLabel(missing));
+        return;
+      }
+
+      const q = getQty();
+      const it = {
+        product: currentProduct,
+        priority,
+        qty: q,
+        note: (noteEl.value||"").trim() || null,
+        customer_name: (customer.value||"").trim() || null,
+        price_override: null
+      };
+
+      if(currentProduct==="bunny"){
+        it.bunny_size = bunnySize;
+        it.bunny_mode = bunnyMode;
+        it.colors = bunnyMode==="single"
+          ? { single: fields.bunny_single }
+          : { body: fields.bunny_body, ears: fields.bunny_ears, butt: fields.bunny_butt };
+      }
+      if(currentProduct==="lumi"){
+        it.colors = { body: fields.lumi_body, wings: fields.lumi_wings, feelers: fields.lumi_feelers };
+      }
+      if(currentProduct==="other"){
+        it.other_size = fields.other_size;
+        it.other_color = fields.other_color;
+      }
+
+      cart.push(it);
+      renderCart();
+      validateSaveEnabled();
+
+      // do NOT auto-reset selections (you didn't ask), keep user selections
+      saveStatus.style.display = "none";
+    });
+
+    function missingLabel(ids){
+      // nicer red-text output
+      const map = {
+        size20: "Größe",
+        modeMulti: "Farbmodus",
+        bunny_single: "Einfarbig",
+        bunny_body: "Körperfarbe",
+        bunny_ears: "Ohrenfarbe",
+        bunny_butt: "Popofarbe",
+        lumi_body: "Körperfarbe",
+        lumi_wings: "Flügelfarbe",
+        lumi_feelers: "Fühlerfarbe",
+        other_size: "Größe",
+        other_color: "Farbe",
+        qtyOther: "Menge",
+        pNorm: "Priorität",
+      };
+      const uniq = [...new Set(ids.map(x=>map[x]).filter(Boolean))];
+      return uniq.join(", ") || "Pflichtfelder";
+    }
+
+    // ---------- Cart item edit modal ----------
+    function openEditCartItem(idx){
+      editing = { type:"cart", idx };
+      const it = cart[idx];
+
+      modalBody.innerHTML = buildEditForm(it, { allowPrice:true });
+      modalBack.style.display = "flex";
+    }
+
+    closeModal.addEventListener("click", ()=>modalBack.style.display="none");
+    cancelEditBtn.addEventListener("click", ()=>modalBack.style.display="none");
+    modalBack.addEventListener("click", (e)=>{ if(e.target===modalBack) modalBack.style.display="none"; });
+
+    saveEditBtn.addEventListener("click", ()=>{
+      if(!editing) return;
+
+      if(editing.type==="cart"){
+        const idx = editing.idx;
+        const it = cart[idx];
+        applyEditFormToItem(it);
+        cart[idx] = it;
+        renderCart();
+        validateSaveEnabled();
+        modalBack.style.display="none";
+        return;
+      }
+
+      if(editing.type==="open"){
+        // handled in part 3 (saving to DB)
+      }
+    });
+
+    function buildEditForm(it, { allowPrice }){
+      // NOTE: We keep it simple: customer/note/qty/priority/colors; plus price override field
+      const prioOptions = ["very","normal","low"].map(p=>{
+        const t = PRIORITY[p];
+        return `<button type="button" class="prioBtn ${it.priority===p?"active":""}" data-eprio="${p}">${t}</button>`;
+      }).join("");
+
+      const priceVal = it.price_override!=null ? String(it.price_override) : "";
+
+      const base = `
+        <div class="grid">
+          <div>
+            <label>Kundenname</label>
+            <input id="e_customer" value="${escapeHtml(it.customer_name||"")}" placeholder="Kunde" />
+          </div>
+
+          <div>
+            <label>Beschreibung (optional)</label>
+            <textarea id="e_note" placeholder="Hinweis…">${escapeHtml(it.note||"")}</textarea>
+          </div>
+
+          <div>
+            <label>Priorität</label>
+            <div class="prioWrap" id="e_prioWrap">${prioOptions}</div>
+          </div>
+
+          <div>
+            <label>Menge</label>
+            <input id="e_qty" inputmode="numeric" value="${escapeHtml(String(it.qty||1))}" />
+          </div>
+
+          ${allowPrice ? `
+          <div>
+            <label>Preis pro Stück (optional überschreiben)</label>
+            <input id="e_price" inputmode="decimal" placeholder="z. B. 8" value="${escapeHtml(priceVal)}" />
+            <div class="subTitle">Leer lassen = Standardpreis</div>
+          </div>` : ``}
+        </div>
+      `;
+
+      const colors = (() => {
+        if(it.product==="bunny"){
+          if(it.bunny_mode==="single"){
+            return `
+              <div class="sep"></div>
+              <div class="grid">
+                ${buildDropdown({ id:"e_bunny_single", label:"Einfarbig", placeholder:"Tippen oder auswählen…" })}
+              </div>
+            `;
+          }
+          return `
+            <div class="sep"></div>
+            <div class="grid grid-3">
+              ${buildDropdown({ id:"e_bunny_body", label:"Körperfarbe", placeholder:"Tippen oder auswählen…" })}
+              ${buildDropdown({ id:"e_bunny_ears", label:"Ohrenfarbe", placeholder:"Tippen oder auswählen…" })}
+              ${buildDropdown({ id:"e_bunny_butt", label:"Popofarbe", placeholder:"Tippen oder auswählen…" })}
+            </div>
+          `;
+        }
+        if(it.product==="lumi"){
+          return `
+            <div class="sep"></div>
+            <div class="grid grid-3">
+              ${buildDropdown({ id:"e_lumi_body", label:"Körperfarbe", placeholder:"Tippen oder auswählen…" })}
+              ${buildDropdown({ id:"e_lumi_wings", label:"Flügelfarbe", placeholder:"Tippen oder auswählen…" })}
+              ${buildDropdown({ id:"e_lumi_feelers", label:"Fühlerfarbe", placeholder:"Tippen oder auswählen…" })}
+            </div>
+          `;
+        }
+        return `
+          <div class="sep"></div>
+          <div class="grid grid-2">
+            <div>
+              <label>Größe</label>
+              <input id="e_other_size" value="${escapeHtml(it.other_size||"")}" />
+            </div>
+            ${buildDropdown({ id:"e_other_color", label:"Farbe", placeholder:"Tippen oder auswählen…" })}
+          </div>
+        `;
+      })();
+
+      // attach after open
+      setTimeout(()=> {
+        // priority buttons
+        const wrap = document.getElementById("e_prioWrap");
+        wrap.querySelectorAll("[data-eprio]").forEach(b=>{
+          b.addEventListener("click", ()=>{
+            wrap.querySelectorAll("[data-eprio]").forEach(x=>x.classList.remove("active"));
+            b.classList.add("active");
+          });
+        });
+
+        // dropdowns init + set values
+        if(it.product==="bunny" && it.bunny_mode==="single"){
+          setupDropdown("e_bunny_single");
+          document.getElementById("e_bunny_single").value = it.colors.single || "";
+          fields["e_bunny_single"] = it.colors.single || "";
+        } else if(it.product==="bunny"){
+          setupDropdown("e_bunny_body");
+          setupDropdown("e_bunny_ears");
+          setupDropdown("e_bunny_butt");
+          document.getElementById("e_bunny_body").value = it.colors.body || "";
+          document.getElementById("e_bunny_ears").value = it.colors.ears || "";
+          document.getElementById("e_bunny_butt").value = it.colors.butt || "";
+          fields["e_bunny_body"]=it.colors.body||"";
+          fields["e_bunny_ears"]=it.colors.ears||"";
+          fields["e_bunny_butt"]=it.colors.butt||"";
+        }
+        if(it.product==="lumi"){
+          setupDropdown("e_lumi_body");
+          setupDropdown("e_lumi_wings");
+          setupDropdown("e_lumi_feelers");
+          document.getElementById("e_lumi_body").value = it.colors.body || "";
+          document.getElementById("e_lumi_wings").value = it.colors.wings || "";
+          document.getElementById("e_lumi_feelers").value = it.colors.feelers || "";
+          fields["e_lumi_body"]=it.colors.body||"";
+          fields["e_lumi_wings"]=it.colors.wings||"";
+          fields["e_lumi_feelers"]=it.colors.feelers||"";
+        }
+        if(it.product==="other"){
+          setupDropdown("e_other_color");
+          document.getElementById("e_other_color").value = it.other_color || "";
+          fields["e_other_color"]=it.other_color||"";
+        }
+      }, 0);
+
+      return base + colors;
+    }
+
+    function applyEditFormToItem(it){
+      const e_customer = document.getElementById("e_customer");
+      const e_note = document.getElementById("e_note");
+      const e_qty = document.getElementById("e_qty");
+      const e_price = document.getElementById("e_price");
+
+      it.customer_name = (e_customer?.value||"").trim() || null;
+      it.note = (e_note?.value||"").trim() || null;
+
+      const q = Math.max(1, Math.floor(Number(String(e_qty?.value||"1").replace(",", "."))));
+      it.qty = q;
+
+      // priority
+      const pr = document.querySelector("#e_prioWrap .active")?.getAttribute("data-eprio");
+      if(pr) it.priority = pr;
+
+      // price override per piece
+      if(e_price){
+        const v = String(e_price.value||"").trim();
+        if(!v){
+          it.price_override = null;
+        } else {
+          const num = Number(v.replace(",", "."));
+          it.price_override = Number.isFinite(num) ? num : null;
+        }
+      }
+
+      // colors
+      if(it.product==="bunny"){
+        if(it.bunny_mode==="single"){
+          it.colors.single = (document.getElementById("e_bunny_single")?.value||"").trim();
+        }else{
+          it.colors.body = (document.getElementById("e_bunny_body")?.value||"").trim();
+          it.colors.ears = (document.getElementById("e_bunny_ears")?.value||"").trim();
+          it.colors.butt = (document.getElementById("e_bunny_butt")?.value||"").trim();
+        }
+      }
+      if(it.product==="lumi"){
+        it.colors.body = (document.getElementById("e_lumi_body")?.value||"").trim();
+        it.colors.wings = (document.getElementById("e_lumi_wings")?.value||"").trim();
+        it.colors.feelers = (document.getElementById("e_lumi_feelers")?.value||"").trim();
+      }
+      if(it.product==="other"){
+        it.other_size = (document.getElementById("e_other_size")?.value||"").trim();
+        it.other_color = (document.getElementById("e_other_color")?.value||"").trim();
+      }
+    }
+
+    // ---------- init UI: start with nothing selected ----------
+    function init(){
+      // product buttons initial style
+      btnBunny.classList.remove("btnDark");
+      btnLumi.classList.remove("btnDark");
+      btnOther.classList.remove("btnDark");
+
+      renderProductArea();
+      renderColorArea();
+      renderCart();
+      validateSaveEnabled();
+    }
+
+    init();
+
+    // Part 3/4 will add: DB save order + fetch/render open/archive + edit open orders + archive/restore/delete + sold adjustments + sorting
+  
+	    // ---------- DB helpers ----------
+    async function dbCreateOrderWithItems(items){
+      // create order
+      const { data: o, error: oErr } = await supabase
+        .from("orders")
+        .insert({
+          archived: false,
+          customer_name: (customer.value||"").trim() || null,
+          note: (noteEl.value||"").trim() || null
+        })
+        .select("id,created_at")
+        .single();
+
+      if(oErr) throw oErr;
+
+      const orderId = o.id;
+
+      // map cart items -> order_items rows
+      const rows = items.map(it=>{
+        const base = {
+          order_id: orderId,
+          product: it.product,
+          size: it.product==="bunny" ? it.bunny_size : it.product==="other" ? (it.other_size||null) : null,
+          colors: it.product==="bunny"
+            ? (it.bunny_mode==="single"
+                ? { mode:"single", single: it.colors.single }
+                : { mode:"multi", body: it.colors.body, ears: it.colors.ears, butt: it.colors.butt })
+            : it.product==="lumi"
+              ? { body: it.colors.body, wings: it.colors.wings, feelers: it.colors.feelers }
+              : { color: it.other_color || "" },
+          priority: it.priority,
+          qty: it.qty,
+          price_override: it.price_override
+        };
+        return base;
+      });
+
+      const { error: iErr } = await supabase.from("order_items").insert(rows);
+      if(iErr) throw iErr;
+
+      return orderId;
+    }
+
+    async function dbFetchAll(){
+      // orders + items
+      const { data: orders, error: oErr } = await supabase
+        .from("orders")
+        .select("id,created_at,archived,customer_name,note");
+      if(oErr) throw oErr;
+
+      const { data: items, error: iErr } = await supabase
+        .from("order_items")
+        .select("id,order_id,created_at,product,size,colors,priority,qty,price_override");
+      if(iErr) throw iErr;
+
+      const { data: adjs, error: aErr } = await supabase
+        .from("adjustments")
+        .select("id,created_at,amount_eur,note");
+      if(aErr) throw aErr;
+
+      // join
+      const byOrder = new Map();
+      for(const o of (orders||[])){
+        byOrder.set(o.id, { ...o, items: [] });
+      }
+      for(const it of (items||[])){
+        const o = byOrder.get(it.order_id);
+        if(o) o.items.push(it);
+      }
+
+      return {
+        orders: [...byOrder.values()],
+        adjustments: adjs || []
+      };
+    }
+
+    function humanProduct(it){
+      if(it.product==="bunny"){
+        return `Hase ${it.size || ""} cm`.trim();
+      }
+      if(it.product==="lumi") return "Lumi";
+      return "Weitere Produkt";
+    }
+
+    function humanPriority(p){
+      return PRIORITY[p] || "Wichtig";
+    }
+
+    function badgeClass(p){
+      return p==="very" ? "badgeVery" : p==="normal" ? "badgeNorm" : "badgeLow";
+    }
+
+    function lineMeta(it){
+      const q = Number(it.qty||1);
+      const pr = humanPriority(it.priority);
+
+      let colors = "";
+      if(it.product==="bunny"){
+        const mode = it.colors?.mode;
+        if(mode==="single"){
+          colors = `Farbe: ${it.colors.single || ""}`;
+        } else {
+          colors = `Körper: ${it.colors.body || ""} • Ohren: ${it.colors.ears || ""} • Popo: ${it.colors.butt || ""}`;
+        }
+      } else if(it.product==="lumi"){
+        colors = `Körper: ${it.colors?.body || ""} • Flügel: ${it.colors?.wings || ""} • Fühler: ${it.colors?.feelers || ""}`;
+      } else {
+        colors = `Größe: ${it.size || ""} • Farbe: ${it.colors?.color || ""}`;
+      }
+
+      // requested: not "Priorität: sehr wichtig" but just "Sehr wichtig"
+      return `${pr}<br>${escapeHtml(colors)}<br>Menge: ${q}`;
+    }
+
+    // pricing: works per item, and bundles are calculated per ORDER (only for standard bunny items without overrides)
+    function priceForOrderItems(orderItems){
+      const items = orderItems || [];
+
+      // overrides: count separately at unit override * qty
+      const overridden = items.filter(i => i.price_override != null && Number.isFinite(Number(i.price_override)));
+      const normal = items.filter(i => i.price_override == null || !Number.isFinite(Number(i.price_override)));
+
+      let total = 0;
+
+      for(const it of overridden){
+        total += Number(it.price_override) * Number(it.qty||0);
+      }
+
+      // now normal pricing with bunny combo logic
+      // count bunnies by size
+      const b20 = normal.filter(i=>i.product==="bunny" && i.size==="20").reduce((s,i)=>s+Number(i.qty||0),0);
+      const b15 = normal.filter(i=>i.product==="bunny" && i.size==="15").reduce((s,i)=>s+Number(i.qty||0),0);
+      const b11 = normal.filter(i=>i.product==="bunny" && i.size==="11").reduce((s,i)=>s+Number(i.qty||0),0);
+
+      const lumis = normal.filter(i=>i.product==="lumi").reduce((s,i)=>s+Number(i.qty||0),0);
+
+      // other defaults to 0 unless override exists (so stays 0 here)
+      // Bunny combo: one set requires at least one of each size
+      let sets = Math.min(b20,b15,b11);
+      total += sets * PRICES.bunny.combo;
+
+      // remaining bunnies
+      total += (b20 - sets) * PRICES.bunny["20"];
+      total += (b15 - sets) * PRICES.bunny["15"];
+      total += (b11 - sets) * PRICES.bunny["11"];
+
+      total += lumis * PRICES.lumi;
+
+      return total;
+    }
+
+    function sortOrders(orders){
+      const arr = [...orders];
+      if(sortMode === "prio"){
+        arr.sort((a,b)=>{
+          // higher priority first (very->low), then date
+          const ap = Math.min(...(a.items||[]).map(x=>priorRank(x.priority)));
+          const bp = Math.min(...(b.items||[]).map(x=>priorRank(x.priority)));
+          if(ap !== bp) return ap - bp;
+          return new Date(b.created_at) - new Date(a.created_at);
+        });
+        return arr;
+      }
+      // date
+      arr.sort((a,b)=> new Date(b.created_at) - new Date(a.created_at));
+      return arr;
+    }
+
+    // ---------- Render orders ----------
+    function renderOpen(orders){
+      openOrdersEl.innerHTML = "";
+
+      const open = sortOrders(orders.filter(o=>!o.archived));
+
+      for(const o of open){
+        const box = document.createElement("div");
+        box.className = "orderBox";
+
+        const dateOnly = formatDateOnly(o.created_at);
+        const cust = (o.customer_name||"").trim();
+        const orderTotal = priceForOrderItems(o.items);
+
+        box.innerHTML = `
+          <div class="orderTop">
+            <div>
+              <div class="orderCustomer">${cust ? escapeHtml(cust) : "Ohne Kundenname"}</div>
+              <div class="orderDate">${dateOnly}</div>
+              ${o.note ? `<div class="subTitle" style="margin-top:8px">${escapeHtml(o.note)}</div>` : ``}
+            </div>
+            <div class="right" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+              <div class="orderBadge">Summe: ${euro(orderTotal)}</div>
+              <button class="iconBtn" title="Archivieren" data-arch="${o.id}">📁</button>
+            </div>
+          </div>
+
+          <div class="orderItems">
+            ${(o.items||[]).map(it=>{
+              return `
+                <div class="orderLine">
+                  <div class="lineLeft">
+                    <div class="lineName">${escapeHtml(humanProduct(it))}</div>
+                    <div class="lineMeta">${lineMeta(it)}</div>
+                  </div>
+                  <div class="lineRight">
+                    <div class="lineQty">x${Number(it.qty||1)}</div>
+                    <button class="iconBtn" title="Bearbeiten" data-edit-open="${o.id}" data-item="${it.id}">
+                      ${iconPencil()}
+                    </button>
+                  </div>
+                </div>
+              `;
+            }).join("")}
+          </div>
+        `;
+
+        openOrdersEl.appendChild(box);
+      }
+
+      // archive button for order
+      openOrdersEl.querySelectorAll("[data-arch]").forEach(b=>{
+        b.addEventListener("click", async ()=>{
+          const id = b.getAttribute("data-arch");
+          await supabase.from("orders").update({ archived:true }).eq("id", id);
+          await loadAll();
+        });
+      });
+
+      // edit open item
+      openOrdersEl.querySelectorAll("[data-edit-open]").forEach(b=>{
+        b.addEventListener("click", ()=>{
+          const orderId = b.getAttribute("data-edit-open");
+          const itemId = b.getAttribute("data-item");
+          openEditOpenItem(orderId, itemId);
+        });
+      });
+    }
+
+    function monthKey(dateIso){
+      const d = new Date(dateIso);
+      const m = String(d.getMonth()+1).padStart(2,"0");
+      return `${d.getFullYear()}-${m}`;
+    }
+    function monthLabel(key){
+      const [y,m] = key.split("-");
+      const names = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+      return `${names[Number(m)-1]} ${y}`;
+    }
+
+    function renderArchive(orders){
+      archiveOrdersEl.innerHTML = "";
+
+      const archived = sortOrders(orders.filter(o=>o.archived));
+      if(archived.length === 0){
+        archiveOrdersEl.innerHTML = `<div class="subTitle">Noch nichts im Archiv.</div>`;
+        return;
+      }
+
+      // group by month
+      const groups = new Map();
+      for(const o of archived){
+        const k = monthKey(o.created_at);
+        if(!groups.has(k)) groups.set(k, []);
+        groups.get(k).push(o);
+      }
+      const keys = [...groups.keys()].sort((a,b)=> b.localeCompare(a));
+
+      for(const k of keys){
+        const title = document.createElement("div");
+        title.className = "orderBox";
+        title.style.background = "transparent";
+        title.style.border = "none";
+        title.style.boxShadow = "none";
+        title.innerHTML = `<div class="monthTitle">${monthLabel(k)}</div>`;
+        archiveOrdersEl.appendChild(title);
+
+        for(const o of groups.get(k)){
+          const box = document.createElement("div");
+          box.className = "orderBox";
+
+          const dateOnly = formatDateOnly(o.created_at);
+          const cust = (o.customer_name||"").trim();
+          const orderTotal = priceForOrderItems(o.items);
+
+          box.innerHTML = `
+            <div class="orderTop">
+              <div>
+                <div class="orderCustomer">${cust ? escapeHtml(cust) : "Ohne Kundenname"}</div>
+                <div class="orderDate">${dateOnly}</div>
+                ${o.note ? `<div class="subTitle" style="margin-top:8px">${escapeHtml(o.note)}</div>` : ``}
+              </div>
+              <div class="right" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+                <div class="orderBadge">Summe: ${euro(orderTotal)}</div>
+                <button class="btnSmall btn btnOk" data-restore="${o.id}">Zurückholen</button>
+                <button class="btnSmall btn btnDanger" data-del-order="${o.id}">Löschen</button>
+              </div>
+            </div>
+
+            <div class="orderItems">
+              ${(o.items||[]).map(it=>{
+                return `
+                  <div class="orderLine">
+                    <div class="lineLeft">
+                      <div class="lineName">${escapeHtml(humanProduct(it))}</div>
+                      <div class="lineMeta">${lineMeta(it)}</div>
+                    </div>
+                    <div class="lineRight">
+                      <div class="lineQty">x${Number(it.qty||1)}</div>
+                    </div>
+                  </div>
+                `;
+              }).join("")}
+            </div>
+          `;
+          archiveOrdersEl.appendChild(box);
+        }
+      }
+
+      archiveOrdersEl.querySelectorAll("[data-restore]").forEach(b=>{
+        b.addEventListener("click", async ()=>{
+          const id = b.getAttribute("data-restore");
+          await supabase.from("orders").update({ archived:false }).eq("id", id);
+          await loadAll();
+        });
+      });
+
+      archiveOrdersEl.querySelectorAll("[data-del-order]").forEach(b=>{
+        b.addEventListener("click", async ()=>{
+          const id = b.getAttribute("data-del-order");
+          const ok = confirm("Bist du sicher, dass du diese Archiv-Bestellung löschen willst?");
+          if(!ok) return;
+          await supabase.from("orders").delete().eq("id", id);
+          await loadAll();
+        });
+      });
+    }
+
+    // ---------- Open item edit (DB) ----------
+    async function openEditOpenItem(orderId, itemId){
+      // fetch item (we have it in memory via loadAll, but simplest fetch)
+      const { data, error } = await supabase
+        .from("order_items")
+        .select("id,order_id,product,size,colors,priority,qty,price_override")
+        .eq("id", itemId)
+        .single();
+      if(error){ alert(error.message); return; }
+
+      editing = { type:"open", orderId, itemId, item:data };
+
+      // Build form for open item (allowPrice true)
+      modalBody.innerHTML = buildEditForm(fromDbItemToCartLike(data), { allowPrice:true });
+      modalBack.style.display = "flex";
+
+      // Override the save handler for open items
+      saveEditBtn.onclick = async ()=>{
+        const it = fromDbItemToCartLike(data);
+        applyEditFormToItem(it);
+
+        // validate minimal: qty >= 1, priority exists
+        if(!it.priority || !it.qty || it.qty<1){
+          alert("Bitte Menge & Priorität prüfen.");
+          return;
+        }
+
+        const patch = {
+          priority: it.priority,
+          qty: it.qty,
+          price_override: it.price_override
+        };
+
+        // colors + size depending product
+        if(it.product==="bunny"){
+          patch.size = it.bunny_size;
+          patch.colors = it.bunny_mode==="single"
+            ? { mode:"single", single: it.colors.single }
+            : { mode:"multi", body: it.colors.body, ears: it.colors.ears, butt: it.colors.butt };
+        } else if(it.product==="lumi"){
+          patch.size = null;
+          patch.colors = { body: it.colors.body, wings: it.colors.wings, feelers: it.colors.feelers };
+        } else {
+          patch.size = it.other_size || null;
+          patch.colors = { color: it.other_color || "" };
+        }
+
+        const { error: uErr } = await supabase.from("order_items").update(patch).eq("id", itemId);
+        if(uErr){ alert(uErr.message); return; }
+
+        // update order-level customer/note too (in same modal)
+        const custVal = (document.getElementById("e_customer")?.value||"").trim() || null;
+        const noteVal = (document.getElementById("e_note")?.value||"").trim() || null;
+        await supabase.from("orders").update({ customer_name: custVal, note: noteVal }).eq("id", orderId);
+
+        modalBack.style.display="none";
+        await loadAll();
+      };
+    }
+
+    function fromDbItemToCartLike(db){
+      const it = {
+        product: db.product,
+        priority: db.priority,
+        qty: Number(db.qty||1),
+        note: null,
+        customer_name: null,
+        price_override: db.price_override
+      };
+      if(db.product==="bunny"){
+        it.bunny_size = db.size;
+        it.bunny_mode = db.colors?.mode || "multi";
+        it.colors = it.bunny_mode==="single"
+          ? { single: db.colors?.single || "" }
+          : { body: db.colors?.body || "", ears: db.colors?.ears || "", butt: db.colors?.butt || "" };
+      } else if(db.product==="lumi"){
+        it.colors = { body: db.colors?.body || "", wings: db.colors?.wings || "", feelers: db.colors?.feelers || "" };
+      } else {
+        it.other_size = db.size || "";
+        it.other_color = db.colors?.color || "";
+      }
+      return it;
+    }
+
+    // ---------- Save order ----------
+    saveOrderBtn.addEventListener("click", async ()=>{
+      if(cart.length===0) return;
+
+      try{
+        saveStatus.style.display = "none";
+        saveOrderBtn.disabled = true;
+
+        const orderId = await dbCreateOrderWithItems(cart);
+
+        // reset cart + (optional) clear form inputs
+        cart = [];
+        renderCart();
+        validateSaveEnabled();
+        saveOrderBtn.disabled = false;
+
+        saveStatus.style.display = "block";
+        setTimeout(()=>saveStatus.style.display="none", 1500);
+
+        await loadAll();
+      } catch(e){
+        alert(e.message || String(e));
+        saveOrderBtn.disabled = false;
+      }
+    });
+
+    // ---------- Sorting buttons ----------
     sortDate.addEventListener("click", ()=>{
       sortMode = "date";
-      sortDate.className = "btn-small btn";
-      sortPrio.className = "btn-small btn-soft";
+      sortDate.classList.add("btnDark"); sortDate.classList.remove("btnSoft");
+      sortPrio.classList.add("btnSoft"); sortPrio.classList.remove("btnDark");
       loadAll();
     });
     sortPrio.addEventListener("click", ()=>{
       sortMode = "prio";
-      sortPrio.className = "btn-small btn";
-      sortDate.className = "btn-small btn-soft";
+      sortPrio.classList.add("btnDark"); sortPrio.classList.remove("btnSoft");
+      sortDate.classList.add("btnSoft"); sortDate.classList.remove("btnDark");
       loadAll();
     });
 
-    // init defaults (NO auto selections)
-    setActiveProduct("bunny");
-    refreshCart();
-    refreshSaveEnabled();
+    // ---------- Sold sum button opens modal ----------
+    soldBtn.addEventListener("click", ()=>{
+      adjMsg.style.display="none";
+      adjErr.style.display="none";
+      adjNote.value = "";
+      adjStep2.style.display="none";
+      adjPickArea.innerHTML = "";
+      adjBack.style.display="flex";
+    });
+
+    closeAdj.addEventListener("click", ()=>adjBack.style.display="none");
+    adjBack.addEventListener("click", (e)=>{ if(e.target===adjBack) adjBack.style.display="none"; });
+
+    // ---------- Load & KPIs ----------
+    async function loadAll(){
+      const { orders, adjustments } = await dbFetchAll();
+
+      renderOpen(orders);
+      renderArchive(orders);
+
+      // sums
+      const openOrders = orders.filter(o=>!o.archived);
+      const openTotal = openOrders.reduce((s,o)=>s + priceForOrderItems(o.items), 0);
+      openSumEl.textContent = `Summe offen: ${euro(openTotal)}`;
+
+      const archivedOrders = orders.filter(o=>o.archived);
+      const soldRaw = archivedOrders.reduce((s,o)=>s + priceForOrderItems(o.items), 0);
+      const adjSum = (adjustments||[]).reduce((s,a)=>s + Number(a.amount_eur||0), 0);
+
+      const soldFinal = soldRaw + adjSum;
+      soldSumEl.textContent = `Verkauft gesamt: ${euro(soldFinal)}`;
+    }
+
     await loadAll();
-  </script>
+
+    // Part 4/4 will add: adjustments UI (choose product/size/qty) + subtract logic + archive delete confirmations are already, but we add better step-2 UI and "other amount" + finalize script end tags.
+
+
+</script>
+
+
 </body>
 </html>
