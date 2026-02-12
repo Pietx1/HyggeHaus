@@ -479,8 +479,7 @@
 
     // ---------------- constants ----------------
     const COLOR_SUGGESTIONS = [
-      "weiß","schwarz","grau","rot","blau","gelb","grün","orange","pink","lila","braun","beige","gold","silber"
-    ];
+      "dunkelgrau","hellgrau","oak","beige","gold","pink","rosa","blau","grün","orange","gelb"
 
     const PRICES = {
       bunny: { "20": 12.0, "15": 9.0, "11": 6.0, comboAllThree: 22.50 },
@@ -676,18 +675,33 @@
           ? { single: norm(invColors.single) }
           : { ears: norm(invColors.ears), body: norm(invColors.body), butt: norm(invColors.butt) };
 
-      const { error } = await supabase
-        .from("inventory")
-        .upsert({
-          key,
-          product: "bunny",
-          size: invSize,
-          mode: invMode,
-          colors,
-          qty: Math.floor(q)
-        }, { onConflict: "key" });
+   // ✅ 1) schauen ob key schon existiert
+const { data: existing, error: exErr } = await supabase
+  .from("inventory")
+  .select("qty")
+  .eq("key", key)
+  .maybeSingle();
 
-      if(error) return showErr(invErr, error.message);
+if(exErr) return showErr(invErr, exErr.message);
+
+const oldQty = Number(existing?.qty ?? 0);
+const addQty = Math.floor(q);
+const newQty = oldQty + addQty;
+
+// ✅ 2) upsert mit neuer Menge (zusammenpacken)
+const { error } = await supabase
+  .from("inventory")
+  .upsert({
+    key,
+    product: "bunny",
+    size: invSize,
+    mode: invMode,
+    colors,
+    qty: newQty
+  }, { onConflict: "key" });
+
+if(error) return showErr(invErr, error.message);
+
 
       invShowOk("Bestand gespeichert ✅");
       await loadInventory();
