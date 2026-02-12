@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Bestellungen & Bestand</title>
+  <title>HyggeHaus • Bestellungen</title>
 
   <style>
     :root{
@@ -17,6 +17,9 @@
       --dark2:#111827;
       --danger:#b91c1c;
       --ok:#047857;
+      --warn:#b45309;
+      --soft:#f1f5f9;
+      --radius:18px;
     }
     *{ box-sizing:border-box; }
     body{
@@ -27,32 +30,13 @@
     }
     .container{ max-width:1100px; margin:0 auto; padding:24px; }
     h1{ margin:0; font-size:38px; letter-spacing:-.02em; }
-    .topbar{
-      display:flex; align-items:flex-end; justify-content:space-between; gap:12px;
-      margin-bottom:18px;
-    }
+    .topbar{ display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin-bottom:18px; }
     .hint{ color:var(--muted); font-size:13px; }
-
-    .navRow{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-    .navBtn{
-      border:1px solid var(--border);
-      background:#fff;
-      border-radius:999px;
-      padding:10px 14px;
-      font-weight:1000;
-      cursor:pointer;
-      user-select:none;
-    }
-    .navBtn.active{
-      background:linear-gradient(180deg, #0b1220, #0f172a);
-      border-color:#0f172a;
-      color:#fff;
-    }
 
     .card{
       background:var(--card);
       border:1px solid var(--border);
-      border-radius:18px;
+      border-radius:var(--radius);
       box-shadow:var(--shadow);
     }
     .pad{ padding:18px; }
@@ -75,7 +59,6 @@
 
     .grid{ display:grid; gap:14px; }
     @media(min-width:900px){
-      .grid-1{ grid-template-columns:1fr; }
       .grid-2{ grid-template-columns:repeat(2,1fr); }
       .grid-3{ grid-template-columns:repeat(3,1fr); }
       .grid-4{ grid-template-columns:repeat(4,1fr); }
@@ -86,7 +69,7 @@
       cursor:pointer;
       border-radius:14px;
       padding:12px 14px;
-      font-weight:1000;
+      font-weight:900;
       font-size:14px;
       background:var(--dark2);
       color:#fff;
@@ -105,6 +88,13 @@
       font-weight:900;
     }
     .btnDark{ background:linear-gradient(180deg, #0b1220, #0f172a); }
+    .btnDanger{ background:var(--danger); }
+    .btnGhost{
+      background:transparent;
+      border:1px dashed var(--border);
+      color:var(--muted);
+      font-weight:900;
+    }
 
     .chips{ display:flex; gap:10px; flex-wrap:wrap; }
     .chip{
@@ -113,17 +103,16 @@
       color:var(--text);
       padding:11px 14px;
       border-radius:999px;
-      font-weight:1000;
+      font-weight:900;
       cursor:pointer;
       user-select:none;
       min-width:108px;
       text-align:center;
     }
-    .chip.chipActive,
     .chip.active{
-      background: linear-gradient(180deg, #0b1220, #0f172a) !important;
-      color: #fff !important;
-      border-color: #0f172a !important;
+      background:linear-gradient(180deg, #0b1220, #0f172a);
+      color:#fff;
+      border-color:#0f172a;
     }
 
     .prioRow{ display:flex; gap:10px; align-items:stretch; }
@@ -132,7 +121,7 @@
       border:1px solid var(--border);
       background:#fff;
       border-radius:14px;
-      font-weight:1000;
+      font-weight:900;
       cursor:pointer;
       padding:10px 12px;
       text-align:center;
@@ -142,17 +131,58 @@
     .prioBtn.big{ flex:1.3; }
     .prioBtn.active{ background:var(--dark2); color:#fff; border-color:var(--dark2); }
 
-    .ddWrap{ position:relative; }
-    .ddInput{
-      width:100%;
-      height:44px;
-      line-height:44px;
-      padding:0 44px 0 14px;
+    .row{ display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+    .muted{ color:var(--muted); font-size:13px; }
+
+    .status{ margin-top:10px; font-size:13px; color:var(--muted); }
+    .error{ color:var(--danger); font-weight:900; }
+    .ok{ color:var(--ok); font-weight:900; }
+    .reqMissing{ border-color: var(--danger) !important; box-shadow:0 0 0 4px rgba(185,28,28,.10) !important; }
+
+    .orderCard{
       border:1px solid var(--border);
-      border-radius:14px;
-      outline:none;
+      border-radius:16px;
+      padding:12px;
       background:#fff;
     }
+    .orderTop{ display:flex; justify-content:space-between; gap:10px; align-items:flex-start; }
+    .orderTitle{ font-weight:1000; }
+    .badge{
+      font-size:12px;
+      font-weight:900;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:#fff;
+      white-space:nowrap;
+    }
+    .badge.ok{ border-color:#bbf7d0; background:#f0fdf4; color:#166534; }
+    .badge.warn{ border-color:#fed7aa; background:#fff7ed; color:#9a3412; }
+    .badge.bad{ border-color:#fecaca; background:#fff1f2; color:#991b1b; }
+
+    .iconBtn{
+      border:1px solid var(--border);
+      background:#fff;
+      width:36px; height:36px;
+      border-radius:12px;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:900;
+    }
+    .iconBtn:hover{ background:#f9fafb; }
+
+    details.archive > summary{
+      cursor:pointer;
+      user-select:none;
+      font-weight:900;
+      color:#1f3a8a;
+    }
+    .archiveWrap{ margin-top:10px; }
+
+    /* Dropdown */
+    .ddWrap{ position:relative; }
     .ddBtn{
       position:absolute;
       right:10px;
@@ -164,13 +194,13 @@
       cursor:pointer;
       z-index:3;
     }
+    .ddInput{ padding-right:36px; }
     .ddMenu{
       position:absolute;
       top:100%;
-      left:0;
-      right:0;
+      left:0; right:0;
       background:#fff;
-      border:1px solid #e5e7eb;
+      border:1px solid var(--border);
       border-radius:12px;
       margin-top:4px;
       max-height:200px;
@@ -181,172 +211,63 @@
     .ddMenu.open{ display:block; }
     .ddItem{ padding:10px 12px; cursor:pointer; }
     .ddItem:hover{ background:#f1f5f9; }
-    .ddEmpty{ padding:10px; color:#6b7280; }
+    .ddEmpty{ padding:10px; color:var(--muted); }
 
-    .status{ margin-top:10px; font-size:13px; color:var(--muted); }
-    .error{ color:var(--danger); font-weight:900; }
-    .ok{ color:var(--ok); font-weight:900; }
-    .reqMissing{ border-color: var(--danger) !important; box-shadow:0 0 0 4px rgba(185,28,28,.10) !important; }
-
-    .ordersHead{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
-    .sortBtns{ display:flex; gap:10px; }
-    .filterRow{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-
-    .row{ display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
-    .muted{ color:var(--muted); font-size:13px; }
-
-    .orderCard{
-      border:1px solid var(--border);
-      border-radius:16px;
-      padding:12px;
-      background:#fff;
-    }
-    .orderTitle{ font-weight:1000; }
-    .badge,.pill{
-      font-size:12px;
-      font-weight:1000;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid var(--border);
-      background:#fff;
-    }
-
-    .iconBtn{
-      border:1px solid var(--border);
-      background:#fff;
-      width:36px; height:36px;
-      border-radius:12px;
-      cursor:pointer;
+    /* Tabs oben */
+    .tabs{
       display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-    .iconBtn:hover{ background:#f9fafb; }
-
-    details.archive > summary{
-      cursor:pointer;
-      user-select:none;
-      font-weight:1000;
-      color:#1f3a8a;
-    }
-    .archiveWrap{ margin-top:10px; }
-
-    .sumBox{
-      border:1px solid var(--border);
-      border-radius:16px;
-      padding:10px 12px;
-      background:#fff;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-    }
-    .sumBig{
-      font-weight:1100;
-      font-size:20px;
-      text-align:center;
-      padding:14px 12px;
-      cursor:pointer;
-    }
-
-    .modalBack{
-      position:fixed; inset:0;
-      background:rgba(0,0,0,.35);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding:18px;
-      z-index:100;
-    }
-    .modalBack.open{ display:flex; }
-    .modal{
-      width:min(760px, 100%);
-      background:#fff;
-      border-radius:18px;
-      border:1px solid var(--border);
-      box-shadow:0 20px 60px rgba(0,0,0,.25);
-    }
-    .modalHead{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
       gap:10px;
-      padding:14px 14px 10px;
-      border-bottom:1px solid var(--border);
+      flex-wrap:wrap;
+      margin-bottom:14px;
     }
-    .xBtn{
+    .tabBtn{
       border:1px solid var(--border);
       background:#fff;
-      border-radius:12px;
-      width:38px; height:38px;
-      cursor:pointer;
+      border-radius:999px;
+      padding:10px 14px;
       font-weight:1000;
-    }
-    .modalBody{ padding:14px; }
-    .dangerMsg{ color:#b91c1c; font-weight:1000; display:none; margin-top:8px; }
-    .okMsg{ color:#047857; font-weight:1000; display:none; margin-top:8px; }
-
-    /* DONE */
-    .itemDone{ opacity:.55; text-decoration:line-through; }
-    .doneBox{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      font-weight:900;
-      font-size:13px;
+      cursor:pointer;
       user-select:none;
     }
-    .doneBox input{ width:18px; height:18px; }
+    .tabBtn.active{
+      background:linear-gradient(180deg, #0b1220, #0f172a);
+      color:#fff;
+      border-color:#0f172a;
+    }
 
-    /* Views */
+    /* View containers */
     .view{ display:none; }
     .view.active{ display:block; }
 
-    /* Bestand cards */
-    .invCard{
+    /* Bestand */
+    .invRow{
+      display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end;
+      padding:12px;
       border:1px solid var(--border);
       border-radius:16px;
-      padding:12px;
       background:#fff;
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      flex-wrap:wrap;
-      align-items:center;
     }
-    .invLeft{ min-width:240px; }
-    .invTitle{ font-weight:1100; }
-    .invMeta{ color:var(--muted); font-size:13px; margin-top:3px; }
-    .qtyInline{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
-    .qtyInputSmall{
-      width:120px;
-      text-align:center;
-      font-weight:1000;
-    }
+    .invKey{ font-weight:1000; }
+    .invControls{ display:flex; gap:8px; align-items:center; }
+    .invQty{ width:110px; }
   </style>
 </head>
 
 <body>
   <div class="container">
     <div class="topbar">
-      <div>
-        <h1 id="pageH1">Bestellungen</h1>
-        <div class="hint">GitHub Pages • Supabase</div>
-      </div>
-
-      <div class="navRow">
-        <button class="navBtn active" id="navOrders">🧾 Bestellungen</button>
-        <button class="navBtn" id="navStock">📦 Bestand</button>
-      </div>
+      <h1>Bestellungen</h1>
+      <div class="hint">GitHub Pages • Supabase</div>
     </div>
 
-    <!-- VIEW: Bestellungen -->
+    <div class="tabs">
+      <button class="tabBtn active" id="tabOrders">🧾 Bestellungen</button>
+      <button class="tabBtn" id="tabInv">📦 Bestand</button>
+    </div>
+
+    <!-- ================== VIEW: BESTELLUNGEN ================== -->
     <div class="view active" id="viewOrders">
+
       <!-- NEUE BESTELLUNG -->
       <div class="card">
         <div class="pad">
@@ -363,8 +284,8 @@
 
           <div id="productArea"></div>
           <div class="sep"></div>
-          <div id="colorArea"></div>
 
+          <div id="colorArea"></div>
           <div class="sep"></div>
 
           <label>Priorität</label>
@@ -432,7 +353,7 @@
           <div class="sep"></div>
 
           <button id="saveOrderBtn" class="btn" disabled>✅ Bestellung speichern</button>
-          <div class="okMsg" id="saveStatus">Gespeichert ✅</div>
+          <div class="ok" id="saveStatus" style="display:none; margin-top:10px;">Gespeichert ✅</div>
         </div>
       </div>
 
@@ -441,19 +362,15 @@
       <!-- OFFENE BESTELLUNGEN -->
       <div class="card">
         <div class="pad">
-          <div class="ordersHead">
+          <div class="row" style="justify-content:space-between; align-items:flex-start;">
             <div>
               <div class="title2" style="margin:0;">Offene Bestellungen</div>
               <div class="muted" id="openSum">Summe offen: 0,00 €</div>
             </div>
 
-            <div class="filterRow">
-              <div class="sortBtns">
-                <button class="btnSmall btnDark" id="sortDate">Sort: Datum</button>
-                <button class="btnSmall btnSoft" id="sortPrio">Sort: Priorität</button>
-              </div>
-
-              <button class="btnSmall btnSoft" id="toggleDone">✅ Fertige ausblenden</button>
+            <div class="row" style="gap:10px;">
+              <button class="btnSmall btnDark" id="sortDate">Sort: Datum</button>
+              <button class="btnSmall btnSoft" id="sortPrio">Sort: Priorität</button>
             </div>
           </div>
 
@@ -468,374 +385,112 @@
               <div id="archiveOrders" class="grid" style="margin-top:10px;"></div>
             </div>
           </details>
-
-          <div class="sep"></div>
-
-          <div class="sumBox sumBig" id="soldSum" title="Klicken für Korrektur / Abzug">
-            Verkauft gesamt: 0,00 €
-          </div>
-          <div class="muted" style="text-align:center; margin-top:6px;">Klicken für Korrektur / Abzug</div>
         </div>
       </div>
 
-      <!-- Modals (wie vorher) -->
-      <div class="modalBack" id="modalBack">
-        <div class="modal">
-          <div class="modalHead">
-            <div class="title2" style="margin:0;">Position bearbeiten</div>
-            <button class="xBtn" id="closeModal">X</button>
-          </div>
-          <div class="modalBody" id="modalBody"></div>
-        </div>
-      </div>
+    </div>
 
-      <div class="modalBack" id="adjBack">
-        <div class="modal">
-          <div class="modalHead">
-            <div class="title2" style="margin:0;">Korrektur / Abzug</div>
-            <button class="xBtn" id="closeAdj">X</button>
-          </div>
-          <div class="modalBody">
-            <div class="muted" style="margin-bottom:10px;">
-              Wähle, was du abziehen willst (z. B. Rückgabe / Rabatt).
-            </div>
+    <!-- ================== VIEW: BESTAND ================== -->
+    <div class="view" id="viewInv">
 
-            <div class="grid grid-2">
-              <button class="btn btnSoft" id="soldBtnBunny">🐰 Hase</button>
-              <button class="btn btnSoft" id="soldBtnLumi">✨🪲 Lumi</button>
-              <button class="btn btnSoft" id="soldBtnCombo">🐰 Hase Combo</button>
-              <button class="btn btnSoft" id="soldBtnOther">➕ Weitere Produkt</button>
-            </div>
-
-            <div style="height:10px"></div>
-
-            <div id="adjPickArea"></div>
-
-            <div style="height:12px"></div>
-
-            <label for="adjNote">Notiz (optional)</label>
-            <input id="adjNote" placeholder="z. B. Rabatt / Fehler / Kunde …" />
-
-            <div style="height:10px"></div>
-            <button class="btn btnDark" id="addAdjBtn">Abzug speichern</button>
-
-            <div class="okMsg" id="adjMsg">Gespeichert ✅</div>
-            <div class="dangerMsg" id="adjErr">Fehler</div>
-          </div>
-        </div>
-      </div>
-    </div><!-- /viewOrders -->
-
-    <!-- VIEW: Bestand -->
-    <div class="view" id="viewStock">
       <div class="card">
         <div class="pad">
           <div class="title2">Bestand</div>
-          <div class="muted">Hier trägst du fertige Hasen ein – unabhängig von Bestellungen.</div>
+          <div class="muted">Hier pflegst du Hasen unabhängig von Bestellungen. Beim Archivieren wird automatisch abgezogen.</div>
 
           <div class="sep"></div>
 
-          <label>Größe</label>
-          <div class="chips" id="stockSizeRow">
-            <div class="chip" data-size="11">11 cm</div>
-            <div class="chip" data-size="15">15 cm</div>
-            <div class="chip" data-size="20">20 cm</div>
+          <label>Hase: Größe</label>
+          <div class="chips" id="invSizeRow">
+            <div class="chip invSize" data-s="11">11 cm</div>
+            <div class="chip invSize" data-s="15">15 cm</div>
+            <div class="chip invSize" data-s="20">20 cm</div>
           </div>
 
-          <div style="height:10px"></div>
+          <div class="sep"></div>
 
-          <div class="grid grid-3" id="stockColorArea"></div>
+          <label>Farbmodus</label>
+          <div class="chips" id="invModeRow">
+            <div class="chip invMode" data-m="single">Einfarbig</div>
+            <div class="chip invMode" data-m="multi">Mehrfarbig</div>
+          </div>
 
-          <div style="height:10px"></div>
+          <div class="sep"></div>
+
+          <div id="invColorsArea"></div>
+
+          <div class="sep"></div>
 
           <div class="grid grid-2" style="align-items:end;">
             <div>
-              <label for="stockQty">Menge</label>
-              <input id="stockQty" inputmode="numeric" placeholder="z. B. 3" />
+              <label for="invQty">Menge</label>
+              <input id="invQty" inputmode="numeric" placeholder="z. B. 5" />
             </div>
             <div style="display:flex; justify-content:flex-end;">
-              <button class="btn btnDark" id="stockAddBtn" style="min-width:280px;">+ Zum Bestand hinzufügen</button>
+              <button class="btn btnDark" id="invSaveBtn" style="min-width:280px;">💾 In Bestand speichern</button>
             </div>
           </div>
 
           <div class="status">
-            <div class="error" id="stockErr" style="display:none;"></div>
-            <div class="ok" id="stockOk" style="display:none;"></div>
+            <div class="error" id="invErr" style="display:none;"></div>
+            <div class="ok" id="invOk" style="display:none;"></div>
           </div>
 
           <div class="sep"></div>
 
           <div class="row" style="justify-content:space-between; align-items:flex-end;">
             <div class="title2" style="margin:0;">Aktueller Bestand</div>
-            <div class="muted" id="stockSum">Gesamt: 0</div>
+            <button class="btnSmall btnSoft" id="invReload">↻ Neu laden</button>
           </div>
 
-          <div id="stockList" class="grid" style="margin-top:10px;"></div>
-          <div class="muted" id="stockHint">Noch kein Bestand erfasst.</div>
+          <div id="invList" class="grid" style="margin-top:10px;"></div>
+          <div class="muted" id="invHint">Noch kein Bestand eingetragen.</div>
         </div>
       </div>
-    </div><!-- /viewStock -->
 
+    </div>
+
+  </div>
+
+  <!-- Script kommt in Teil 2/3 und 3/3 -->
   <script type="module">
     import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
+    // ✅ Supabase
     const SUPABASE_URL = "https://htgrzmlcdolxxzvkppon.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0Z3J6bWxjZG9seHh6dmtwcG9uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0MzM2ODIsImV4cCI6MjA4NTAwOTY4Mn0.B0PxMAzmuvsHNd2n_mgNspjlPkaBpQlkrNzGu7p78fY";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0Z3J6bWxjZG9seHh6dmtwcG9uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0MzM2ODIsImV4cCI6MjA4NTAwOTY4Mn0.B0PxMAzmuvsHNd2n_mgNspjlPkaBpQlkrNzGu7p78fY"; // <- deinen Key wieder eintragen!
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // ---------- shared helpers ----------
-    const COLOR_SUGGESTIONS = ["weiß","schwarz","grau","rot","blau","gelb","grün","orange","pink","lila","braun","beige","gold","silber"];
-    const PRICES = { bunny:{ "20":12.0,"15":9.0,"11":6.0, comboAllThree:22.50 }, lumi:8.50 };
+    // ---------------- constants ----------------
+    const COLOR_SUGGESTIONS = [
+      "weiß","schwarz","grau","rot","blau","gelb","grün","orange","pink","lila","braun","beige","gold","silber"
+    ];
 
-    const euro = (n)=> (Number(n)||0).toFixed(2).replace(".", ",") + " €";
-    const esc = (s)=> String(s??"").replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+    const PRICES = {
+      bunny: { "20": 12.0, "15": 9.0, "11": 6.0, comboAllThree: 22.50 },
+      lumi: 8.50
+    };
 
-    function buildDropdown({ id, label, placeholder }){
-      return `
-        <div class="field" data-dd-wrap="${id}">
-          <label for="${id}">${esc(label)}</label>
-          <div class="ddWrap">
-            <input id="${id}" class="ddInput" placeholder="${esc(placeholder)}" autocomplete="off" />
-            <button type="button" class="ddBtn" aria-label="Dropdown öffnen" data-dd-btn="${id}"><span>▾</span></button>
-            <div class="ddMenu" data-dd-menu="${id}"></div>
-          </div>
-        </div>
-      `;
-    }
-    function setupDropdown(inputId, onChange){
-      const input = document.getElementById(inputId);
-      const menu  = document.querySelector(`[data-dd-menu="${inputId}"]`);
-      const btn   = document.querySelector(`[data-dd-btn="${inputId}"]`);
-      const wrap  = document.querySelector(`[data-dd-wrap="${inputId}"]`);
-      if(!input || !menu || !btn || !wrap) return;
+    // ---------------- DOM (Tabs) ----------------
+    const tabOrders = document.getElementById("tabOrders");
+    const tabInv    = document.getElementById("tabInv");
+    const viewOrders= document.getElementById("viewOrders");
+    const viewInv   = document.getElementById("viewInv");
 
-      function renderMenu(filter=""){
-        const f = filter.trim().toLowerCase();
-        const list = COLOR_SUGGESTIONS.filter(x => x.toLowerCase().includes(f));
-        menu.innerHTML = list.length
-          ? list.map(x=>`<div class="ddItem" data-val="${esc(x)}">${esc(x)}</div>`).join("")
-          : `<div class="ddEmpty">Keine Vorschläge</div>`;
-
-        menu.querySelectorAll(".ddItem").forEach(it=>{
-          it.addEventListener("click", ()=>{
-            const v = it.getAttribute("data-val") || "";
-            input.value = v;
-            menu.classList.remove("open");
-            onChange?.(v);
-          });
-        });
-      }
-
-      input.addEventListener("input", ()=>{
-        if(menu.classList.contains("open")) renderMenu(input.value || "");
-        onChange?.(input.value || "");
-      });
-      btn.addEventListener("click", (e)=>{
-        e.preventDefault(); e.stopPropagation();
-        if(menu.classList.contains("open")) menu.classList.remove("open");
-        else { menu.classList.add("open"); renderMenu(input.value || ""); input.focus(); }
-      });
-      document.addEventListener("click", (e)=>{ if(!wrap.contains(e.target)) menu.classList.remove("open"); });
+    function setActiveTab(which){
+      const onOrders = which === "orders";
+      tabOrders.classList.toggle("active", onOrders);
+      tabInv.classList.toggle("active", !onOrders);
+      viewOrders.classList.toggle("active", onOrdesrs);
+      viewInv.classList.toggle("active", !onOrders);
+      document.querySelector("h1").textContent = onOrders ? "Bestellungen" : "Bestand";
+      if(!onOrders) loadInventory(); // beim Wechsel Bestand neu laden
     }
 
-    // ---------- NAV (2 Seiten) ----------
-    const pageH1 = document.getElementById("pageH1");
-    const navOrders = document.getElementById("navOrders");
-    const navStock  = document.getElementById("navStock");
-    const viewOrders = document.getElementById("viewOrders");
-    const viewStock  = document.getElementById("viewStock");
+    tabOrders.addEventListener("click", ()=>setActiveTab("orders"));
+    tabInv.addEventListener("click", ()=>setActiveTab("inv"));
 
-    function setActiveView(which){
-      const isOrders = which === "orders";
-      navOrders.classList.toggle("active", isOrders);
-      navStock.classList.toggle("active", !isOrders);
-      viewOrders.classList.toggle("active", isOrders);
-      viewStock.classList.toggle("active", !isOrders);
-      pageH1.textContent = isOrders ? "Bestellungen" : "Bestand";
-    }
-    navOrders.addEventListener("click", ()=> setActiveView("orders"));
-    navStock.addEventListener("click", async ()=> { setActiveView("stock"); await loadStock(); });
-
-    // ============================================================
-    // =======================  BESTAND  ==========================
-    // ============================================================
-    const stockSizeRow = document.getElementById("stockSizeRow");
-    const stockColorArea = document.getElementById("stockColorArea");
-    const stockQty = document.getElementById("stockQty");
-    const stockAddBtn = document.getElementById("stockAddBtn");
-    const stockErr = document.getElementById("stockErr");
-    const stockOk = document.getElementById("stockOk");
-    const stockList = document.getElementById("stockList");
-    const stockHint = document.getElementById("stockHint");
-    const stockSum = document.getElementById("stockSum");
-
-    let stockSize = null;
-    let stockBody = "";
-    let stockEars = "";
-    let stockButt = "";
-
-    function stockShowErr(msg){ stockOk.style.display="none"; stockErr.textContent=msg; stockErr.style.display="block"; }
-    function stockShowOk(msg){ stockErr.style.display="none"; stockOk.textContent=msg; stockOk.style.display="block"; setTimeout(()=>stockOk.style.display="none", 1400); }
-
-    // build color inputs
-    stockColorArea.innerHTML = `
-      ${buildDropdown({ id:"stock_body", label:"Körperfarbe", placeholder:"Tippen oder auswählen…" })}
-      ${buildDropdown({ id:"stock_ears", label:"Ohrenfarbe",  placeholder:"Tippen oder auswählen…" })}
-      ${buildDropdown({ id:"stock_butt", label:"Popofarbe",   placeholder:"Tippen oder auswählen…" })}
-    `;
-    setupDropdown("stock_body", (v)=> stockBody = v);
-    setupDropdown("stock_ears", (v)=> stockEars = v);
-    setupDropdown("stock_butt", (v)=> stockButt = v);
-
-    // size chips
-    stockSizeRow.querySelectorAll(".chip").forEach(ch=>{
-      ch.addEventListener("click", ()=>{
-        stockSize = ch.getAttribute("data-size");
-        stockSizeRow.querySelectorAll(".chip").forEach(x=>x.classList.remove("chipActive","btnDark"));
-        ch.classList.add("chipActive","btnDark");
-      });
-    });
-
-    function stockKey(size, body, ears, butt){
-      // normalize
-      const norm = (s)=> String(s||"").trim().toLowerCase();
-      return `bunny|${norm(size)}|${norm(body)}|${norm(ears)}|${norm(butt)}`;
-    }
-
-    async function addToStock(){
-      stockErr.style.display="none";
-
-      const size = String(stockSize||"").trim();
-      const body = String(stockBody||"").trim();
-      const ears = String(stockEars||"").trim();
-      const butt = String(stockButt||"").trim();
-      const q = Math.floor(Number(String(stockQty.value||"").replace(",", ".")));
-
-      if(!size) return stockShowErr("Bitte Größe wählen.");
-      if(!body || !ears || !butt) return stockShowErr("Bitte alle 3 Farben ausfüllen.");
-      if(!Number.isFinite(q) || q<=0) return stockShowErr("Bitte gültige Menge eingeben.");
-
-      const key = stockKey(size, body, ears, butt);
-
-      // hole aktuellen qty (falls existiert), dann addieren
-      const { data: existing, error: exErr } = await supabase
-        .from("inventory_bunnies")
-        .select("qty")
-        .eq("key", key)
-        .maybeSingle();
-
-      if(exErr) return stockShowErr(exErr.message);
-
-      const newQty = (existing?.qty ?? 0) + q;
-
-      const { error } = await supabase
-        .from("inventory_bunnies")
-        .upsert({
-          key,
-          size, body, ears, butt,
-          qty: newQty,
-          updated_at: new Date().toISOString()
-        });
-
-      if(error) return stockShowErr(error.message);
-
-      stockQty.value = "";
-      stockShowOk("Gespeichert ✅");
-      await loadStock();
-    }
-
-    stockAddBtn.addEventListener("click", addToStock);
-
-    async function updateStockQty(key, qty){
-      const q = Math.floor(Number(qty));
-      if(!Number.isFinite(q) || q<0) throw new Error("Menge muss 0 oder größer sein.");
-
-      const { error } = await supabase
-        .from("inventory_bunnies")
-        .update({ qty: q, updated_at: new Date().toISOString() })
-        .eq("key", key);
-
-      if(error) throw error;
-    }
-
-    async function deleteStockRow(key){
-      const ok = confirm("Diesen Bestand-Eintrag löschen?");
-      if(!ok) return;
-      await supabase.from("inventory_bunnies").delete().eq("key", key);
-      await loadStock();
-    }
-
-    async function loadStock(){
-      const { data, error } = await supabase
-        .from("inventory_bunnies")
-        .select("*")
-        .order("updated_at", { ascending:false });
-
-      if(error){
-        stockShowErr(error.message);
-        return;
-      }
-
-      const rows = data || [];
-      stockList.innerHTML = "";
-      stockHint.style.display = rows.length ? "none" : "block";
-
-      const total = rows.reduce((s,r)=> s + Number(r.qty||0), 0);
-      stockSum.textContent = `Gesamt: ${total}`;
-
-      // nice sorting inside stock: by size 11->15->20, then updated desc
-      const sizeOrder = { "11":0, "15":1, "20":2 };
-      rows.sort((a,b)=>{
-        const sa = sizeOrder[String(a.size)] ?? 99;
-        const sb = sizeOrder[String(b.size)] ?? 99;
-        if(sa!==sb) return sa-sb;
-        return new Date(b.updated_at)-new Date(a.updated_at);
-      });
-
-      for(const r of rows){
-        const card = document.createElement("div");
-        card.className = "invCard";
-
-        card.innerHTML = `
-          <div class="invLeft">
-            <div class="invTitle">🐰 Hase ${esc(r.size)} cm</div>
-            <div class="invMeta">Körper: ${esc(r.body)} • Ohren: ${esc(r.ears)} • Popo: ${esc(r.butt)}</div>
-          </div>
-
-          <div class="qtyInline">
-            <div class="muted">Menge:</div>
-            <input class="qtyInputSmall" inputmode="numeric" value="${esc(r.qty)}" data-qty-key="${esc(r.key)}" />
-            <button class="btnSmall btnSoft" data-save-key="${esc(r.key)}">Speichern</button>
-            <button class="btnSmall btnSoft" data-del-key="${esc(r.key)}">Löschen</button>
-          </div>
-        `;
-
-        stockList.appendChild(card);
-      }
-
-      // handlers
-      stockList.querySelectorAll("[data-save-key]").forEach(btn=>{
-        btn.addEventListener("click", async ()=>{
-          const key = btn.getAttribute("data-save-key");
-          const inp = stockList.querySelector(`input[data-qty-key="${CSS.escape(key)}"]`);
-          try{
-            await updateStockQty(key, inp.value);
-            stockShowOk("Aktualisiert ✅");
-            await loadStock();
-          }catch(e){
-            stockShowErr(e?.message || String(e));
-          }
-        });
-      });
-      stockList.querySelectorAll("[data-del-key]").forEach(btn=>{
-        btn.addEventListener("click", ()=> deleteStockRow(btn.getAttribute("data-del-key")));
-      });
-    }
-
-    // ============================================================
-    // ======================  BESTELLUNGEN  ======================
-    // ============================================================
-    // DOM
+    // ---------------- DOM (Orders) ----------------
     const btnBunny = document.getElementById("btnBunny");
     const btnLumi  = document.getElementById("btnLumi");
     const btnOther = document.getElementById("btnOther");
@@ -867,50 +522,296 @@
     const openOrdersEl = document.getElementById("openOrders");
     const archiveOrdersEl = document.getElementById("archiveOrders");
     const openSumEl = document.getElementById("openSum");
-    const soldSumEl = document.getElementById("soldSum");
 
     const sortDate = document.getElementById("sortDate");
     const sortPrio = document.getElementById("sortPrio");
-    const toggleDone = document.getElementById("toggleDone");
 
-    const modalBack = document.getElementById("modalBack");
-    const modalBody = document.getElementById("modalBody");
-    const closeModal = document.getElementById("closeModal");
+    // ---------------- DOM (Inventory) ----------------
+    const invSizeRow = document.getElementById("invSizeRow");
+    const invModeRow = document.getElementById("invModeRow");
+    const invColorsArea = document.getElementById("invColorsArea");
+    const invQty = document.getElementById("invQty");
+    const invSaveBtn = document.getElementById("invSaveBtn");
+    const invErr = document.getElementById("invErr");
+    const invOk  = document.getElementById("invOk");
+    const invList = document.getElementById("invList");
+    const invHint = document.getElementById("invHint");
+    const invReload = document.getElementById("invReload");
 
-    const adjBack = document.getElementById("adjBack");
-    const closeAdj = document.getElementById("closeAdj");
-    const adjPickArea = document.getElementById("adjPickArea");
-    const addAdjBtn = document.getElementById("addAdjBtn");
-    const adjNote = document.getElementById("adjNote");
-    const adjMsg  = document.getElementById("adjMsg");
-    const adjErr  = document.getElementById("adjErr");
+    // ---------------- helpers ----------------
+    const euro = (n)=> (Number(n)||0).toFixed(2).replace(".", ",") + " €";
+    const esc = (s)=> String(s??"").replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+    const norm = (s)=> String(s||"").trim().toLowerCase();
 
-    const soldBtnBunny = document.getElementById("soldBtnBunny");
-    const soldBtnLumi  = document.getElementById("soldBtnLumi");
-    const soldBtnCombo = document.getElementById("soldBtnCombo");
-    const soldBtnOther = document.getElementById("soldBtnOther");
+    function setChip(el, on){ el?.classList.toggle("active", !!on); }
+    function showErr(el,msg){ el.style.display="block"; el.textContent=msg; }
+    function hideErr(el){ el.style.display="none"; el.textContent=""; }
 
-    // state
-    let currentProduct = null;
-    let bunnySize = null;
-    let bunnyMode = null;
-    let priority  = null;
-    let qty = null;
-    let sortMode = "date";
-    let hideDoneItems = true;
+    // ---------------- dropdown builder ----------------
+    function buildDropdown({ id, label, placeholder }){
+      return `
+        <div class="field" data-dd-wrap="${id}">
+          <label for="${id}">${esc(label)}</label>
+          <div class="ddWrap">
+            <input id="${id}" class="ddInput" placeholder="${esc(placeholder)}" autocomplete="off" />
+            <button type="button" class="ddBtn" aria-label="Dropdown öffnen" data-dd-btn="${id}">
+              <span class="ddArrow">▾</span>
+            </button>
+            <div class="ddMenu" data-dd-menu="${id}"></div>
+          </div>
+        </div>
+      `;
+    }
+
+    function setupDropdown(inputId, onChange){
+      const input = document.getElementById(inputId);
+      const menu  = document.querySelector(`[data-dd-menu="${inputId}"]`);
+      const btn   = document.querySelector(`[data-dd-btn="${inputId}"]`);
+      const wrap  = document.querySelector(`[data-dd-wrap="${inputId}"]`);
+      if(!input || !menu || !btn || !wrap) return;
+
+      function renderMenu(filter=""){
+        const f = filter.trim().toLowerCase();
+        const list = COLOR_SUGGESTIONS.filter(x => x.toLowerCase().includes(f));
+        menu.innerHTML = list.length
+          ? list.map(x=>`<div class="ddItem" data-val="${esc(x)}">${esc(x)}</div>`).join("")
+          : `<div class="ddEmpty">Keine Vorschläge</div>`;
+
+        menu.querySelectorAll(".ddItem").forEach(it=>{
+          it.addEventListener("click", ()=>{
+            const v = it.getAttribute("data-val") || "";
+            input.value = v;
+            closeMenu();
+            onChange?.(v);
+          });
+        });
+      }
+
+      function openMenu(){ menu.classList.add("open"); renderMenu(input.value||""); }
+      function closeMenu(){ menu.classList.remove("open"); }
+
+      input.addEventListener("input", ()=>{
+        if(menu.classList.contains("open")) renderMenu(input.value||"");
+        onChange?.(input.value||"");
+      });
+
+      btn.addEventListener("click", (e)=>{
+        e.preventDefault(); e.stopPropagation();
+        if(menu.classList.contains("open")) closeMenu(); else openMenu();
+        input.focus();
+      });
+
+      document.addEventListener("click", (e)=>{
+        if(!wrap.contains(e.target)) closeMenu();
+      });
+    }
+
+    // ---------------- Inventory state ----------------
+    let invSize = null;           // "11"|"15"|"20"
+    let invMode = null;           // "single"|"multi"
+    let invColors = { single:"", body:"", ears:"", butt:"" };
+
+    function inventoryKeyFromParts({ size, mode, colors }){
+      if(mode==="single"){
+        return `bunny|${size}|single|${norm(colors.single)}`;
+      }
+      return `bunny|${size}|multi|${norm(colors.body)}|${norm(colors.ears)}|${norm(colors.butt)}`;
+    }
+
+    function invShowOk(msg){
+      hideErr(invErr);
+      invOk.style.display="block";
+      invOk.textContent = msg || "Gespeichert ✅";
+      setTimeout(()=>{ invOk.style.display="none"; }, 1600);
+    }
+
+    function renderInvColors(){
+      invColorsArea.innerHTML = "";
+
+      if(!invMode){
+        invColorsArea.innerHTML = `<div class="muted">Bitte zuerst Farbmodus wählen.</div>`;
+        return;
+      }
+
+      if(invMode==="single"){
+        invColorsArea.innerHTML = `
+          <div class="grid grid-1">
+            ${buildDropdown({ id:"inv_single", label:"Einfarbig", placeholder:"Tippen oder auswählen…" })}
+          </div>
+        `;
+        setupDropdown("inv_single", (v)=>{ invColors.single = v; });
+        return;
+      }
+
+      invColorsArea.innerHTML = `
+        <div class="grid grid-3">
+          ${buildDropdown({ id:"inv_body", label:"Körperfarbe", placeholder:"Tippen oder auswählen…" })}
+          ${buildDropdown({ id:"inv_ears", label:"Ohrenfarbe",  placeholder:"Tippen oder auswählen…" })}
+          ${buildDropdown({ id:"inv_butt", label:"Popofarbe",  placeholder:"Tippen oder auswählen…" })}
+        </div>
+      `;
+      setupDropdown("inv_body", (v)=>{ invColors.body = v; });
+      setupDropdown("inv_ears", (v)=>{ invColors.ears = v; });
+      setupDropdown("inv_butt", (v)=>{ invColors.butt = v; });
+    }
+
+    // Größe wählen
+    invSizeRow.querySelectorAll(".invSize").forEach(b=>{
+      b.addEventListener("click", ()=>{
+        invSize = b.getAttribute("data-s");
+        invSizeRow.querySelectorAll(".invSize").forEach(x=>setChip(x, x===b));
+      });
+    });
+
+    // Modus wählen
+    invModeRow.querySelectorAll(".invMode").forEach(b=>{
+      b.addEventListener("click", ()=>{
+        invMode = b.getAttribute("data-m");
+        invModeRow.querySelectorAll(".invMode").forEach(x=>setChip(x, x===b));
+        invColors = { single:"", body:"", ears:"", butt:"" };
+        renderInvColors();
+      });
+    });
+
+    invReload.addEventListener("click", loadInventory);
+
+    async function saveInventory(){
+      hideErr(invErr);
+      invOk.style.display="none";
+
+      const q = Number(String(invQty.value||"").replace(",", "."));
+      if(!invSize) return showErr(invErr, "Bitte Größe wählen.");
+      if(!invMode) return showErr(invErr, "Bitte Farbmodus wählen.");
+      if(!Number.isFinite(q) || q<0) return showErr(invErr, "Bitte gültige Menge eingeben (0 oder mehr).");
+
+      if(invMode==="single"){
+        if(!norm(invColors.single)) return showErr(invErr, "Bitte Einfarbig-Farbe wählen.");
+      } else {
+        if(!norm(invColors.body) || !norm(invColors.ears) || !norm(invColors.butt)){
+          return showErr(invErr, "Bitte Körper/Ohren/Popo auswählen.");
+        }
+      }
+
+      const key = inventoryKeyFromParts({ size: invSize, mode: invMode, colors: invColors });
+      const colors =
+        invMode==="single"
+          ? { single: norm(invColors.single) }
+          : { body: norm(invColors.body), ears: norm(invColors.ears), butt: norm(invColors.butt) };
+
+      // upsert: wenn key existiert -> qty ersetzen
+      const { error } = await supabase
+        .from("inventory")
+        .upsert({
+          key,
+          product: "bunny",
+          size: invSize,
+          mode: invMode,
+          colors,
+          qty: Math.floor(q)
+        }, { onConflict: "key" });
+
+      if(error) return showErr(invErr, error.message);
+
+      invShowOk("Bestand gespeichert ✅");
+      await loadInventory();
+    }
+
+    invSaveBtn.addEventListener("click", saveInventory);
+
+    async function loadInventory(){
+      invList.innerHTML = "";
+      invHint.style.display = "none";
+      hideErr(invErr);
+
+      const { data, error } = await supabase
+        .from("inventory")
+        .select("*")
+        .order("updated_at", { ascending:false });
+
+      if(error){
+        invHint.style.display="block";
+        invHint.textContent = "Fehler: " + error.message;
+        return;
+      }
+
+      const rows = data || [];
+      if(rows.length===0){
+        invHint.style.display="block";
+        invHint.textContent = "Noch kein Bestand eingetragen.";
+        return;
+      }
+
+      for(const r of rows){
+        const pretty =
+          r.mode==="single"
+            ? `🐰 ${r.size} cm • Einfarbig: ${r.colors?.single||""}`
+            : `🐰 ${r.size} cm • Körper: ${r.colors?.body||""}, Ohren: ${r.colors?.ears||""}, Popo: ${r.colors?.butt||""}`;
+
+        const wrap = document.createElement("div");
+        wrap.className = "invRow";
+        wrap.innerHTML = `
+          <div style="flex:1; min-width:240px;">
+            <div class="invKey">${esc(pretty)}</div>
+            <div class="muted">${esc(r.key)}</div>
+          </div>
+          <div class="invControls">
+            <label class="muted" style="margin:0;">Menge</label>
+            <input class="invQty" inputmode="numeric" value="${esc(String(r.qty ?? 0))}" data-qty="${esc(r.key)}" />
+            <button class="btnSmall btnDark" data-save="${esc(r.key)}">Speichern</button>
+            <button class="btnSmall btnSoft" data-del="${esc(r.key)}">Löschen</button>
+          </div>
+        `;
+
+        invList.appendChild(wrap);
+      }
+
+      // save handlers
+      invList.querySelectorAll("[data-save]").forEach(btn=>{
+        btn.addEventListener("click", async ()=>{
+          const key = btn.getAttribute("data-save");
+          const inp = invList.querySelector(`input[data-qty="${CSS.escape(key)}"]`);
+          const q = Number(String(inp?.value||"").replace(",", "."));
+          if(!Number.isFinite(q) || q<0) return alert("Bitte gültige Menge (0 oder mehr).");
+
+          const { error } = await supabase.from("inventory").update({ qty: Math.floor(q) }).eq("key", key);
+          if(error) return alert(error.message);
+          invShowOk("Aktualisiert ✅");
+        });
+      });
+
+      // delete handlers
+      invList.querySelectorAll("[data-del]").forEach(btn=>{
+        btn.addEventListener("click", async ()=>{
+          const key = btn.getAttribute("data-del");
+          const ok = confirm("Wirklich löschen?");
+          if(!ok) return;
+          const { error } = await supabase.from("inventory").delete().eq("key", key);
+          if(error) return alert(error.message);
+          invShowOk("Gelöscht ✅");
+          await loadInventory();
+        });
+      });
+    }
+
+    // ---------------- Orders state ----------------
+    let currentProduct = null;  // 'bunny' | 'lumi' | 'other'
+    let bunnySize = null;       // '20'|'15'|'11'
+    let bunnyMode = null;       // 'multi'|'single'
+    let priority  = null;       // 'very'|'normal'|'low'
+    let qty = null;             // number 1..9 or other
+    let sortMode = "date";      // 'date'|'prio'
 
     const fields = {
       bunny_body:"", bunny_ears:"", bunny_butt:"", bunny_single:"",
       lumi_body:"",  lumi_wings:"", lumi_feelers:"",
-      other_size:"", other_color:"",
+      other_size:"", other_color:"", other_name:"",
     };
 
     let cart = [];
 
     function setChipActive(el, on){
       if(!el) return;
-      el.classList.toggle("chipActive", !!on);
-      el.classList.toggle("btnDark", !!on);
+      el.classList.toggle("active", !!on);
     }
     function setPrioActive(el, on){
       if(!el) return;
@@ -926,10 +827,6 @@
       missingEl.style.display = "none";
       missingEl.textContent = "";
       document.querySelectorAll(".reqMissing").forEach(x=>x.classList.remove("reqMissing"));
-    }
-
-    function setupColorDropdowns(){
-      // noop placeholder; dropdowns are created in renderColorArea()
     }
 
     function renderProductArea(){
@@ -986,13 +883,18 @@
         productArea.innerHTML = `
           <div class="grid grid-2">
             <div class="field">
+              <label for="other_name">Produktname *</label>
+              <input id="other_name" placeholder="z. B. Schlüsselanhänger" />
+            </div>
+            <div class="field">
               <label for="other_size">Größe *</label>
               <input id="other_size" placeholder="z. B. groß / 10 cm / XL" />
             </div>
-            <div class="muted">Weitere Produkt: frei definierbar</div>
           </div>
         `;
+        const on = document.getElementById("other_name");
         const os = document.getElementById("other_size");
+        on.addEventListener("input", ()=>{ fields.other_name = on.value||""; validateForAdd(); });
         os.addEventListener("input", ()=>{ fields.other_size = os.value||""; validateForAdd(); });
       }
     }
@@ -1007,7 +909,8 @@
               ${buildDropdown({ id:"bunny_single", label:"Einfarbig", placeholder:"Tippen oder auswählen…" })}
             </div>
           `;
-          setupDropdown("bunny_single", (v)=> fields.bunny_single=v);
+          setupDropdown("bunny_single", v=>{ fields.bunny_single=v; validateForAdd(); });
+
         } else if(bunnyMode === "multi"){
           colorArea.innerHTML = `
             <div class="grid grid-3">
@@ -1016,9 +919,10 @@
               ${buildDropdown({ id:"bunny_butt", label:"Popofarbe",  placeholder:"Tippen oder auswählen…" })}
             </div>
           `;
-          setupDropdown("bunny_body", (v)=> fields.bunny_body=v);
-          setupDropdown("bunny_ears", (v)=> fields.bunny_ears=v);
-          setupDropdown("bunny_butt", (v)=> fields.bunny_butt=v);
+          setupDropdown("bunny_body", v=>{ fields.bunny_body=v; validateForAdd(); });
+          setupDropdown("bunny_ears", v=>{ fields.bunny_ears=v; validateForAdd(); });
+          setupDropdown("bunny_butt", v=>{ fields.bunny_butt=v; validateForAdd(); });
+
         } else {
           colorArea.innerHTML = `<div class="muted">Bitte zuerst <b>Farbmodus</b> wählen.</div>`;
         }
@@ -1032,9 +936,9 @@
             ${buildDropdown({ id:"lumi_feelers",label:"Fühlerfarbe",  placeholder:"Tippen oder auswählen…" })}
           </div>
         `;
-        setupDropdown("lumi_body", (v)=> fields.lumi_body=v);
-        setupDropdown("lumi_wings", (v)=> fields.lumi_wings=v);
-        setupDropdown("lumi_feelers", (v)=> fields.lumi_feelers=v);
+        setupDropdown("lumi_body",   v=>{ fields.lumi_body=v; validateForAdd(); });
+        setupDropdown("lumi_wings",  v=>{ fields.lumi_wings=v; validateForAdd(); });
+        setupDropdown("lumi_feelers",v=>{ fields.lumi_feelers=v; validateForAdd(); });
       }
 
       if(currentProduct === "other"){
@@ -1043,7 +947,7 @@
             ${buildDropdown({ id:"other_color", label:"Farbe", placeholder:"Tippen oder auswählen…" })}
           </div>
         `;
-        setupDropdown("other_color", (v)=> fields.other_color=v);
+        setupDropdown("other_color", v=>{ fields.other_color=v; validateForAdd(); });
       }
     }
 
@@ -1056,16 +960,15 @@
 
       fields.bunny_body=""; fields.bunny_ears=""; fields.bunny_butt=""; fields.bunny_single="";
       fields.lumi_body=""; fields.lumi_wings=""; fields.lumi_feelers="";
-      fields.other_size=""; fields.other_color="";
+      fields.other_size=""; fields.other_color=""; fields.other_name="";
       clearErrorUI();
 
       [pVery,pNorm,pLow].forEach(x=>setPrioActive(x,false));
-      document.querySelectorAll(".qtyBtn").forEach(b=>b.classList.remove("chipActive","btnDark"));
+      document.querySelectorAll(".qtyBtn").forEach(b=>b.classList.remove("active"));
     }
 
     function setProduct(p){
       currentProduct = p;
-
       [btnBunny,btnLumi,btnOther].forEach(x=>setChipActive(x,false));
       setChipActive(btnBunny, p==="bunny");
       setChipActive(btnLumi,  p==="lumi");
@@ -1109,11 +1012,13 @@
     document.querySelectorAll(".qtyBtn").forEach(btn=>{
       btn.addEventListener("click", ()=>{
         qty = Number(btn.getAttribute("data-q"));
-        document.querySelectorAll(".qtyBtn").forEach(b=>b.classList.remove("chipActive","btnDark"));
-        btn.classList.add("chipActive","btnDark");
+        document.querySelectorAll(".qtyBtn").forEach(b=>b.classList.remove("active"));
+        btn.classList.add("active");
         validateForAdd();
       });
     });
+
+    qtyOther.addEventListener("input", ()=> validateForAdd());
 
     function requiredOk(){
       const missing = [];
@@ -1127,39 +1032,29 @@
       if(currentProduct === "bunny"){
         if(!bunnySize) missing.push("Größe");
         if(!bunnyMode) missing.push("Farbmodus");
-
         if(bunnyMode === "single"){
-          if(!(fields.bunny_single||"").trim()) missing.push("Einfarbig");
+          if(!norm(fields.bunny_single)) missing.push("Einfarbig");
         }
         if(bunnyMode === "multi"){
-          if(!(fields.bunny_body||"").trim()) missing.push("Körperfarbe");
-          if(!(fields.bunny_ears||"").trim()) missing.push("Ohrenfarbe");
-          if(!(fields.bunny_butt||"").trim()) missing.push("Popofarbe");
+          if(!norm(fields.bunny_body)) missing.push("Körperfarbe");
+          if(!norm(fields.bunny_ears)) missing.push("Ohrenfarbe");
+          if(!norm(fields.bunny_butt)) missing.push("Popofarbe");
         }
       }
 
       if(currentProduct === "lumi"){
-        if(!(fields.lumi_body||"").trim())    missing.push("Körperfarbe");
-        if(!(fields.lumi_wings||"").trim())   missing.push("Flügelfarbe");
-        if(!(fields.lumi_feelers||"").trim()) missing.push("Fühlerfarbe");
+        if(!norm(fields.lumi_body))    missing.push("Körperfarbe");
+        if(!norm(fields.lumi_wings))   missing.push("Flügelfarbe");
+        if(!norm(fields.lumi_feelers)) missing.push("Fühlerfarbe");
       }
 
       if(currentProduct === "other"){
-        if(!(fields.other_size||"").trim())  missing.push("Größe");
-        if(!(fields.other_color||"").trim()) missing.push("Farbe");
+        if(!norm(fields.other_name)) missing.push("Produktname");
+        if(!norm(fields.other_size)) missing.push("Größe");
+        if(!norm(fields.other_color)) missing.push("Farbe");
       }
 
       return missing;
-    }
-
-    function markMissingFields(missing){
-      if(missing.includes("Priorität")){
-        document.querySelector(".prioRow")?.classList.add("reqMissing");
-      }
-      if(missing.includes("Menge")){
-        document.getElementById("qtyRow")?.classList.add("reqMissing");
-        qtyOther?.classList.add("reqMissing");
-      }
     }
 
     function validateForAdd(){
@@ -1167,7 +1062,6 @@
       const missing = requiredOk();
       if(missing.length){
         showMissing("Bitte erst ausfüllen: " + missing.join(", "));
-        markMissingFields(missing);
         return false;
       }
       return true;
@@ -1179,13 +1073,12 @@
 
     function itemBasePrice(item){
       if(item.product === "bunny") return PRICES.bunny[item.size] || 0;
-      if(item.product === "lumi")  return PRICES.lumi;
+      if(item.product === "lumi") return PRICES.lumi;
       return 0;
     }
 
     function cartTotal(){
       let total = 0;
-
       for(const it of cart){
         if(it.product !== "bunny"){
           total += (it.price_override != null ? it.price_override : itemBasePrice(it)) * it.qty;
@@ -1194,34 +1087,25 @@
 
       const counts = { "20":0, "15":0, "11":0 };
       const bunnyItems = cart.filter(x=>x.product==="bunny");
-      for(const it of bunnyItems){
-        counts[it.size] += it.qty;
-      }
+      for(const it of bunnyItems) counts[it.size] += it.qty;
 
       const combos = Math.min(counts["20"], counts["15"], counts["11"]);
       if(combos > 0){
         total += combos * PRICES.bunny.comboAllThree;
-        counts["20"] -= combos;
-        counts["15"] -= combos;
-        counts["11"] -= combos;
+        counts["20"] -= combos; counts["15"] -= combos; counts["11"] -= combos;
       }
 
       total += counts["20"] * PRICES.bunny["20"];
       total += counts["15"] * PRICES.bunny["15"];
       total += counts["11"] * PRICES.bunny["11"];
-
       return total;
-    }
-
-    function prioLabel(p){
-      if(p==="very") return "Sehr wichtig";
-      if(p==="normal") return "Wichtig";
-      return "Nicht wichtig";
     }
 
     function colorText(it){
       if(it.product==="bunny"){
-        if(it.mode==="single") return `Einfarbig: ${it.colors.single||""}`;
+        if(it.mode==="single"){
+          return `Einfarbig: ${it.colors.single||""}`;
+        }
         return `Körper: ${it.colors.body||""}, Ohren: ${it.colors.ears||""}, Popo: ${it.colors.butt||""}`;
       }
       if(it.product==="lumi"){
@@ -1230,52 +1114,10 @@
       return `Größe: ${it.size||""}, Farbe: ${it.colors.color||""}`;
     }
 
-    function updateCartUI(){
-      cartList.innerHTML = "";
-      cartHint.style.display = (cart.length === 0) ? "block" : "none";
-
-      for(const it of cart){
-        const card = document.createElement("div");
-        card.className = "card pad";
-
-        const pr = prioLabel(it.priority);
-        const qtyTxt = `× ${it.qty}`;
-        const title =
-          it.product === "bunny" ? `Hase ${it.size} cm` :
-          it.product === "lumi"  ? `Lumi` :
-                                   `Weitere Produkt`;
-
-        const colors = colorText(it);
-
-        card.innerHTML = `
-          <div class="row" style="justify-content:space-between; align-items:flex-start;">
-            <div>
-              <div style="font-weight:1000">${esc(title)} <span class="muted" style="margin-left:8px;">${esc(pr)}</span></div>
-              <div class="muted" style="margin-top:2px;">
-                ${esc(colors)}
-                ${it.customer_name ? ` • Kunde: ${esc(it.customer_name)}` : ``}
-              </div>
-              ${it.note ? `<div class="muted" style="margin-top:6px;">📝 ${esc(it.note)}</div>` : ``}
-            </div>
-            <div class="row" style="gap:8px;">
-              <div class="badge">${esc(qtyTxt)}</div>
-              <button class="iconBtn" data-del="${it._cid}" title="Entfernen">✖</button>
-            </div>
-          </div>
-        `;
-        cartList.appendChild(card);
-      }
-
-      cartList.querySelectorAll("[data-del]").forEach(b=>{
-        b.addEventListener("click", ()=>{
-          const id = b.getAttribute("data-del");
-          cart = cart.filter(x=>String(x._cid)!==String(id));
-          updateCartUI();
-          validateSaveEnabled();
-        });
-      });
-
-      cartSum.textContent = "Summe: " + euro(cartTotal());
+    function prioLabel(p){
+      if(p==="very") return "Sehr wichtig";
+      if(p==="normal") return "Wichtig";
+      return "Nicht wichtig";
     }
 
     function getQty(){
@@ -1283,6 +1125,18 @@
       if(Number.isFinite(otherQ) && otherQ>0) return Math.floor(otherQ);
       if(typeof qty==="number" && qty>0) return qty;
       return null;
+    }
+
+    function orderItemInventoryKey(it){
+      // Nur Hase matcht Bestand
+      if(it.product !== "bunny") return null;
+      const size = String(it.size||"");
+      const mode = String(it.mode||"");
+      const c = it.colors || {};
+      if(mode==="single"){
+        return inventoryKeyFromParts({ size, mode:"single", colors:{ single: c.single||"" } });
+      }
+      return inventoryKeyFromParts({ size, mode:"multi", colors:{ body:c.body||"", ears:c.ears||"", butt:c.butt||"" } });
     }
 
     function makeItem(){
@@ -1303,27 +1157,69 @@
       if(currentProduct==="bunny"){
         item.size = bunnySize;
         item.mode = bunnyMode;
-        if(bunnyMode==="single"){
-          item.colors.single = (fields.bunny_single||"").trim();
-        } else {
-          item.colors.body = (fields.bunny_body||"").trim();
-          item.colors.ears = (fields.bunny_ears||"").trim();
-          item.colors.butt = (fields.bunny_butt||"").trim();
+        if(bunnyMode==="single") item.colors.single = norm(fields.bunny_single);
+        else {
+          item.colors.body = norm(fields.bunny_body);
+          item.colors.ears = norm(fields.bunny_ears);
+          item.colors.butt = norm(fields.bunny_butt);
         }
       }
 
       if(currentProduct==="lumi"){
-        item.colors.body    = (fields.lumi_body||"").trim();
-        item.colors.wings   = (fields.lumi_wings||"").trim();
-        item.colors.feelers = (fields.lumi_feelers||"").trim();
+        item.colors.body    = norm(fields.lumi_body);
+        item.colors.wings   = norm(fields.lumi_wings);
+        item.colors.feelers = norm(fields.lumi_feelers);
       }
 
       if(currentProduct==="other"){
-        item.size = (fields.other_size||"").trim();
-        item.colors.color = (fields.other_color||"").trim();
+        item.size = norm(fields.other_size);
+        item.colors.color = norm(fields.other_color);
+        item.other_name = (fields.other_name||"").trim();
       }
 
+      item.inventory_key = orderItemInventoryKey(item);
       return item;
+    }
+
+    function updateCartUI(){
+      cartList.innerHTML = "";
+      cartHint.style.display = cart.length===0 ? "block" : "none";
+
+      for(const it of cart){
+        const card = document.createElement("div");
+        card.className = "card pad";
+
+        const title =
+          it.product === "bunny" ? `Hase ${it.size} cm` :
+          it.product === "lumi"  ? `Lumi` :
+                                   `Weitere Produkt`;
+
+        card.innerHTML = `
+          <div class="row" style="justify-content:space-between; align-items:flex-start;">
+            <div>
+              <div style="font-weight:1000">${esc(title)} <span class="muted">(${esc(prioLabel(it.priority))})</span></div>
+              <div class="muted" style="margin-top:2px;">${esc(colorText(it))}${it.customer_name?` • Kunde: ${esc(it.customer_name)}`:""}</div>
+              ${it.note ? `<div class="muted" style="margin-top:6px;">📝 ${esc(it.note)}</div>` : ``}
+            </div>
+            <div class="row" style="gap:8px;">
+              <div class="badge">${esc("× "+it.qty)}</div>
+              <button class="iconBtn" data-del="${esc(it._cid)}" title="Entfernen">✖</button>
+            </div>
+          </div>
+        `;
+        cartList.appendChild(card);
+      }
+
+      cartList.querySelectorAll("[data-del]").forEach(b=>{
+        b.addEventListener("click", ()=>{
+          const id = b.getAttribute("data-del");
+          cart = cart.filter(x=>String(x._cid)!==String(id));
+          updateCartUI();
+          validateSaveEnabled();
+        });
+      });
+
+      cartSum.textContent = "Summe: " + euro(cartTotal());
     }
 
     addItemBtn.addEventListener("click", ()=>{
@@ -1335,53 +1231,33 @@
 
       qty = null;
       qtyOther.value = "";
-      document.querySelectorAll(".qtyBtn").forEach(b=>b.classList.remove("chipActive","btnDark"));
+      document.querySelectorAll(".qtyBtn").forEach(b=>b.classList.remove("active"));
 
       updateCartUI();
       validateSaveEnabled();
       clearErrorUI();
     });
 
-    // done toggle
-    async function toggleItemDone(itemId, done){
-      const { error } = await supabase
-        .from("order_items")
-        .update({ done: !!done })
-        .eq("id", itemId);
-      if(error) throw error;
-    }
-
     sortDate.addEventListener("click", ()=>{
       sortMode = "date";
-      sortDate.classList.add("btnDark");
-      sortDate.classList.remove("btnSoft");
-      sortPrio.classList.add("btnSoft");
-      sortPrio.classList.remove("btnDark");
+      sortDate.classList.add("btnDark"); sortDate.classList.remove("btnSoft");
+      sortPrio.classList.add("btnSoft"); sortPrio.classList.remove("btnDark");
       loadAll();
     });
     sortPrio.addEventListener("click", ()=>{
       sortMode = "prio";
-      sortPrio.classList.add("btnDark");
-      sortPrio.classList.remove("btnSoft");
-      sortDate.classList.add("btnSoft");
-      sortDate.classList.remove("btnDark");
+      sortPrio.classList.add("btnDark"); sortPrio.classList.remove("btnSoft");
+      sortDate.classList.add("btnSoft"); sortDate.classList.remove("btnDark");
       loadAll();
     });
 
-    toggleDone.addEventListener("click", ()=>{
-      hideDoneItems = !hideDoneItems;
-      if(hideDoneItems){
-        toggleDone.textContent = "✅ Fertige ausblenden";
-        toggleDone.classList.add("btnSoft");
-        toggleDone.classList.remove("btnDark");
-      }else{
-        toggleDone.textContent = "✅ Fertige anzeigen";
-        toggleDone.classList.add("btnDark");
-        toggleDone.classList.remove("btnSoft");
-      }
-      loadAll();
-    });
+    // Start defaults
+    setProduct("bunny");
+    updateCartUI();
+    validateSaveEnabled();
 
+    // Teil 3/3 folgt: Save order, Render orders + Bestand-Status + Archivieren zieht Bestand ab
+    // ---------------- date / prio helpers ----------------
     function formatDateOnly(iso){
       const d = new Date(iso);
       const dd = String(d.getDate()).padStart(2,"0");
@@ -1395,24 +1271,11 @@
       return 2;
     }
 
-    // ✅ Hasen in Bestellung: 11 -> 15 -> 20 (egal wie eingegeben)
-    function sortItemsInsideOrder(items){
-      const sizeOrder = { "11":0, "15":1, "20":2 };
-      return [...items].sort((a,b)=>{
-        if(a.product==="bunny" && b.product!=="bunny") return -1;
-        if(a.product!=="bunny" && b.product==="bunny") return 1;
-        if(a.product==="bunny" && b.product==="bunny"){
-          const sa = sizeOrder[a.size] ?? 99;
-          const sb = sizeOrder[b.size] ?? 99;
-          if(sa !== sb) return sa - sb;
-        }
-        return 0;
-      });
-    }
-
+    // ---------------- price for items (for orders list) ----------------
     function priceForOrderItems(items){
       let total = 0;
 
+      // non-bunny
       for(const it of items){
         if(it.product !== "bunny"){
           const base = (it.price_override != null ? it.price_override : itemBasePrice(it));
@@ -1420,20 +1283,16 @@
         }
       }
 
+      // bunny combo rule
       const counts = { "20":0, "15":0, "11":0 };
       const bunnyItems = items.filter(x=>x.product==="bunny");
-      for(const it of bunnyItems){
-        counts[it.size] += it.qty;
-      }
+      for(const it of bunnyItems) counts[it.size] += it.qty;
 
       const combos = Math.min(counts["20"], counts["15"], counts["11"]);
       if(combos>0){
         total += combos * PRICES.bunny.comboAllThree;
-        counts["20"] -= combos;
-        counts["15"] -= combos;
-        counts["11"] -= combos;
+        counts["20"] -= combos; counts["15"] -= combos; counts["11"] -= combos;
       }
-
       total += counts["20"] * PRICES.bunny["20"];
       total += counts["15"] * PRICES.bunny["15"];
       total += counts["11"] * PRICES.bunny["11"];
@@ -1441,6 +1300,7 @@
       return total;
     }
 
+    // ---------------- save current cart as one order ----------------
     async function saveOrder(){
       clearErrorUI();
       saveStatus.style.display = "none";
@@ -1484,7 +1344,7 @@
         colors: it.colors,
         note: it.note ?? null,
         price_override: it.price_override ?? null,
-        done: false
+        inventory_key: it.inventory_key ?? null
       }));
 
       const { error: itemsErr } = await supabase
@@ -1505,214 +1365,225 @@
 
       saveStatus.style.display = "block";
       saveStatus.textContent = "Gespeichert ✅";
-
       saveOrderBtn.textContent = "✅ Bestellung speichern";
       saveOrderBtn.disabled = true;
 
       await loadAll();
     }
+
     saveOrderBtn.addEventListener("click", saveOrder);
 
-    async function archiveOrder(orderId){
-      await supabase.from("orders").update({ archived:true }).eq("id", orderId);
-      await loadAll();
+    // ---------------- inventory map (für Status + Abzug) ----------------
+    function buildInventoryMap(rows){
+      const map = new Map();
+      for(const r of (rows||[])){
+        map.set(String(r.key), Number(r.qty||0));
+      }
+      return map;
     }
+
+    function sizeRank(size){
+      // für Sortierung: 11 -> 0, 15 -> 1, 20 -> 2
+      if(String(size)==="11") return 0;
+      if(String(size)==="15") return 1;
+      return 2;
+    }
+
+    function itemSortKey(it){
+      // Hasen immer 11 -> 15 -> 20, egal wie bestellt
+      if(it.product==="bunny") return "0-"+sizeRank(it.size)+"-"+(it.mode||"");
+      if(it.product==="lumi") return "1";
+      return "2";
+    }
+
+    // Statusbadge für Bestand
+    function stockBadgeForItem(it, invMap){
+      if(it.product !== "bunny") return `<span class="badge">—</span>`;
+
+      const key = it.inventory_key || orderItemInventoryKey(it);
+      const have = Number(invMap.get(key) || 0);
+      const need = Number(it.qty || 0);
+
+      if(have >= need) return `<span class="badge ok">✅ Im Bestand (${have})</span>`;
+      if(have > 0) return `<span class="badge warn">⚠️ Nur ${have} da</span>`;
+      return `<span class="badge bad">❌ Nicht im Bestand</span>`;
+    }
+
+    // ---------------- archive / restore / delete orders ----------------
     async function restoreOrder(orderId){
       await supabase.from("orders").update({ archived:false }).eq("id", orderId);
       await loadAll();
     }
+
     async function deleteOrder(orderId){
       const ok = confirm("Bist du sicher? Diese Bestellung wird endgültig gelöscht.");
       if(!ok) return;
-
       await supabase.from("order_items").delete().eq("order_id", orderId);
       await supabase.from("orders").delete().eq("id", orderId);
       await loadAll();
     }
 
-    // adjustments
-    function adjShowOk(msg){
-      adjErr.style.display="none";
-      adjMsg.textContent = msg || "Gespeichert ✅";
-      adjMsg.style.display="block";
-    }
-    function adjShowErr(msg){
-      adjMsg.style.display="none";
-      adjErr.textContent = msg || "Fehler";
-      adjErr.style.display="block";
-    }
-    function adjClearMsgs(){
-      adjMsg.style.display="none";
-      adjErr.style.display="none";
-    }
+    // ✅ Archivieren mit automatischem Bestands-Abzug (nur Hasen)
+    async function archiveOrderWithStock(orderId){
+      // 1) Items holen
+      const { data: items, error: iErr } = await supabase
+        .from("order_items")
+        .select("*")
+        .eq("order_id", orderId);
 
-    let adjPick = { kind:null, bunnySize:null, otherAmount:null };
+      if(iErr) return alert(iErr.message);
 
-    function renderAdjPick(){
-      adjPickArea.innerHTML = "";
-      adjClearMsgs();
+      // 2) Bestand holen
+      const { data: inv, error: invErr2 } = await supabase
+        .from("inventory")
+        .select("*");
 
-      if(adjPick.kind === "bunny"){
-        adjPickArea.innerHTML = `
-          <label>Hase: Größe wählen</label>
-          <div class="chips">
-            <div class="chip" id="adjS20">20 cm</div>
-            <div class="chip" id="adjS15">15 cm</div>
-            <div class="chip" id="adjS11">11 cm</div>
-          </div>
-        `;
-        ["20","15","11"].forEach(s=>{
-          const el = document.getElementById("adjS"+s);
-          el.addEventListener("click", ()=>{
-            adjPick.bunnySize = s;
-            ["20","15","11"].forEach(x=>document.getElementById("adjS"+x).classList.toggle("chipActive", x===s));
-          });
-        });
+      if(invErr2) return alert(invErr2.message);
+
+      const invMap = buildInventoryMap(inv);
+
+      // 3) Bedarf zusammenfassen (pro key)
+      const needMap = new Map(); // key -> qty
+      for(const it of (items||[])){
+        if(it.product !== "bunny") continue;
+        const key = it.inventory_key || orderItemInventoryKey(it);
+        const q = Number(it.qty||0);
+        needMap.set(key, (needMap.get(key)||0) + q);
       }
-      if(adjPick.kind === "combo"){
-        adjPickArea.innerHTML = `<div class="hint">Hase-Combo (20+15+11)</div>`;
-      }
-      if(adjPick.kind === "lumi"){
-        adjPickArea.innerHTML = `<div class="hint">Lumi</div>`;
-      }
-      if(adjPick.kind === "other"){
-        adjPickArea.innerHTML = `
-          <label>Beliebiger Betrag</label>
-          <input id="adjOtherAmount" inputmode="decimal" placeholder="z. B. 5,50" />
-        `;
-        const inp = document.getElementById("adjOtherAmount");
-        inp.addEventListener("input", ()=> adjPick.otherAmount = inp.value );
-      }
-    }
 
-    soldSumEl.addEventListener("click", ()=>{
-      adjPick = { kind:null, bunnySize:null, otherAmount:null };
-      adjNote.value = "";
-      adjPickArea.innerHTML = `<div class="hint">Wähle unten eine Option.</div>`;
-      adjClearMsgs();
-      adjBack.classList.add("open");
-    });
-    closeAdj.addEventListener("click", ()=> adjBack.classList.remove("open"));
-    adjBack.addEventListener("click", (e)=>{ if(e.target===adjBack) adjBack.classList.remove("open"); });
-
-    soldBtnBunny.addEventListener("click", ()=>{ adjPick = { kind:"bunny", bunnySize:null, otherAmount:null }; renderAdjPick(); });
-    soldBtnLumi.addEventListener("click", ()=>{ adjPick = { kind:"lumi", bunnySize:null, otherAmount:null }; renderAdjPick(); });
-    soldBtnCombo.addEventListener("click", ()=>{ adjPick = { kind:"combo", bunnySize:null, otherAmount:null }; renderAdjPick(); });
-    soldBtnOther.addEventListener("click", ()=>{ adjPick = { kind:"other", otherAmount:null }; renderAdjPick(); });
-
-    addAdjBtn.addEventListener("click", async ()=>{
-      try{
-        adjClearMsgs();
-        let amount = null;
-
-        if(adjPick.kind === "bunny"){
-          if(!adjPick.bunnySize) return adjShowErr("Bitte Größe wählen.");
-          amount = PRICES.bunny[adjPick.bunnySize];
-        } else if(adjPick.kind === "lumi"){
-          amount = PRICES.lumi;
-        } else if(adjPick.kind === "combo"){
-          amount = PRICES.bunny.comboAllThree;
-        } else if(adjPick.kind === "other"){
-          const raw = String(adjPick.otherAmount||"").trim().replace(",",".");
-          const n = Number(raw);
-          if(!Number.isFinite(n) || n<=0) return adjShowErr("Bitte gültigen Betrag eingeben.");
-          amount = n;
-        } else {
-          return adjShowErr("Bitte zuerst eine Option wählen.");
+      // 4) prüfen ob genug da
+      const shortages = [];
+      for(const [key, need] of needMap.entries()){
+        const have = Number(invMap.get(key)||0);
+        if(have < need){
+          shortages.push({ key, have, need });
         }
-
-        const payload = { amount_eur: -Math.abs(Number(amount)||0), note: (adjNote.value||"").trim() || null };
-        const { error } = await supabase.from("adjustments").insert(payload);
-        if(error) return adjShowErr(error.message);
-
-        adjShowOk("Gespeichert ✅");
-        await loadAll();
-      } catch(err){
-        adjShowErr(String(err?.message || err));
       }
-    });
 
-    // render orders
-    function renderOrders(target, orders, { archived }){
+      if(shortages.length){
+        const msg =
+          "⚠️ Bestand reicht nicht für alle Positionen.\n\n" +
+          shortages.slice(0,6).map(s=>`• ${s.key} (da: ${s.have}, nötig: ${s.need})`).join("\n") +
+          (shortages.length>6 ? "\n…" : "") +
+          "\n\nTrotzdem archivieren?\n" +
+          "OK = Archivieren OHNE Bestands-Abzug\n" +
+          "Abbrechen = zurück";
+        const ok = confirm(msg);
+        if(!ok) return;
+
+        // archivieren ohne abzug
+        await supabase.from("orders").update({ archived:true }).eq("id", orderId);
+        await loadAll();
+        return;
+      }
+
+      // 5) Bestand abziehen (update pro key)
+      for(const [key, need] of needMap.entries()){
+        const have = Number(invMap.get(key)||0);
+        const newQty = Math.max(0, have - need);
+
+        const { error: uErr } = await supabase
+          .from("inventory")
+          .update({ qty: newQty })
+          .eq("key", key);
+
+        if(uErr) return alert("Fehler beim Abziehen im Bestand: " + uErr.message);
+      }
+
+      // 6) archivieren
+      await supabase.from("orders").update({ archived:true }).eq("id", orderId);
+      await loadAll();
+      // optional: Bestand view aktualisieren
+      // await loadInventory();
+    }
+
+    // ---------------- render orders ----------------
+    function renderOrders(target, orders, invMap, { archived }){
       target.innerHTML = "";
 
       if(orders.length === 0){
-        target.innerHTML = `<div class="hint">Keine ${archived ? "Archiv" : "offenen"} Bestellungen.</div>`;
+        target.innerHTML = `<div class="muted">Keine ${archived ? "archivierten" : "offenen"} Bestellungen.</div>`;
         return;
       }
 
       for(const o of orders){
-        const allItems = o.items || [];
-        const sortedAllItems = sortItemsInsideOrder(allItems);
+        let items = (o.items || []).slice();
 
-        const items = (archived || !hideDoneItems)
-          ? sortedAllItems
-          : sortedAllItems.filter(x=>!x.done);
+        // ✅ Sortierung innerhalb einer Bestellung:
+        // Hasen 11->15->20, egal wie bestellt
+        items.sort((a,b)=>{
+          const ka = itemSortKey(a);
+          const kb = itemSortKey(b);
+          if(ka < kb) return -1;
+          if(ka > kb) return 1;
+          return 0;
+        });
 
-        const total = priceForOrderItems(allItems);
+        const total = priceForOrderItems(items);
         const date = formatDateOnly(o.created_at);
 
-        const minPr = Math.min(...allItems.map(x=>prioRank(x.priority)).concat([2]));
+        const minPr = Math.min(...items.map(x=>prioRank(x.priority)).concat([2]));
         const prText = minPr===0 ? "Sehr wichtig" : minPr===1 ? "Wichtig" : "Nicht wichtig";
 
-        const doneCount = allItems.filter(x=>!!x.done).length;
-        const totalCount = allItems.length;
-        const progressText = `${doneCount}/${totalCount} fertig`;
-        const allDone = totalCount > 0 && doneCount === totalCount;
+        // Gesamt-Stock-Status (nur offene Bestellungen sinnvoll)
+        let okCount = 0, warnCount=0, badCount=0;
+        if(!archived){
+          for(const it of items){
+            if(it.product!=="bunny") continue;
+            const key = it.inventory_key || orderItemInventoryKey(it);
+            const have = Number(invMap.get(key)||0);
+            const need = Number(it.qty||0);
+            if(have >= need) okCount++;
+            else if(have>0) warnCount++;
+            else badCount++;
+          }
+        }
+
+        let orderStockBadge = "";
+        if(!archived){
+          if(badCount===0 && warnCount===0) orderStockBadge = `<span class="badge ok">✅ Alles da</span>`;
+          else if(badCount>0) orderStockBadge = `<span class="badge bad">❌ Fehlt</span>`;
+          else orderStockBadge = `<span class="badge warn">⚠️ Teilweise</span>`;
+        }
 
         const card = document.createElement("div");
         card.className = "card pad orderCard";
 
-        const lines = (items.length === 0)
-          ? `<div class="hint">${(!archived && hideDoneItems && allItems.length > 0) ? "Alle Positionen sind fertig (ausgeblendet)." : "Keine Positionen."}</div>`
-          : items.map(it=>{
-              const title =
-                it.product==="bunny" ? `Hase ${it.size} cm` :
-                it.product==="lumi"  ? `Lumi` : `Weitere Produkt (${it.size||"?"})`;
+        const lines = items.map(it=>{
+          const title =
+            it.product==="bunny" ? `Hase ${it.size} cm` :
+            it.product==="lumi"  ? `Lumi` : `Weitere Produkt (${it.size||"?"})`;
 
-              const colors = colorText(it);
-              const qtyTxt = `× ${it.qty}`;
-              const pr = prioLabel(it.priority);
-              const isDone = !!it.done;
-              const doneCls = (!archived && isDone) ? "itemDone" : "";
+          const overrideTxt = (it.price_override!=null) ? ` • Preis: ${euro(it.price_override)}/Stk` : "";
+          const pr = prioLabel(it.priority);
 
-              return `
-                <div class="line ${doneCls}">
-                  <div class="row" style="justify-content:space-between; gap:10px; align-items:flex-start;">
-                    <div>
-                      <div style="font-weight:900">
-                        ${esc(title)} <span class="muted">(${esc(pr)})</span>
-                      </div>
-                      <div class="muted">${esc(colors)}</div>
-                    </div>
+          const stock = archived ? `<span class="badge">—</span>` : stockBadgeForItem(it, invMap);
 
-                    <div class="row" style="gap:12px; align-items:center;">
-                      ${
-                        archived ? `` : `
-                          <label class="doneBox" title="Position fertig?">
-                            <input type="checkbox" data-done-id="${esc(it.id)}" ${isDone ? "checked" : ""} />
-                            fertig
-                          </label>
-                        `
-                      }
-                      <div class="muted" style="font-weight:1000">${esc(qtyTxt)}</div>
-                    </div>
-                  </div>
-
+          return `
+            <div style="padding:10px 0; border-top:1px dashed #eef2f7;">
+              <div class="row" style="justify-content:space-between; gap:10px; align-items:flex-start;">
+                <div style="min-width:240px;">
+                  <div style="font-weight:900">${esc(title)} <span class="muted">(${esc(pr)})</span></div>
+                  <div class="muted">${esc(colorText(it))}${overrideTxt}</div>
                   ${it.note ? `<div class="muted" style="margin-top:4px;">📝 ${esc(it.note)}</div>` : ``}
                 </div>
-              `;
-            }).join(`<div class="sep"></div>`);
+                <div class="row" style="gap:10px;">
+                  ${stock}
+                  <span class="badge">${esc("× "+it.qty)}</span>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join("");
 
         card.innerHTML = `
           <div class="row" style="justify-content:space-between; align-items:flex-start;">
             <div>
-              <div class="row" style="gap:10px; align-items:center; flex-wrap:wrap;">
+              <div class="row" style="gap:10px; align-items:center;">
                 <div class="orderTitle">${archived ? "Archiv" : "Offen"} • ${esc(date)}</div>
-                <div class="pill">${esc(prText)}</div>
-                ${archived ? "" : `<div class="badge" title="Fortschritt">${esc(progressText)}</div>`}
+                <span class="badge">${esc(prText)}</span>
+                ${orderStockBadge}
               </div>
-
               ${o.customer_name ? `<div class="muted" style="margin-top:6px;">👤 ${esc(o.customer_name)}</div>` : ``}
               ${o.note ? `<div class="muted" style="margin-top:6px;">📝 ${esc(o.note)}</div>` : ``}
             </div>
@@ -1727,12 +1598,7 @@
                     <button class="iconBtn" data-delete="${o.id}" title="Löschen">🗑</button>
                   `
                   : `
-                    <button class="iconBtn"
-                      data-archive="${o.id}"
-                      title="${allDone ? "Ins Archiv" : "Erst alle Positionen abhaken"}"
-                      ${allDone ? "" : "disabled"}
-                      style="${allDone ? "" : "opacity:.45; cursor:not-allowed;"}"
-                    >📦</button>
+                    <button class="iconBtn" data-archive="${o.id}" title="Ins Archiv (zieht Bestand ab)">📦</button>
                   `
               }
             </div>
@@ -1745,11 +1611,9 @@
         target.appendChild(card);
       }
 
+      // handlers
       target.querySelectorAll("[data-archive]").forEach(b=>{
-        b.addEventListener("click", ()=>{
-          if(b.hasAttribute("disabled")) return;
-          archiveOrder(b.getAttribute("data-archive"));
-        });
+        b.addEventListener("click", ()=>archiveOrderWithStock(b.getAttribute("data-archive")));
       });
       target.querySelectorAll("[data-restore]").forEach(b=>{
         b.addEventListener("click", ()=>restoreOrder(b.getAttribute("data-restore")));
@@ -1757,25 +1621,12 @@
       target.querySelectorAll("[data-delete]").forEach(b=>{
         b.addEventListener("click", ()=>deleteOrder(b.getAttribute("data-delete")));
       });
-
-      target.querySelectorAll('input[type="checkbox"][data-done-id]').forEach(cb=>{
-        cb.addEventListener("change", async ()=>{
-          const id = cb.getAttribute("data-done-id");
-          try{
-            await toggleItemDone(id, cb.checked);
-            await loadAll();
-          }catch(e){
-            alert("Fehler: " + (e?.message || e));
-            cb.checked = !cb.checked;
-          }
-        });
-      });
     }
 
-    function renderArchive(target, orders){
+    function renderArchive(target, orders, invMap){
       target.innerHTML = "";
       if(orders.length===0){
-        target.innerHTML = `<div class="hint">Keine archivierten Bestellungen.</div>`;
+        target.innerHTML = `<div class="muted">Keine archivierten Bestellungen.</div>`;
         return;
       }
 
@@ -1783,8 +1634,7 @@
       for(const o of orders){
         const d = new Date(o.created_at);
         const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
-        if(!groups[key]) groups[key]=[];
-        groups[key].push(o);
+        (groups[key] ||= []).push(o);
       }
 
       const keys = Object.keys(groups).sort().reverse();
@@ -1800,11 +1650,13 @@
         target.appendChild(wrap);
 
         const grid = wrap.querySelector(`[data-month="${key}"]`);
-        renderOrders(grid, groups[key], { archived:true });
+        renderOrders(grid, groups[key], invMap, { archived:true });
       }
     }
 
+    // ---------------- load all (orders + items + inventory) ----------------
     async function loadAll(){
+      // orders
       const { data: orders, error: oErr } = await supabase
         .from("orders")
         .select("id,created_at,customer_name,note,archived")
@@ -1815,6 +1667,7 @@
         return;
       }
 
+      // items
       const { data: items, error: iErr } = await supabase
         .from("order_items")
         .select("*")
@@ -1825,11 +1678,14 @@
         return;
       }
 
-      const { data: adjs } = await supabase
-        .from("adjustments")
-        .select("*")
-        .order("created_at", { ascending:false });
+      // inventory
+      const { data: inv, error: invErr3 } = await supabase
+        .from("inventory")
+        .select("*");
 
+      const invMap = invErr3 ? new Map() : buildInventoryMap(inv);
+
+      // merge items into orders
       const map = new Map();
       for(const o of (orders||[])){
         map.set(o.id, { ...o, items: [] });
@@ -1837,7 +1693,10 @@
       for(const it of (items||[])){
         const o = map.get(it.order_id);
         if(o){
-          o.items.push({ ...it, colors: it.colors || {} });
+          o.items.push({
+            ...it,
+            colors: it.colors || {}
+          });
         }
       }
 
@@ -1857,29 +1716,17 @@
       }
 
       const openTotal = open.reduce((s,o)=> s + priceForOrderItems(o.items), 0);
-      openSumEl.textContent = `Summe offen: ${euro(openTotal)}`;
+      openSumEl.textContent = `Summe offen: ${openTotal.toFixed(2)}€`;
 
-      const soldTotalRaw = archived.reduce((s,o)=> s + priceForOrderItems(o.items), 0);
-      const adjSum = (adjs||[]).reduce((s,a)=> s + Number(a.amount_eur||0), 0);
-      const soldFinal = soldTotalRaw + adjSum;
-
-      soldSumEl.textContent = `Verkauft gesamt: ${euro(soldFinal)} (klicken für Korrektur/Abzug)`;
-
-      renderOrders(openOrdersEl, open, { archived:false });
-      renderArchive(archiveOrdersEl, archived);
+      renderOrders(openOrdersEl, open, invMap, { archived:false });
+      renderArchive(archiveOrdersEl, archived, invMap);
     }
 
-    // modal close
-    closeModal.addEventListener("click", ()=>{ modalBack.classList.remove("open"); });
-    modalBack.addEventListener("click", (e)=>{ if(e.target===modalBack) modalBack.classList.remove("open"); });
-
-    // start
-    setActiveView("orders");
-    setProduct("bunny");
-    cart = [];
-    updateCartUI();
-    validateSaveEnabled();
+    // initial load
     await loadAll();
+    // optional: Bestand einmal laden
+    await loadInventory();
+
   </script>
 </body>
 </html>
