@@ -1705,34 +1705,36 @@
       renderArchive(archiveOrdersEl, archived, invMap);
     }
 
+// ---------------- Tabs (SOFORT initialisieren – kein DOMContentLoaded!) ----------------
+const tabOrders = document.getElementById("tabOrders");
+const tabInv    = document.getElementById("tabInv");
+const viewOrders= document.getElementById("viewOrders");
+const viewInv   = document.getElementById("viewInv");
+const h1 = document.querySelector("h1");
+
+function setActiveTab(which){
+  const onOrders = which === "orders";
+  tabOrders.classList.toggle("active", onOrders);
+  tabInv.classList.toggle("active", !onOrders);
+  viewOrders.classList.toggle("active", onOrders);
+  viewInv.classList.toggle("active", !onOrders);
+  if(h1) h1.textContent = onOrders ? "Bestellungen" : "Bestand";
+  if(!onOrders) loadInventory();
+}
+
+tabOrders.addEventListener("click", ()=>setActiveTab("orders"));
+tabInv.addEventListener("click", ()=>setActiveTab("inv"));
+
+// Start
+setActiveTab("orders");
+
+
     // initial load
     await loadAll();
     // optional: Bestand einmal laden
     await loadInventory();
 
-document.addEventListener("DOMContentLoaded", () => {
-  const tabOrders = document.getElementById("tabOrders");
-  const tabInv    = document.getElementById("tabInv");
-  const viewOrders= document.getElementById("viewOrders");
-  const viewInv   = document.getElementById("viewInv");
-  const h1 = document.querySelector("h1");
 
-  function setActiveTab(which){
-    const onOrders = which === "orders";
-    tabOrders.classList.toggle("active", onOrders);
-    tabInv.classList.toggle("active", !onOrders);
-    viewOrders.classList.toggle("active", onOrders);
-    viewInv.classList.toggle("active", !onOrders);
-    if(h1) h1.textContent = onOrders ? "Bestellungen" : "Bestand";
-    if(!onOrders) loadInventory();
-  }
-
-  tabOrders?.addEventListener("click", ()=>setActiveTab("orders"));
-  tabInv?.addEventListener("click", ()=>setActiveTab("inv"));
-
-  // Startseite
-  setActiveTab("orders");
-});
 
 
   </script>
