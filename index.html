@@ -60,7 +60,6 @@
     @media(min-width:900px){
       .grid-2{ grid-template-columns:repeat(2,1fr); }
       .grid-3{ grid-template-columns:repeat(3,1fr); }
-      .grid-4{ grid-template-columns:repeat(4,1fr); }
     }
 
     .btn{
@@ -87,7 +86,6 @@
       font-weight:900;
     }
     .btnDark{ background:linear-gradient(180deg, #0b1220, #0f172a); }
-    .btnDanger{ background:var(--danger); }
 
     .chips{ display:flex; gap:10px; flex-wrap:wrap; }
     .chip{
@@ -130,7 +128,6 @@
     .status{ margin-top:10px; font-size:13px; color:var(--muted); }
     .error{ color:var(--danger); font-weight:900; }
     .ok{ color:var(--ok); font-weight:900; }
-    .reqMissing{ border-color: var(--danger) !important; box-shadow:0 0 0 4px rgba(185,28,28,.10) !important; }
 
     /* Dropdown */
     .ddWrap{ position:relative; }
@@ -165,12 +162,7 @@
     .ddEmpty{ padding:10px; color:var(--muted); }
 
     /* Tabs oben */
-    .tabs{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-bottom:14px;
-    }
+    .tabs{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
     .tabBtn{
       border:1px solid var(--border);
       background:#fff;
@@ -185,7 +177,6 @@
       color:#fff;
       border-color:#0f172a;
     }
-
     .view{ display:none; }
     .view.active{ display:block; }
 
@@ -209,6 +200,8 @@
     .badge.ok{ border-color:#bbf7d0; background:#f0fdf4; color:#166534; }
     .badge.warn{ border-color:#fed7aa; background:#fff7ed; color:#9a3412; }
     .badge.bad{ border-color:#fecaca; background:#fff1f2; color:#991b1b; }
+    .badge.neutral{ border-color:#e5e7eb; background:#f9fafb; color:#111827; }
+    .badge.clickable{ cursor:pointer; user-select:none; }
 
     .iconBtn{
       border:1px solid var(--border);
@@ -232,50 +225,41 @@
     }
 
     /* Farben untereinander */
-    .colorsStack{
-      display:grid;
-      gap:2px;
-      margin-top:4px;
-    }
+    .colorsStack{ display:grid; gap:2px; margin-top:4px; }
     .colorsStack div{ line-height:1.25; }
 
     /* Bestand: nicht zu breit */
     .invRow{
-      display:flex;
-      gap:12px;
-      flex-wrap:wrap;
-      align-items:flex-end;
-      padding:12px;
-      border:1px solid var(--border);
-      border-radius:16px;
-      background:#fff;
-      max-width:100%;
-      overflow:hidden;
+      display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end;
+      padding:12px; border:1px solid var(--border); border-radius:16px; background:#fff;
+      max-width:100%; overflow:hidden;
     }
-    .invLeft{
-      flex:1;
-      min-width:220px;
-      max-width:100%;
-      overflow:hidden;
-    }
-    .invKey{
-      font-weight:1000;
-      overflow-wrap:anywhere;
-      word-break:break-word;
-    }
-    .invSub{
-      overflow-wrap:anywhere;
-      word-break:break-word;
-    }
+    .invLeft{ flex:1; min-width:220px; max-width:100%; overflow:hidden; }
+    .invKey{ font-weight:1000; overflow-wrap:anywhere; word-break:break-word; }
     .invControls{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
     .invQty{ width:110px; }
+
+    /* Bestand Filter Buttons */
+    .filtersRow{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+      margin-top:10px;
+    }
+    .filterBtn{
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:999px;
+      padding:10px 14px;
+      font-weight:1000;
+      cursor:pointer;
+      user-select:none;
+    }
   </style>
 </head>
 
 <body>
   <div class="container">
     <div class="topbar">
-      <h1>Bestellungen</h1>
+      <h1 id="pageTitle">Bestellungen</h1>
       <div class="hint">GitHub Pages • Supabase</div>
     </div>
 
@@ -321,7 +305,6 @@
               <label for="customer">Kundenname</label>
               <input id="customer" placeholder="z. B. Max Mustermann" />
             </div>
-
             <div>
               <label for="note">Beschreibung (optional)</label>
               <textarea id="note" placeholder="z. B. Sonderwunsch, Hinweis …"></textarea>
@@ -348,7 +331,6 @@
               <label for="qtyOther">Andere Menge (optional)</label>
               <input id="qtyOther" inputmode="numeric" placeholder="z. B. 12" />
             </div>
-
             <div style="display:flex; justify-content:flex-end;">
               <button class="btn btnDark" id="addItemBtn" style="min-width:280px;">+ Position hinzufügen</button>
             </div>
@@ -401,6 +383,8 @@
           <details class="archive">
             <summary>Archiv (alte Bestellungen anzeigen)</summary>
             <div style="margin-top:10px;">
+              <div class="muted" id="archivedTotal">Archiv gesamt: 0,00 €</div>
+              <div style="height:8px"></div>
               <div id="archiveOrders" class="grid"></div>
             </div>
           </details>
@@ -413,8 +397,18 @@
     <div class="view" id="viewInv">
       <div class="card">
         <div class="pad">
-          <div class="title2">Bestand</div>
-          <div class="muted">Hasen unabhängig von Bestellungen pflegen. Beim Archivieren wird automatisch abgezogen.</div>
+          <div class="row" style="justify-content:space-between; align-items:flex-end;">
+            <div>
+              <div class="title2">Bestand</div>
+              <div class="muted">Hasen unabhängig von Bestellungen pflegen. Beim Archivieren wird automatisch abgezogen (außer “manuell als da markiert”).</div>
+            </div>
+            <button class="btnSmall btnSoft" id="invReload">↻ Neu laden</button>
+          </div>
+
+          <div class="filtersRow">
+            <button class="filterBtn" id="filterModeBtn">Modus: Alle</button>
+            <button class="filterBtn" id="filterSizeBtn">Größe: Alle</button>
+          </div>
 
           <div class="sep"></div>
 
@@ -456,11 +450,7 @@
 
           <div class="sep"></div>
 
-          <div class="row" style="justify-content:space-between; align-items:flex-end;">
-            <div class="title2" style="margin:0;">Aktueller Bestand</div>
-            <button class="btnSmall btnSoft" id="invReload">↻ Neu laden</button>
-          </div>
-
+          <div class="title2" style="margin:0;">Aktueller Bestand</div>
           <div id="invList" class="grid" style="margin-top:10px;"></div>
           <div class="muted" id="invHint">Noch kein Bestand eingetragen.</div>
         </div>
@@ -469,6 +459,7 @@
 
   </div>
 
+  <!-- Teil 2/3 kommt jetzt -->
   <script type="module">
     import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
@@ -479,7 +470,11 @@
 
     // ---------------- constants ----------------
     const COLOR_SUGGESTIONS = [
-      "dunkelgrau","hellgrau","oak","beige","gold","pink","rosa","blau","grün","orange","gelb" ];
+      "weiß","schwarz","grau","dunkelgrau","hellgrau",
+      "beige","creme","braun","oak",
+      "rot","orange","gelb","grün","blau","lila",
+      "pink","rosa","gold","silber"
+    ];
 
     const PRICES = {
       bunny: { "20": 12.0, "15": 9.0, "11": 6.0, comboAllThree: 22.50 },
@@ -490,18 +485,20 @@
     const euro = (n)=> (Number(n)||0).toFixed(2).replace(".", ",") + " €";
     const esc = (s)=> String(s??"").replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
     const norm = (s)=> String(s||"").trim().toLowerCase();
+    const num = (s)=> Number(String(s??"").replace(",", "."));
 
     function setChip(el, on){ el?.classList.toggle("active", !!on); }
     function showErr(el,msg){ el.style.display="block"; el.textContent=msg; }
     function hideErr(el){ el.style.display="none"; el.textContent=""; }
 
+    // ---------------- dropdown ----------------
     function buildDropdown({ id, label, placeholder }){
       return `
         <div class="field" data-dd-wrap="${id}">
           <label for="${id}">${esc(label)}</label>
           <div class="ddWrap">
             <input id="${id}" class="ddInput" placeholder="${esc(placeholder)}" autocomplete="off" />
-            <button type="button" class="ddBtn" aria-label="Dropdown öffnen" data-dd-btn="${id}"><span>▾</span></button>
+            <button type="button" class="ddBtn" aria-label="Dropdown öffnen" data-dd-btn="${id}">▾</button>
             <div class="ddMenu" data-dd-menu="${id}"></div>
           </div>
         </div>
@@ -549,23 +546,22 @@
       });
     }
 
-    // ---------------- Tabs (Bestellungen / Bestand) ----------------
+    // ---------------- Tabs ----------------
     const tabOrders = document.getElementById("tabOrders");
     const tabInv    = document.getElementById("tabInv");
     const viewOrders= document.getElementById("viewOrders");
     const viewInv   = document.getElementById("viewInv");
-    const h1        = document.querySelector("h1");
+    const pageTitle = document.getElementById("pageTitle");
 
     async function setActiveTab(which){
       const onOrders = which === "orders";
-
       tabOrders.classList.toggle("active", onOrders);
       tabInv.classList.toggle("active", !onOrders);
       viewOrders.classList.toggle("active", onOrders);
       viewInv.classList.toggle("active", !onOrders);
-      if(h1) h1.textContent = onOrders ? "Bestellungen" : "Bestand";
+      pageTitle.textContent = onOrders ? "Bestellungen" : "Bestand";
 
-      // ✅ beim Wechsel immer neu laden
+      // ✅ IMMER neu laden beim Wechsel
       if(onOrders) await loadAll();
       else await loadInventory();
     }
@@ -585,16 +581,50 @@
     const invHint = document.getElementById("invHint");
     const invReload = document.getElementById("invReload");
 
+    // Filter Buttons
+    const filterModeBtn = document.getElementById("filterModeBtn");
+    const filterSizeBtn = document.getElementById("filterSizeBtn");
+    const modeCycle = ["all","single","multi"];
+    const sizeCycle = ["all","11","15","20"];
+    let modeFilter = "all";
+    let sizeFilter = "all";
+
+    function refreshFilterLabels(){
+      filterModeBtn.textContent =
+        modeFilter==="all" ? "Modus: Alle" : (modeFilter==="single" ? "Modus: Einfarbig" : "Modus: Mehrfarbig");
+      filterSizeBtn.textContent =
+        sizeFilter==="all" ? "Größe: Alle" : `Größe: ${sizeFilter} cm`;
+    }
+
+    filterModeBtn.addEventListener("click", async ()=>{
+      modeFilter = modeCycle[(modeCycle.indexOf(modeFilter)+1)%modeCycle.length];
+      refreshFilterLabels();
+      await loadInventory();
+    });
+    filterSizeBtn.addEventListener("click", async ()=>{
+      sizeFilter = sizeCycle[(sizeCycle.indexOf(sizeFilter)+1)%sizeCycle.length];
+      refreshFilterLabels();
+      await loadInventory();
+    });
+
+    refreshFilterLabels();
+    invReload.addEventListener("click", loadInventory);
+
     let invSize = null;           // "11"|"15"|"20"
     let invMode = null;           // "single"|"multi"
     let invColors = { single:"", ears:"", body:"", butt:"" };
 
     function inventoryKeyFromParts({ size, mode, colors }){
-      if(mode==="single"){
-        return `bunny|${size}|single|${norm(colors.single)}`;
-      }
-      // OHREN → KÖRPER → POPO (Reihenfolge im Key)
+      if(mode==="single") return `bunny|${size}|single|${norm(colors.single)}`;
+      // OHREN → KÖRPER → POPO
       return `bunny|${size}|multi|${norm(colors.ears)}|${norm(colors.body)}|${norm(colors.butt)}`;
+    }
+
+    function invShowOk(msg){
+      hideErr(invErr);
+      invOk.style.display="block";
+      invOk.textContent = msg || "Gespeichert ✅";
+      setTimeout(()=>{ invOk.style.display="none"; }, 1600);
     }
 
     function renderInvColors(){
@@ -606,7 +636,7 @@
 
       if(invMode==="single"){
         invColorsArea.innerHTML = `
-          <div class="grid grid-1">
+          <div class="grid">
             ${buildDropdown({ id:"inv_single", label:"Einfarbig", placeholder:"Tippen oder auswählen…" })}
           </div>
         `;
@@ -614,7 +644,6 @@
         return;
       }
 
-      // Mehrfarbig: OHREN → KÖRPER → POPO
       invColorsArea.innerHTML = `
         <div class="grid grid-3">
           ${buildDropdown({ id:"inv_ears", label:"Ohren", placeholder:"Tippen oder auswählen…" })}
@@ -643,20 +672,11 @@
       });
     });
 
-    invReload.addEventListener("click", loadInventory);
-
-    function invShowOk(msg){
-      hideErr(invErr);
-      invOk.style.display="block";
-      invOk.textContent = msg || "Gespeichert ✅";
-      setTimeout(()=>{ invOk.style.display="none"; }, 1600);
-    }
-
     async function saveInventory(){
       hideErr(invErr);
       invOk.style.display="none";
 
-      const q = Number(String(invQty.value||"").replace(",", "."));
+      const q = num(invQty.value);
       if(!invSize) return showErr(invErr, "Bitte Größe wählen.");
       if(!invMode) return showErr(invErr, "Bitte Farbmodus wählen.");
       if(!Number.isFinite(q) || q<0) return showErr(invErr, "Bitte gültige Menge eingeben (0 oder mehr).");
@@ -670,38 +690,34 @@
       }
 
       const key = inventoryKeyFromParts({ size: invSize, mode: invMode, colors: invColors });
-      const colors =
-        invMode==="single"
-          ? { single: norm(invColors.single) }
-          : { ears: norm(invColors.ears), body: norm(invColors.body), butt: norm(invColors.butt) };
+      const colors = invMode==="single"
+        ? { single: norm(invColors.single) }
+        : { ears: norm(invColors.ears), body: norm(invColors.body), butt: norm(invColors.butt) };
 
-   // ✅ 1) schauen ob key schon existiert
-const { data: existing, error: exErr } = await supabase
-  .from("inventory")
-  .select("qty")
-  .eq("key", key)
-  .maybeSingle();
+      // ✅ zusammenpacken (addieren)
+      const { data: existing, error: exErr } = await supabase
+        .from("inventory")
+        .select("qty")
+        .eq("key", key)
+        .maybeSingle();
+      if(exErr) return showErr(invErr, exErr.message);
 
-if(exErr) return showErr(invErr, exErr.message);
+      const oldQty = Number(existing?.qty ?? 0);
+      const addQty = Math.floor(q);
+      const newQty = oldQty + addQty;
 
-const oldQty = Number(existing?.qty ?? 0);
-const addQty = Math.floor(q);
-const newQty = oldQty + addQty;
+      const { error } = await supabase
+        .from("inventory")
+        .upsert({
+          key,
+          product: "bunny",
+          size: invSize,
+          mode: invMode,
+          colors,
+          qty: newQty
+        }, { onConflict: "key" });
 
-// ✅ 2) upsert mit neuer Menge (zusammenpacken)
-const { error } = await supabase
-  .from("inventory")
-  .upsert({
-    key,
-    product: "bunny",
-    size: invSize,
-    mode: invMode,
-    colors,
-    qty: newQty
-  }, { onConflict: "key" });
-
-if(error) return showErr(invErr, error.message);
-
+      if(error) return showErr(invErr, error.message);
 
       invShowOk("Bestand gespeichert ✅");
       await loadInventory();
@@ -725,27 +741,33 @@ if(error) return showErr(invErr, error.message);
         return;
       }
 
-      const rows = data || [];
+      let rows = (data || []);
+
+      // ✅ Filter anwenden
+      if(modeFilter!=="all") rows = rows.filter(r => String(r.mode) === modeFilter);
+      if(sizeFilter!=="all") rows = rows.filter(r => String(r.size) === sizeFilter);
+
       if(rows.length===0){
         invHint.style.display="block";
-        invHint.textContent = "Noch kein Bestand eingetragen.";
+        invHint.textContent = "Kein Bestand für diese Filter.";
         return;
       }
 
       for(const r of rows){
         const isSingle = r.mode==="single";
-        const colors = r.colors || {};
-        const pretty = isSingle
-          ? `🐰 ${r.size} cm • Einfarbig: ${colors.single||""}`
+        const c = r.colors || {};
+
+        const title = isSingle
+          ? `🐰 ${r.size} cm • Einfarbig`
           : `🐰 ${r.size} cm • Mehrfarbig`;
 
         const colorsHtml = isSingle
-          ? `<div class="colorsStack muted"><div><b>Einfarbig:</b> ${esc(colors.single||"")}</div></div>`
+          ? `<div class="colorsStack muted"><div><b>Einfarbig:</b> ${esc(c.single||"")}</div></div>`
           : `
             <div class="colorsStack muted">
-              <div><b>Ohren:</b> ${esc(colors.ears||"")}</div>
-              <div><b>Körper:</b> ${esc(colors.body||"")}</div>
-              <div><b>Popo:</b> ${esc(colors.butt||"")}</div>
+              <div><b>Ohren:</b> ${esc(c.ears||"")}</div>
+              <div><b>Körper:</b> ${esc(c.body||"")}</div>
+              <div><b>Popo:</b> ${esc(c.butt||"")}</div>
             </div>
           `;
 
@@ -753,9 +775,8 @@ if(error) return showErr(invErr, error.message);
         wrap.className = "invRow";
         wrap.innerHTML = `
           <div class="invLeft">
-            <div class="invKey">${esc(pretty)}</div>
+            <div class="invKey">${esc(title)}</div>
             ${colorsHtml}
-            <div class="invSub muted">${esc(r.key)}</div>
           </div>
           <div class="invControls">
             <label class="muted" style="margin:0;">Menge</label>
@@ -764,7 +785,6 @@ if(error) return showErr(invErr, error.message);
             <button class="btnSmall btnSoft" data-del="${esc(r.key)}">Löschen</button>
           </div>
         `;
-
         invList.appendChild(wrap);
       }
 
@@ -772,7 +792,7 @@ if(error) return showErr(invErr, error.message);
         btn.addEventListener("click", async ()=>{
           const key = btn.getAttribute("data-save");
           const inp = invList.querySelector(`input[data-qty="${CSS.escape(key)}"]`);
-          const q = Number(String(inp?.value||"").replace(",", "."));
+          const q = num(inp?.value);
           if(!Number.isFinite(q) || q<0) return alert("Bitte gültige Menge (0 oder mehr).");
 
           const { error } = await supabase.from("inventory").update({ qty: Math.floor(q) }).eq("key", key);
@@ -794,7 +814,8 @@ if(error) return showErr(invErr, error.message);
       });
     }
 
-    // ---------------- Orders (Bestellungen) ----------------
+    // Teil 3/3 kommt jetzt…
+    // ---------------- Orders DOM ----------------
     const btnBunny = document.getElementById("btnBunny");
     const btnLumi  = document.getElementById("btnLumi");
     const btnOther = document.getElementById("btnOther");
@@ -826,10 +847,12 @@ if(error) return showErr(invErr, error.message);
     const openOrdersEl = document.getElementById("openOrders");
     const archiveOrdersEl = document.getElementById("archiveOrders");
     const openSumEl = document.getElementById("openSum");
+    const archivedTotalEl = document.getElementById("archivedTotal");
 
     const sortDate = document.getElementById("sortDate");
     const sortPrio = document.getElementById("sortPrio");
 
+    // ---------------- Orders state ----------------
     let currentProduct = null;  // 'bunny' | 'lumi' | 'other'
     let bunnySize = null;       // '20'|'15'|'11'
     let bunnyMode = null;       // 'multi'|'single'
@@ -859,6 +882,114 @@ if(error) return showErr(invErr, error.message);
       missingEl.textContent = "";
     }
 
+    function buildOrderItemTitle(it){
+      if(it.product==="bunny") return `Hase ${it.size} cm`;
+      if(it.product==="lumi") return `Lumi`;
+      return `Weitere Produkt (${it.size||"?"})`;
+    }
+
+    function prioLabel(p){
+      if(p==="very") return "Sehr wichtig";
+      if(p==="normal") return "Wichtig";
+      return "Nicht wichtig";
+    }
+    function prioRank(p){
+      if(p==="very") return 0;
+      if(p==="normal") return 1;
+      return 2;
+    }
+
+    function sizeRank(size){
+      if(String(size)==="11") return 0;
+      if(String(size)==="15") return 1;
+      return 2;
+    }
+    function itemSortKey(it){
+      if(it.product==="bunny") return "0-"+sizeRank(it.size)+"-"+(it.mode||"");
+      if(it.product==="lumi") return "1";
+      return "2";
+    }
+
+    function formatDateOnly(iso){
+      const d = new Date(iso);
+      const dd = String(d.getDate()).padStart(2,"0");
+      const mm = String(d.getMonth()+1).padStart(2,"0");
+      const yy = d.getFullYear();
+      return `${dd}.${mm}.${yy}`;
+    }
+
+    function itemBasePrice(item){
+      if(item.product === "bunny") return PRICES.bunny[item.size] || 0;
+      if(item.product === "lumi") return PRICES.lumi;
+      return 0;
+    }
+
+    function priceForOrderItems(items){
+      // nutzt price_override pro item (falls gesetzt), sonst Standard + Hase-Combo
+      let total = 0;
+
+      // non-bunny:
+      for(const it of items){
+        if(it.product !== "bunny"){
+          const base = (it.price_override != null ? Number(it.price_override) : itemBasePrice(it));
+          total += base * Number(it.qty||0);
+        }
+      }
+
+      // bunnies: wenn irgendein bunny-item price_override hat -> dann kein combo, sondern overrides/standard einzeln
+      const bunny = items.filter(x=>x.product==="bunny");
+      const anyOverride = bunny.some(x => x.price_override != null);
+
+      if(anyOverride){
+        for(const it of bunny){
+          const base = (it.price_override != null ? Number(it.price_override) : itemBasePrice(it));
+          total += base * Number(it.qty||0);
+        }
+        return total;
+      }
+
+      // combo rule
+      const counts = { "20":0, "15":0, "11":0 };
+      for(const it of bunny) counts[it.size] += Number(it.qty||0);
+
+      const combos = Math.min(counts["20"], counts["15"], counts["11"]);
+      if(combos>0){
+        total += combos * PRICES.bunny.comboAllThree;
+        counts["20"] -= combos; counts["15"] -= combos; counts["11"] -= combos;
+      }
+      total += counts["20"] * PRICES.bunny["20"];
+      total += counts["15"] * PRICES.bunny["15"];
+      total += counts["11"] * PRICES.bunny["11"];
+      return total;
+    }
+
+    function colorTextStack(it){
+      const c = it.colors || {};
+      if(it.product==="bunny"){
+        if(it.mode==="single"){
+          return `<div class="colorsStack muted"><div><b>Einfarbig:</b> ${esc(c.single||"")}</div></div>`;
+        }
+        return `
+          <div class="colorsStack muted">
+            <div><b>Ohren:</b> ${esc(c.ears||"")}</div>
+            <div><b>Körper:</b> ${esc(c.body||"")}</div>
+            <div><b>Popo:</b> ${esc(c.butt||"")}</div>
+          </div>
+        `;
+      }
+      if(it.product==="lumi"){
+        return `
+          <div class="colorsStack muted">
+            <div><b>Körper:</b> ${esc(c.body||"")}</div>
+            <div><b>Flügel:</b> ${esc(c.wings||"")}</div>
+            <div><b>Fühler:</b> ${esc(c.feelers||"")}</div>
+          </div>
+        `;
+      }
+      return `<div class="colorsStack muted"><div><b>Größe:</b> ${esc(it.size||"")}</div><div><b>Farbe:</b> ${esc(c.color||"")}</div></div>`;
+    }
+
+    // ---------------- product selection UI ----------------
     function renderProductArea(){
       productArea.innerHTML = "";
 
@@ -935,14 +1066,12 @@ if(error) return showErr(invErr, error.message);
       if(currentProduct === "bunny"){
         if(bunnyMode === "single"){
           colorArea.innerHTML = `
-            <div class="grid grid-1">
+            <div class="grid">
               ${buildDropdown({ id:"bunny_single", label:"Einfarbig", placeholder:"Tippen oder auswählen…" })}
             </div>
           `;
           setupDropdown("bunny_single", v=>{ fields.bunny_single=v; validateForAdd(); });
-
         } else if(bunnyMode === "multi"){
-          // OHREN → KÖRPER → POPO
           colorArea.innerHTML = `
             <div class="grid grid-3">
               ${buildDropdown({ id:"bunny_ears", label:"Ohren", placeholder:"Tippen oder auswählen…" })}
@@ -953,7 +1082,6 @@ if(error) return showErr(invErr, error.message);
           setupDropdown("bunny_ears", v=>{ fields.bunny_ears=v; validateForAdd(); });
           setupDropdown("bunny_body", v=>{ fields.bunny_body=v; validateForAdd(); });
           setupDropdown("bunny_butt", v=>{ fields.bunny_butt=v; validateForAdd(); });
-
         } else {
           colorArea.innerHTML = `<div class="muted">Bitte zuerst <b>Farbmodus</b> wählen.</div>`;
         }
@@ -962,9 +1090,9 @@ if(error) return showErr(invErr, error.message);
       if(currentProduct === "lumi"){
         colorArea.innerHTML = `
           <div class="grid grid-3">
-            ${buildDropdown({ id:"lumi_body",   label:"Körper",  placeholder:"Tippen oder auswählen…" })}
-            ${buildDropdown({ id:"lumi_wings",  label:"Flügel",  placeholder:"Tippen oder auswählen…" })}
-            ${buildDropdown({ id:"lumi_feelers",label:"Fühler",  placeholder:"Tippen oder auswählen…" })}
+            ${buildDropdown({ id:"lumi_body",   label:"Körper", placeholder:"Tippen oder auswählen…" })}
+            ${buildDropdown({ id:"lumi_wings",  label:"Flügel", placeholder:"Tippen oder auswählen…" })}
+            ${buildDropdown({ id:"lumi_feelers",label:"Fühler", placeholder:"Tippen oder auswählen…" })}
           </div>
         `;
         setupDropdown("lumi_body",   v=>{ fields.lumi_body=v; validateForAdd(); });
@@ -988,12 +1116,10 @@ if(error) return showErr(invErr, error.message);
       priority  = null;
       qty       = null;
       qtyOther.value = "";
-
       fields.bunny_ears=""; fields.bunny_body=""; fields.bunny_butt=""; fields.bunny_single="";
       fields.lumi_body=""; fields.lumi_wings=""; fields.lumi_feelers="";
       fields.other_size=""; fields.other_color=""; fields.other_name="";
       clearErrorUI();
-
       [pVery,pNorm,pLow].forEach(x=>setPrioActive(x,false));
       document.querySelectorAll(".qtyBtn").forEach(b=>b.classList.remove("active"));
     }
@@ -1056,14 +1182,13 @@ if(error) return showErr(invErr, error.message);
       if(!currentProduct) missing.push("Produkt");
       if(!priority) missing.push("Priorität");
 
-      const otherQ = Number(String(qtyOther.value||"").replace(",", "."));
+      const otherQ = num(qtyOther.value);
       const hasQty = Number.isFinite(otherQ) && otherQ>0 ? true : (typeof qty==="number" && qty>0);
       if(!hasQty) missing.push("Menge");
 
       if(currentProduct === "bunny"){
         if(!bunnySize) missing.push("Größe");
         if(!bunnyMode) missing.push("Farbmodus");
-
         if(bunnyMode === "single"){
           if(!norm(fields.bunny_single)) missing.push("Einfarbig");
         }
@@ -1103,14 +1228,8 @@ if(error) return showErr(invErr, error.message);
       saveOrderBtn.disabled = (cart.length === 0);
     }
 
-    function itemBasePrice(item){
-      if(item.product === "bunny") return PRICES.bunny[item.size] || 0;
-      if(item.product === "lumi") return PRICES.lumi;
-      return 0;
-    }
-
     function getQty(){
-      const otherQ = Number(String(qtyOther.value||"").replace(",", "."));
+      const otherQ = num(qtyOther.value);
       if(Number.isFinite(otherQ) && otherQ>0) return Math.floor(otherQ);
       if(typeof qty==="number" && qty>0) return qty;
       return null;
@@ -1121,14 +1240,10 @@ if(error) return showErr(invErr, error.message);
       const size = String(it.size||"");
       const mode = String(it.mode||"");
       const c = it.colors || {};
-
       if(mode==="single"){
         return inventoryKeyFromParts({ size, mode:"single", colors:{ single: c.single||"" } });
       }
-      return inventoryKeyFromParts({
-        size, mode:"multi",
-        colors:{ ears: c.ears||"", body: c.body||"", butt: c.butt||"" }
-      });
+      return inventoryKeyFromParts({ size, mode:"multi", colors:{ ears:c.ears||"", body:c.body||"", butt:c.butt||"" } });
     }
 
     function makeItem(){
@@ -1144,7 +1259,7 @@ if(error) return showErr(invErr, error.message);
         customer_name: (customer.value||"").trim() || null,
         note: (noteEl.value||"").trim() || null,
         price_override: null,
-        inventory_key: null
+        ignore_inventory: false
       };
 
       if(currentProduct==="bunny"){
@@ -1152,12 +1267,10 @@ if(error) return showErr(invErr, error.message);
         item.mode = bunnyMode;
         if(bunnyMode==="single") item.colors.single = norm(fields.bunny_single);
         else {
-          // OHREN → KÖRPER → POPO
           item.colors.ears = norm(fields.bunny_ears);
           item.colors.body = norm(fields.bunny_body);
           item.colors.butt = norm(fields.bunny_butt);
         }
-        item.inventory_key = inventoryKeyFromOrderItem(item);
       }
 
       if(currentProduct==="lumi"){
@@ -1175,61 +1288,9 @@ if(error) return showErr(invErr, error.message);
       return item;
     }
 
-    function colorTextStack(it){
-      // Farben untereinander
-      if(it.product==="bunny"){
-        if(it.mode==="single"){
-          return `<div class="colorsStack muted"><div><b>Einfarbig:</b> ${esc(it.colors.single||"")}</div></div>`;
-        }
-        return `
-          <div class="colorsStack muted">
-            <div><b>Ohren:</b> ${esc(it.colors.ears||"")}</div>
-            <div><b>Körper:</b> ${esc(it.colors.body||"")}</div>
-            <div><b>Popo:</b> ${esc(it.colors.butt||"")}</div>
-          </div>
-        `;
-      }
-      if(it.product==="lumi"){
-        return `
-          <div class="colorsStack muted">
-            <div><b>Körper:</b> ${esc(it.colors.body||"")}</div>
-            <div><b>Flügel:</b> ${esc(it.colors.wings||"")}</div>
-            <div><b>Fühler:</b> ${esc(it.colors.feelers||"")}</div>
-          </div>
-        `;
-      }
-      return `<div class="colorsStack muted"><div><b>Größe:</b> ${esc(it.size||"")}</div><div><b>Farbe:</b> ${esc(it.colors.color||"")}</div></div>`;
-    }
-
-    function prioLabel(p){
-      if(p==="very") return "Sehr wichtig";
-      if(p==="normal") return "Wichtig";
-      return "Nicht wichtig";
-    }
-
     function cartTotal(){
-      let total = 0;
-
-      for(const it of cart){
-        if(it.product !== "bunny"){
-          total += (it.price_override != null ? it.price_override : itemBasePrice(it)) * it.qty;
-        }
-      }
-
-      const counts = { "20":0, "15":0, "11":0 };
-      const bunnyItems = cart.filter(x=>x.product==="bunny");
-      for(const it of bunnyItems) counts[it.size] += it.qty;
-
-      const combos = Math.min(counts["20"], counts["15"], counts["11"]);
-      if(combos > 0){
-        total += combos * PRICES.bunny.comboAllThree;
-        counts["20"] -= combos; counts["15"] -= combos; counts["11"] -= combos;
-      }
-
-      total += counts["20"] * PRICES.bunny["20"];
-      total += counts["15"] * PRICES.bunny["15"];
-      total += counts["11"] * PRICES.bunny["11"];
-      return total;
+      // wie priceForOrderItems aber für cart (noch nicht gespeichert)
+      return priceForOrderItems(cart);
     }
 
     function updateCartUI(){
@@ -1240,18 +1301,11 @@ if(error) return showErr(invErr, error.message);
         const card = document.createElement("div");
         card.className = "card pad";
 
-        const title =
-          it.product === "bunny" ? `Hase ${it.size} cm` :
-          it.product === "lumi"  ? `Lumi` :
-                                   `Weitere Produkt`;
-
         card.innerHTML = `
           <div class="row" style="justify-content:space-between; align-items:flex-start;">
             <div style="min-width:220px;">
-              <div style="font-weight:1000">${esc(title)} <span class="muted">(${esc(prioLabel(it.priority))})</span></div>
+              <div style="font-weight:1000">${esc(buildOrderItemTitle(it))} <span class="muted">(${esc(prioLabel(it.priority))})</span></div>
               ${colorTextStack(it)}
-              ${it.customer_name ? `<div class="muted" style="margin-top:6px;">👤 ${esc(it.customer_name)}</div>` : ``}
-              ${it.note ? `<div class="muted" style="margin-top:6px;">📝 ${esc(it.note)}</div>` : ``}
             </div>
             <div class="row" style="gap:8px;">
               <span class="badge">× ${esc(it.qty)}</span>
@@ -1276,13 +1330,10 @@ if(error) return showErr(invErr, error.message);
 
     addItemBtn.addEventListener("click", ()=>{
       if(!validateForAdd()) return;
-
       cart.push(makeItem());
-
       qty = null;
       qtyOther.value = "";
       document.querySelectorAll(".qtyBtn").forEach(b=>b.classList.remove("active"));
-
       updateCartUI();
       validateSaveEnabled();
       clearErrorUI();
@@ -1301,51 +1352,11 @@ if(error) return showErr(invErr, error.message);
       loadAll();
     });
 
-    // Start default view state for product
     setProduct("bunny");
     updateCartUI();
     validateSaveEnabled();
 
-    // ---------------- Orders: save + render ----------------
-    function formatDateOnly(iso){
-      const d = new Date(iso);
-      const dd = String(d.getDate()).padStart(2,"0");
-      const mm = String(d.getMonth()+1).padStart(2,"0");
-      const yy = d.getFullYear();
-      return `${dd}.${mm}.${yy}`;
-    }
-    function prioRank(p){
-      if(p==="very") return 0;
-      if(p==="normal") return 1;
-      return 2;
-    }
-
-    function priceForOrderItems(items){
-      let total = 0;
-
-      for(const it of items){
-        if(it.product !== "bunny"){
-          const base = (it.price_override != null ? it.price_override : itemBasePrice(it));
-          total += base * it.qty;
-        }
-      }
-
-      const counts = { "20":0, "15":0, "11":0 };
-      const bunnyItems = items.filter(x=>x.product==="bunny");
-      for(const it of bunnyItems) counts[it.size] += it.qty;
-
-      const combos = Math.min(counts["20"], counts["15"], counts["11"]);
-      if(combos>0){
-        total += combos * PRICES.bunny.comboAllThree;
-        counts["20"] -= combos; counts["15"] -= combos; counts["11"] -= combos;
-      }
-      total += counts["20"] * PRICES.bunny["20"];
-      total += counts["15"] * PRICES.bunny["15"];
-      total += counts["11"] * PRICES.bunny["11"];
-
-      return total;
-    }
-
+    // ---------------- Save order ----------------
     async function saveOrder(){
       clearErrorUI();
       saveStatus.style.display = "none";
@@ -1361,7 +1372,8 @@ if(error) return showErr(invErr, error.message);
       const orderPayload = {
         customer_name: (customer.value||"").trim() || null,
         note: (noteEl.value||"").trim() || null,
-        archived: false
+        archived: false,
+        amount_adjust: 0
       };
 
       const { data: orderData, error: orderErr } = await supabase
@@ -1389,12 +1401,11 @@ if(error) return showErr(invErr, error.message);
         colors: it.colors,
         note: it.note ?? null,
         price_override: it.price_override ?? null,
-        inventory_key: it.inventory_key ?? null
+        ignore_inventory: it.ignore_inventory ?? false,
+        inventory_key: inventoryKeyFromOrderItem(it)
       }));
 
-      const { error: itemsErr } = await supabase
-        .from("order_items")
-        .insert(itemsPayload);
+      const { error: itemsErr } = await supabase.from("order_items").insert(itemsPayload);
 
       if(itemsErr){
         showMissing("Fehler beim Speichern (Positionen): " + itemsErr.message);
@@ -1415,38 +1426,49 @@ if(error) return showErr(invErr, error.message);
 
       await loadAll();
     }
-
     saveOrderBtn.addEventListener("click", saveOrder);
 
+    // ---------------- inventory map ----------------
     function buildInventoryMap(rows){
       const map = new Map();
       for(const r of (rows||[])) map.set(String(r.key), Number(r.qty||0));
       return map;
     }
 
-    function sizeRank(size){
-      if(String(size)==="11") return 0;
-      if(String(size)==="15") return 1;
-      return 2;
-    }
-
-    function itemSortKey(it){
-      if(it.product==="bunny") return "0-"+sizeRank(it.size)+"-"+(it.mode||"");
-      if(it.product==="lumi") return "1";
-      return "2";
-    }
-
+    // ✅ Stock badge: klickbar bei “Nicht im Bestand”
     function stockBadgeForItem(it, invMap){
-      if(it.product !== "bunny") return `<span class="badge">—</span>`;
+      if(it.product !== "bunny") return `<span class="badge neutral">—</span>`;
+
+      // wenn manuell als “da” markiert:
+      if(it.ignore_inventory){
+        return `<span class="badge ok">✅ Manuell als da</span>`;
+      }
+
       const key = it.inventory_key || inventoryKeyFromOrderItem(it);
       const have = Number(invMap.get(key) || 0);
       const need = Number(it.qty || 0);
 
       if(have >= need) return `<span class="badge ok">✅ Im Bestand (${have})</span>`;
       if(have > 0) return `<span class="badge warn">⚠️ Nur ${have} da</span>`;
-      return `<span class="badge bad">❌ Nicht im Bestand</span>`;
+
+      // ❌ klickbar
+      return `<span class="badge bad clickable" data-mark-stock="${esc(it.id)}">❌ Nicht im Bestand</span>`;
     }
 
+    async function markItemAsManualStock(itemId){
+      const ok = confirm("Als 'im Bestand' markieren (manuell)?\n\nDann wird der Bestand NICHT beeinflusst (auch nicht beim Archivieren).");
+      if(!ok) return;
+
+      const { error } = await supabase
+        .from("order_items")
+        .update({ ignore_inventory: true })
+        .eq("id", itemId);
+
+      if(error) return alert(error.message);
+      await loadAll();
+    }
+
+    // ---------------- order actions ----------------
     async function deleteOrder(orderId){
       const ok = confirm("Bist du sicher? Diese Bestellung wird endgültig gelöscht.");
       if(!ok) return;
@@ -1460,6 +1482,35 @@ if(error) return showErr(invErr, error.message);
       await loadAll();
     }
 
+    async function editOrderAdjust(orderId, currentAdjust){
+      const v = prompt("Korrektur / Preis-Anpassung für diese Bestellung in € (z.B. -2 oder 3.50):", String(currentAdjust ?? 0));
+      if(v===null) return;
+      const n = num(v);
+      if(!Number.isFinite(n)) return alert("Bitte eine Zahl eingeben (z.B. 2 oder -1.50).");
+
+      const { error } = await supabase.from("orders").update({ amount_adjust: n }).eq("id", orderId);
+      if(error) return alert(error.message);
+      await loadAll();
+    }
+
+    async function editItemPrice(itemId, currentPrice){
+      const v = prompt("Preis pro Stück in € (leer = Standardpreis):", currentPrice==null ? "" : String(currentPrice));
+      if(v===null) return;
+
+      const trimmed = String(v).trim();
+      let newVal = null;
+      if(trimmed !== ""){
+        const n = num(trimmed);
+        if(!Number.isFinite(n) || n<0) return alert("Bitte eine gültige Zahl >= 0 eingeben.");
+        newVal = n;
+      }
+
+      const { error } = await supabase.from("order_items").update({ price_override: newVal }).eq("id", itemId);
+      if(error) return alert(error.message);
+      await loadAll();
+    }
+
+    // ✅ Archivieren: zieht nur ab, wenn item.ignore_inventory = false
     async function archiveOrderWithStock(orderId){
       const { data: items, error: iErr } = await supabase
         .from("order_items")
@@ -1479,11 +1530,13 @@ if(error) return showErr(invErr, error.message);
       const needMap = new Map();
       for(const it of (items||[])){
         if(it.product !== "bunny") continue;
+        if(it.ignore_inventory) continue; // ✅ manuell markiert -> kein Abzug
         const key = it.inventory_key || inventoryKeyFromOrderItem(it);
         const q = Number(it.qty||0);
         needMap.set(key, (needMap.get(key)||0) + q);
       }
 
+      // prüfen
       const shortages = [];
       for(const [key, need] of needMap.entries()){
         const have = Number(invMap.get(key)||0);
@@ -1506,15 +1559,11 @@ if(error) return showErr(invErr, error.message);
         return;
       }
 
+      // abziehen
       for(const [key, need] of needMap.entries()){
         const have = Number(invMap.get(key)||0);
         const newQty = Math.max(0, have - need);
-
-        const { error: uErr } = await supabase
-          .from("inventory")
-          .update({ qty: newQty })
-          .eq("key", key);
-
+        const { error: uErr } = await supabase.from("inventory").update({ qty: newQty }).eq("key", key);
         if(uErr) return alert("Fehler beim Abziehen im Bestand: " + uErr.message);
       }
 
@@ -1522,6 +1571,7 @@ if(error) return showErr(invErr, error.message);
       await loadAll();
     }
 
+    // ---------------- render orders ----------------
     function renderOrders(target, orders, invMap, { archived }){
       target.innerHTML = "";
 
@@ -1531,66 +1581,50 @@ if(error) return showErr(invErr, error.message);
       }
 
       for(const o of orders){
-        let items = (o.items || []).slice();
-        items.sort((a,b)=>{
-          const ka = itemSortKey(a);
-          const kb = itemSortKey(b);
+        let items = (o.items || []).slice().sort((a,b)=>{
+          const ka = itemSortKey(a), kb = itemSortKey(b);
           return ka < kb ? -1 : ka > kb ? 1 : 0;
         });
 
-        const total = priceForOrderItems(items);
-        const date = formatDateOnly(o.created_at);
+        const baseTotal = priceForOrderItems(items);
+        const adjust = Number(o.amount_adjust || 0);
+        const total = baseTotal + adjust;
 
+        const date = formatDateOnly(o.created_at);
         const minPr = Math.min(...items.map(x=>prioRank(x.priority)).concat([2]));
         const prText = minPr===0 ? "Sehr wichtig" : minPr===1 ? "Wichtig" : "Nicht wichtig";
 
-        let okCount = 0, warnCount=0, badCount=0;
-        if(!archived){
-          for(const it of items){
-            if(it.product!=="bunny") continue;
-            const key = it.inventory_key || inventoryKeyFromOrderItem(it);
-            const have = Number(invMap.get(key)||0);
-            const need = Number(it.qty||0);
-            if(have >= need) okCount++;
-            else if(have>0) warnCount++;
-            else badCount++;
-          }
-        }
-
-        let orderStockBadge = "";
-        if(!archived){
-          if(badCount===0 && warnCount===0) orderStockBadge = `<span class="badge ok">✅ Alles da</span>`;
-          else if(badCount>0) orderStockBadge = `<span class="badge bad">❌ Fehlt</span>`;
-          else orderStockBadge = `<span class="badge warn">⚠️ Teilweise</span>`;
-        }
-
-        const card = document.createElement("div");
-        card.className = "card pad orderCard";
-
         const lines = items.map(it=>{
-          const title =
-            it.product==="bunny" ? `Hase ${it.size} cm` :
-            it.product==="lumi"  ? `Lumi` : `Weitere Produkt (${it.size||"?"})`;
-
-          const overrideTxt = (it.price_override!=null) ? ` • Preis: ${euro(it.price_override)}/Stk` : "";
-          const stock = archived ? `<span class="badge">—</span>` : stockBadgeForItem(it, invMap);
+          const stock = archived ? `<span class="badge neutral">—</span>` : stockBadgeForItem(it, invMap);
+          const priceTxt = (it.price_override!=null)
+            ? `<div class="muted" style="margin-top:4px;">💶 Preis/Stk: ${euro(it.price_override)}</div>`
+            : ``;
 
           return `
             <div style="padding:10px 0; border-top:1px dashed #eef2f7;">
               <div class="row" style="justify-content:space-between; gap:10px; align-items:flex-start;">
                 <div style="min-width:240px;">
-                  <div style="font-weight:900">${esc(title)} <span class="muted">(${esc(prioLabel(it.priority))})</span></div>
+                  <div style="font-weight:900">${esc(buildOrderItemTitle(it))} <span class="muted">(${esc(prioLabel(it.priority))})</span></div>
                   ${colorTextStack(it)}
-                  ${it.note ? `<div class="muted" style="margin-top:4px;">📝 ${esc(it.note)}</div>` : ``}
+                  ${priceTxt}
                 </div>
+
                 <div class="row" style="gap:10px;">
                   ${stock}
                   <span class="badge">× ${esc(it.qty)}</span>
+
+                  <!-- Stift pro Position -->
+                  <button class="iconBtn" title="Preis pro Stück ändern" data-edit-item="${it.id}" data-cur-price="${it.price_override ?? ""}">✏</button>
                 </div>
               </div>
             </div>
           `;
         }).join("");
+
+        const card = document.createElement("div");
+        card.className = "card pad orderCard";
+
+        const adjustTxt = adjust !== 0 ? `<div class="muted" style="margin-top:6px;">Korrektur: ${euro(adjust)}</div>` : "";
 
         card.innerHTML = `
           <div class="row" style="justify-content:space-between; align-items:flex-start;">
@@ -1598,14 +1632,17 @@ if(error) return showErr(invErr, error.message);
               <div class="row" style="gap:10px; align-items:center;">
                 <div class="orderTitle">${archived ? "Archiv" : "Offen"} • ${esc(date)}</div>
                 <span class="badge">${esc(prText)}</span>
-                ${orderStockBadge}
               </div>
               ${o.customer_name ? `<div class="muted" style="margin-top:6px;">👤 ${esc(o.customer_name)}</div>` : ``}
               ${o.note ? `<div class="muted" style="margin-top:6px;">📝 ${esc(o.note)}</div>` : ``}
+              ${adjustTxt}
             </div>
 
             <div class="row" style="gap:8px; align-items:center;">
               <div style="font-weight:1000">${euro(total)}</div>
+
+              <!-- Stift: Korrektur pro Bestellung -->
+              <button class="iconBtn" title="Bestellung-Korrektur ändern" data-edit-order="${o.id}" data-cur-adjust="${o.amount_adjust ?? 0}">✏</button>
 
               ${
                 archived
@@ -1628,6 +1665,7 @@ if(error) return showErr(invErr, error.message);
         target.appendChild(card);
       }
 
+      // Handlers
       target.querySelectorAll("[data-archive]").forEach(b=>{
         b.addEventListener("click", ()=>archiveOrderWithStock(b.getAttribute("data-archive")));
       });
@@ -1637,6 +1675,29 @@ if(error) return showErr(invErr, error.message);
       target.querySelectorAll("[data-delete]").forEach(b=>{
         b.addEventListener("click", ()=>deleteOrder(b.getAttribute("data-delete")));
       });
+
+      // “Nicht im Bestand” anklickbar
+      target.querySelectorAll("[data-mark-stock]").forEach(b=>{
+        b.addEventListener("click", ()=>markItemAsManualStock(b.getAttribute("data-mark-stock")));
+      });
+
+      // Stift pro Bestellung (Korrektur)
+      target.querySelectorAll("[data-edit-order]").forEach(b=>{
+        b.addEventListener("click", ()=>{
+          const id = b.getAttribute("data-edit-order");
+          const cur = b.getAttribute("data-cur-adjust");
+          editOrderAdjust(id, cur);
+        });
+      });
+
+      // Stift pro Item (Preis/Stk)
+      target.querySelectorAll("[data-edit-item]").forEach(b=>{
+        b.addEventListener("click", ()=>{
+          const id = b.getAttribute("data-edit-item");
+          const cur = b.getAttribute("data-cur-price");
+          editItemPrice(id, cur==="" ? null : cur);
+        });
+      });
     }
 
     function renderArchive(target, orders, invMap){
@@ -1645,35 +1706,14 @@ if(error) return showErr(invErr, error.message);
         target.innerHTML = `<div class="muted">Keine archivierten Bestellungen.</div>`;
         return;
       }
-
-      const groups = {};
-      for(const o of orders){
-        const d = new Date(o.created_at);
-        const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
-        (groups[key] ||= []).push(o);
-      }
-
-      const keys = Object.keys(groups).sort().reverse();
-      for(const key of keys){
-        const [yy,mm] = key.split("-");
-        const title = `${mm}.${yy}`;
-        const wrap = document.createElement("div");
-        wrap.innerHTML = `
-          <div class="sep"></div>
-          <div class="muted" style="font-weight:1000; margin:8px 0;">${esc(title)}</div>
-          <div class="grid" data-month="${esc(key)}"></div>
-        `;
-        target.appendChild(wrap);
-
-        const grid = wrap.querySelector(`[data-month="${key}"]`);
-        renderOrders(grid, groups[key], invMap, { archived:true });
-      }
+      renderOrders(target, orders, invMap, { archived:true });
     }
 
+    // ---------------- load all ----------------
     async function loadAll(){
       const { data: orders, error: oErr } = await supabase
         .from("orders")
-        .select("id,created_at,customer_name,note,archived")
+        .select("id,created_at,customer_name,note,archived,amount_adjust")
         .order("created_at", { ascending:false });
 
       if(oErr){
@@ -1697,10 +1737,9 @@ if(error) return showErr(invErr, error.message);
 
       const invMap = invErr3 ? new Map() : buildInventoryMap(inv);
 
+      // merge items into orders
       const map = new Map();
-      for(const o of (orders||[])){
-        map.set(o.id, { ...o, items: [] });
-      }
+      for(const o of (orders||[])) map.set(o.id, { ...o, items: [] });
       for(const it of (items||[])){
         const o = map.get(it.order_id);
         if(o){
@@ -1723,15 +1762,18 @@ if(error) return showErr(invErr, error.message);
         open.sort((a,b)=> new Date(b.created_at)-new Date(a.created_at));
       }
 
-      const openTotal = open.reduce((s,o)=> s + priceForOrderItems(o.items), 0);
-      openSumEl.textContent = `Summe offen: ${openTotal.toFixed(2)}€`;
+      // sums
+      const openTotal = open.reduce((s,o)=> s + (priceForOrderItems(o.items) + Number(o.amount_adjust||0)), 0);
+      openSumEl.textContent = `Summe offen: ${euro(openTotal)}`;
+
+      const archivedTotal = archived.reduce((s,o)=> s + (priceForOrderItems(o.items) + Number(o.amount_adjust||0)), 0);
+      archivedTotalEl.textContent = `Archiv gesamt: ${euro(archivedTotal)}`;
 
       renderOrders(openOrdersEl, open, invMap, { archived:false });
       renderArchive(archiveOrdersEl, archived, invMap);
     }
 
     // ---------------- Start ----------------
-    // initial tab view
     await setActiveTab("orders");
   </script>
 </body>
