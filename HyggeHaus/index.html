@@ -7,44 +7,25 @@
 
   <style>
     :root{
-      --bg:#f6f7fb;
-      --card:#fff;
-      --text:#111827;
-      --muted:#6b7280;
-      --border:#e5e7eb;
+      --bg:#f6f7fb; --card:#fff; --text:#111827; --muted:#6b7280; --border:#e5e7eb;
       --shadow:0 10px 30px rgba(0,0,0,.08);
-      --dark:#0f172a;
-      --dark2:#111827;
-      --danger:#b91c1c;
-      --ok:#047857;
-      --warn:#b45309;
+      --dark:#0f172a; --dark2:#111827;
+      --danger:#b91c1c; --ok:#047857; --warn:#b45309;
       --radius:18px;
     }
     *{ box-sizing:border-box; }
-    body{
-      margin:0;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      background:var(--bg);
-      color:var(--text);
-    }
+    body{ margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; background:var(--bg); color:var(--text); }
     .container{ max-width:1100px; margin:0 auto; padding:24px; }
-    h1{ margin:0; font-size:38px; letter-spacing:-.02em; }
+    h1{ margin:0; font-size:34px; letter-spacing:-.02em; }
     .topbar{ display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin-bottom:18px; }
     .hint{ color:var(--muted); font-size:13px; }
 
-    .card{
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-    }
+    .card{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); }
     .pad{ padding:18px; }
     .sep{ height:1px; background:var(--border); margin:14px 0; }
-
     .title2{ font-size:18px; font-weight:900; margin:0 0 8px; }
-    label{ font-weight:900; font-size:13px; display:block; margin:0 0 6px; }
 
-    /* iOS Zoom Bug vermeiden: input font-size >= 16px */
+    /* Mobile Zoom Fix: mind. 16px */
     input, textarea{
       width:100%;
       border:1px solid var(--border);
@@ -57,37 +38,32 @@
     textarea{ min-height:90px; resize:vertical; }
     input:focus, textarea:focus{ border-color:#c7d2fe; box-shadow:0 0 0 4px rgba(99,102,241,.12); }
 
+    label{ font-weight:900; font-size:13px; display:block; margin:0 0 6px; }
+
     .grid{ display:grid; gap:14px; }
     @media(min-width:900px){
       .grid-2{ grid-template-columns:repeat(2,1fr); }
       .grid-3{ grid-template-columns:repeat(3,1fr); }
+      .grid-4{ grid-template-columns:repeat(4,1fr); }
     }
 
     .btn{
-      border:0;
-      cursor:pointer;
+      border:0; cursor:pointer;
       border-radius:14px;
       padding:12px 14px;
-      font-weight:900;
-      font-size:14px;
-      background:var(--dark2);
-      color:#fff;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
+      font-weight:900; font-size:14px;
+      background:var(--dark2); color:#fff;
+      display:inline-flex; align-items:center; justify-content:center; gap:8px;
       user-select:none;
     }
     .btn:disabled{ opacity:.45; cursor:not-allowed; }
     .btnSmall{ padding:8px 10px; border-radius:12px; font-size:13px; }
-    .btnSoft{
-      background:#fff;
-      border:1px solid var(--border);
-      color:var(--text);
-      font-weight:900;
-    }
+    .btnSoft{ background:#fff; border:1px solid var(--border); color:var(--text); font-weight:900; }
     .btnDark{ background:linear-gradient(180deg, #0b1220, #0f172a); }
     .btnDanger{ background:var(--danger); }
+
+    .row{ display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+    .muted{ color:var(--muted); font-size:13px; }
 
     .chips{ display:flex; gap:10px; flex-wrap:wrap; }
     .chip{
@@ -102,49 +78,30 @@
       min-width:108px;
       text-align:center;
     }
-    .chip.active{
-      background:linear-gradient(180deg, #0b1220, #0f172a);
-      color:#fff;
-      border-color:#0f172a;
-    }
+    .chip.active{ background:linear-gradient(180deg, #0b1220, #0f172a); color:#fff; border-color:#0f172a; }
 
     .prioRow{ display:flex; gap:10px; align-items:stretch; }
     .prioBtn{
-      flex:1;
-      border:1px solid var(--border);
-      background:#fff;
-      border-radius:14px;
-      font-weight:900;
-      cursor:pointer;
-      padding:10px 12px;
-      text-align:center;
-      user-select:none;
+      flex:1; border:1px solid var(--border); background:#fff; border-radius:14px;
+      font-weight:900; cursor:pointer; padding:10px 12px; text-align:center; user-select:none;
     }
-    .prioBtn.small{ flex:.85; }
-    .prioBtn.big{ flex:1.3; }
+    .prioBtn.small{ flex:.85; } .prioBtn.big{ flex:1.3; }
     .prioBtn.active{ background:var(--dark2); color:#fff; border-color:var(--dark2); }
 
-    .row{ display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
-    .muted{ color:var(--muted); font-size:13px; }
-    .status{ margin-top:10px; font-size:13px; color:var(--muted); }
-    .error{ color:var(--danger); font-weight:900; }
-    .ok{ color:var(--ok); font-weight:900; }
-
-    .orderCard{ border:1px solid var(--border); border-radius:16px; padding:12px; background:#fff; }
-    .orderTitle{ font-weight:1000; }
+    /* Menge 3x3 am Handy */
+    .qtyGrid{
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:10px;
+    }
+    .qtyGrid .chip{ min-width:0; }
 
     .badge{
-      font-size:12px;
-      font-weight:900;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid var(--border);
-      background:#fff;
-      white-space:nowrap;
+      font-size:12px; font-weight:900; padding:6px 10px; border-radius:999px;
+      border:1px solid var(--border); background:#fff; white-space:nowrap;
     }
     .badge.ok{ border-color:#bbf7d0; background:#f0fdf4; color:#166534; }
-    .badge.warn{ border-color:#fed7aa; background:#fff7ed; color:#9a3412; }
-    .badge.bad{ border-color:#fecaca; background:#fff1f2; color:#991b1b; }
+    .badge.neutral{ border-color:#e5e7eb; background:#f9fafb; color:#111827; }
 
     .iconBtn{
       border:1px solid var(--border);
@@ -160,6 +117,94 @@
     .iconBtn:hover{ background:#f9fafb; }
     .iconBtn.danger{ border-color:#fecaca; color:#991b1b; }
 
+    /* Produced toggle */
+    .prodBtn{
+      border:1px solid var(--border);
+      background:#fff;
+      height:36px;
+      padding:0 10px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:900;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+    }
+    .prodBtn.done{
+      border-color:#bbf7d0;
+      background:#f0fdf4;
+      color:#166534;
+    }
+
+    /* Color field with arrow inside */
+    .pickWrap{ position:relative; }
+    .pickInput{ padding-right:44px; }
+    .pickArrow{
+      position:absolute;
+      right:8px;
+      top:50%;
+      transform:translateY(-50%);
+      width:34px; height:34px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:#fff;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:900;
+      line-height:1;
+    }
+
+    /* Modal */
+    .modal{
+      position:fixed; inset:0;
+      background:rgba(15,23,42,.45);
+      display:none;
+      align-items:flex-end;
+      justify-content:center;
+      z-index:9999;
+      padding:14px;
+    }
+    .modal.open{ display:flex; }
+    .sheet{
+      width:min(740px, 100%);
+      background:#fff;
+      border-radius:18px;
+      border:1px solid var(--border);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .sheetHead{
+      padding:12px 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      border-bottom:1px solid var(--border);
+      font-weight:1000;
+    }
+    .sheetBody{ padding:14px; }
+    .colorGrid{
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:10px;
+    }
+    @media(min-width:700px){
+      .colorGrid{ grid-template-columns:repeat(5, 1fr); }
+    }
+    .cBtn{
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:14px;
+      padding:10px 10px;
+      cursor:pointer;
+      font-weight:900;
+      text-align:center;
+      user-select:none;
+    }
+    .cBtn:hover{ background:#f9fafb; }
+
     details.archive > summary{
       cursor:pointer;
       user-select:none;
@@ -167,145 +212,9 @@
       color:#1f3a8a;
     }
 
-    /* Farben untereinander */
-    .colorsStack{ display:grid; gap:2px; margin-top:4px; }
-    .colorsStack div{ line-height:1.25; }
+    .error{ color:var(--danger); font-weight:900; }
+    .ok{ color:var(--ok); font-weight:900; }
 
-    /* Menge 3x3 am Handy */
-    .qtyGrid{
-      display:grid;
-      grid-template-columns:repeat(3, 1fr);
-      gap:10px;
-    }
-    .qtyGrid .chip{ min-width:0; }
-
-    /* Color field mit Pfeil (öffnet Modal) */
-    .colorField{ position:relative; }
-    .colorField input{ padding-right:42px; }
-    .colorArrow{
-      position:absolute;
-      right:10px;
-      top:50%;
-      transform:translateY(-50%);
-      border:1px solid var(--border);
-      background:#fff;
-      width:30px;
-      height:30px;
-      border-radius:10px;
-      cursor:pointer;
-      font-weight:1000;
-    }
-
-    /* Produced toggle (nur Icon) */
-    .prodToggle{
-      border:1px solid var(--border);
-      border-radius:14px;
-      padding:10px 12px;
-      cursor:pointer;
-      user-select:none;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      min-width:46px;
-      background:#fff;
-    }
-    .prodToggle.done{
-      border-color:#bbf7d0;
-      background:#f0fdf4;
-      color:#166534;
-    }
-    .prodToggle.notdone{
-      border-color:#fecaca;
-      background:#fff1f2;
-      color:#991b1b;
-    }
-
-    /* Modal */
-    .modalBack{
-      position:fixed; inset:0;
-      background:rgba(15,23,42,.45);
-      display:none;
-      align-items:flex-end;
-      justify-content:center;
-      padding:14px;
-      z-index:9999;
-    }
-    .modalBack.open{ display:flex; }
-    .modal{
-      width:min(560px, 100%);
-      background:#fff;
-      border-radius:22px;
-      border:1px solid var(--border);
-      box-shadow:var(--shadow);
-      overflow:hidden;
-    }
-    .modalHead{
-      padding:14px 16px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      border-bottom:1px solid var(--border);
-    }
-    .modalTitle{ font-weight:1000; }
-    .modalBody{ padding:14px 16px; }
-    .modalFoot{
-      padding:14px 16px;
-      display:flex;
-      gap:10px;
-      justify-content:flex-end;
-      border-top:1px solid var(--border);
-    }
-
-    /* Color buttons */
-    .colorGrid{
-      display:grid;
-      grid-template-columns:repeat(3, 1fr);
-      gap:10px;
-    }
-    @media(min-width:900px){
-      .colorGrid{ grid-template-columns:repeat(4, 1fr); }
-    }
-    .colorBtn{
-      border:1px solid var(--border);
-      background:#fff;
-      border-radius:14px;
-      padding:10px 10px;
-      font-weight:900;
-      cursor:pointer;
-      user-select:none;
-      text-align:center;
-    }
-    .colorBtn:hover{ background:#f9fafb; }
-
-    /* Preis-Keypad */
-    .moneyDisplay{
-      border:1px solid var(--border);
-      border-radius:16px;
-      padding:14px 14px;
-      font-weight:1000;
-      font-size:22px;
-      text-align:center;
-      background:#fff;
-    }
-    .keypad{
-      display:grid;
-      grid-template-columns:repeat(3, 1fr);
-      gap:10px;
-      margin-top:12px;
-    }
-    .key{
-      border:1px solid var(--border);
-      background:#fff;
-      border-radius:16px;
-      padding:14px 0;
-      font-weight:1000;
-      cursor:pointer;
-      user-select:none;
-      text-align:center;
-      font-size:18px;
-    }
-    .key:hover{ background:#f9fafb; }
-    .key.secondary{ color:var(--muted); }
   </style>
 </head>
 
@@ -322,17 +231,16 @@
         <div class="chips">
           <div class="chip" id="btnBunny">🐰 Hase</div>
           <div class="chip" id="btnLumi">✨🪲 Lumi</div>
-          <div class="chip" id="btnScript">✍️ Schriftzug</div>
+          <div class="chip" id="btnText">✍️ Schriftzug</div>
           <div class="chip" id="btnOther">➕ Weitere Produkt</div>
         </div>
 
         <div style="height:10px"></div>
         <div class="title2" id="newTitle">Neue Bestellung</div>
 
-        <div id="productArea"></div>
         <div class="sep"></div>
 
-        <!-- Kundenname immer über Priorität -->
+        <!-- Kunde IMMER über Priorität -->
         <div class="grid grid-2">
           <div>
             <label for="customer">Kundenname</label>
@@ -340,9 +248,13 @@
           </div>
           <div>
             <label for="note">Beschreibung (optional)</label>
-            <textarea id="note" placeholder="z. B. Sonderwunsch, Hinweis …"></textarea>
+            <textarea id="note" placeholder="Hinweis …"></textarea>
           </div>
         </div>
+
+        <div class="sep"></div>
+
+        <div id="productArea"></div>
 
         <div class="sep"></div>
 
@@ -378,10 +290,6 @@
           </div>
         </div>
 
-        <div class="status">
-          <div class="error" id="formError" style="display:none;"></div>
-        </div>
-
         <div class="sep"></div>
 
         <div class="row" style="justify-content:space-between; align-items:flex-end;">
@@ -395,6 +303,7 @@
         <div class="sep"></div>
 
         <button id="saveOrderBtn" class="btn" disabled>✅ Bestellung speichern</button>
+        <div class="error" id="formError" style="display:none; margin-top:10px;"></div>
         <div class="ok" id="saveStatus" style="display:none; margin-top:10px;">Gespeichert ✅</div>
       </div>
     </div>
@@ -409,7 +318,6 @@
             <div class="title2" style="margin:0;">Offene Bestellungen</div>
             <div class="muted" id="openSum">Summe offen: 0,00 €</div>
           </div>
-
           <div class="row" style="gap:10px;">
             <button class="btnSmall btnDark" id="sortDate">Sort: Datum</button>
             <button class="btnSmall btnSoft" id="sortPrio">Sort: Priorität</button>
@@ -433,44 +341,15 @@
     </div>
   </div>
 
-  <!-- MODALS -->
-  <div class="modalBack" id="colorModalBack">
-    <div class="modal">
-      <div class="modalHead">
-        <div class="modalTitle" id="colorModalTitle">Farbe wählen</div>
-        <button class="iconBtn" id="colorModalClose">✕</button>
+  <!-- Color Modal -->
+  <div class="modal" id="colorModal" aria-hidden="true">
+    <div class="sheet">
+      <div class="sheetHead">
+        <div id="colorModalTitle">Farbe wählen</div>
+        <button class="btnSmall btnSoft" id="colorModalClose" type="button">Schließen</button>
       </div>
-      <div class="modalBody">
-        <div class="muted" style="margin-bottom:10px;">Tippe eine Farbe an — oder tippe selbst ins Feld.</div>
-        <div class="grid grid-1">
-          <input id="colorModalInput" placeholder="Farbe eintippen…" />
-        </div>
-        <div style="height:10px"></div>
+      <div class="sheetBody">
         <div class="colorGrid" id="colorGrid"></div>
-      </div>
-      <div class="modalFoot">
-        <button class="btnSmall btnSoft" id="colorCancel">Abbrechen</button>
-        <button class="btnSmall btnDark" id="colorApply">Übernehmen</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="modalBack" id="moneyModalBack">
-    <div class="modal">
-      <div class="modalHead">
-        <div class="modalTitle" id="moneyModalTitle">Preis</div>
-        <button class="iconBtn" id="moneyModalClose">✕</button>
-      </div>
-      <div class="modalBody">
-        <div class="moneyDisplay" id="moneyDisplay">0,00 €</div>
-        <div class="keypad" id="keypad"></div>
-        <div class="muted" style="margin-top:10px;">
-          Eingabe funktioniert wie Kassensystem: jede Zahl schiebt das Komma.
-        </div>
-      </div>
-      <div class="modalFoot">
-        <button class="btnSmall btnSoft" id="moneyClear">Löschen</button>
-        <button class="btnSmall btnDark" id="moneyApply">Übernehmen</button>
       </div>
     </div>
   </div>
@@ -478,163 +357,78 @@
   <script type="module">
     import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-    // ✅ Supabase
+    // ========= Supabase =========
     const SUPABASE_URL = "https://htgrzmlcdolxxzvkppon.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0Z3J6bWxjZG9seHh6dmtwcG9uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0MzM2ODIsImV4cCI6MjA4NTAwOTY4Mn0.B0PxMAzmuvsHNd2n_mgNspjlPkaBpQlkrNzGu7p78fY";
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Farben (Buttons in Modal)
-    const COLOR_SUGGESTIONS = [
+    // ========= Farben (ohne creme) =========
+    const COLORS = [
       "weiß","schwarz","grau","dunkelgrau","hellgrau",
-      "beige","creme","braun","oak",
+      "beige","braun","oak",
       "rot","orange","gelb","grün","blau","lila",
       "pink","rosa","gold","silber"
     ];
 
-    // Standardpreise in CENT
-    const PRICES_CENTS = {
-      bunny: { "11 cm": 600, "15 cm": 900, "20 cm": 1200 },
-      lumi: 850
+    // ========= Standardpreise =========
+    const PRICES = {
+      bunny: { "20": 12.0, "15": 9.0, "11": 6.0, comboAllThree: 22.50 },
+      lumi: 8.50
     };
 
-    // Helpers
+    // ========= Helpers =========
     const esc = (s)=> String(s??"").replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
-    const norm = (s)=> String(s||"").trim();
-    const euroFromCents = (c)=> {
-      const n = Number(c||0);
-      const euros = Math.floor(n/100);
-      const cents = String(Math.abs(n%100)).padStart(2,"0");
-      return `${euros},${cents} €`.replace("-0,", "-0,");
+    const euro = (n)=> (Number(n)||0).toFixed(2).replace(".", ",") + " €";
+    const num = (s)=> Number(String(s??"").replace(",", "."));
+    const toCents = (val)=> {
+      const n = num(val);
+      if(!Number.isFinite(n)) return null;
+      return Math.round(n * 100);
     };
-    const parseQty = (v)=> {
-      const n = Number(String(v??"").replace(",", "."));
-      if(!Number.isFinite(n) || n<=0) return null;
-      return Math.floor(n);
-    };
+    const fromCents = (c)=> (Number(c||0)/100);
 
-    function setChip(el, on){ el?.classList.toggle("active", !!on); }
-    function showErr(msg){
-      const el = document.getElementById("formError");
-      el.style.display="block";
-      el.textContent = msg;
-    }
-    function clearErr(){
-      const el = document.getElementById("formError");
-      el.style.display="none";
-      el.textContent = "";
-    }
+    function prioLabel(p){ return p==="very" ? "Sehr wichtig" : p==="normal" ? "Wichtig" : "Nicht wichtig"; }
+    function prioRank(p){ return p==="very" ? 0 : p==="normal" ? 1 : 2; }
 
-    // ---------------- Color Modal ----------------
-    const colorModalBack = document.getElementById("colorModalBack");
-    const colorModalTitle= document.getElementById("colorModalTitle");
-    const colorModalInput= document.getElementById("colorModalInput");
-    const colorGrid      = document.getElementById("colorGrid");
-    const colorApply     = document.getElementById("colorApply");
-    const colorCancel    = document.getElementById("colorCancel");
-    const colorModalClose= document.getElementById("colorModalClose");
+    // ========= Color modal =========
+    const colorModal = document.getElementById("colorModal");
+    const colorGrid  = document.getElementById("colorGrid");
+    const colorModalTitle = document.getElementById("colorModalTitle");
+    const colorModalClose = document.getElementById("colorModalClose");
+    let colorResolve = null;
 
-    let colorTargetInput = null;
-
-    function openColorModal({ title, targetInput }){
-      colorTargetInput = targetInput;
+    function openColorModal(title){
       colorModalTitle.textContent = title || "Farbe wählen";
-      colorModalInput.value = targetInput?.value || "";
-      colorGrid.innerHTML = COLOR_SUGGESTIONS.map(c=>`<button class="colorBtn" type="button" data-color="${esc(c)}">${esc(c)}</button>`).join("");
-      colorGrid.querySelectorAll("[data-color]").forEach(b=>{
-        b.addEventListener("click", ()=>{
-          const v = b.getAttribute("data-color") || "";
-          colorModalInput.value = v;
-          applyColorModal();
-        });
+      colorGrid.innerHTML = COLORS.map(c => `<button type="button" class="cBtn" data-c="${esc(c)}">${esc(c)}</button>`).join("");
+      colorModal.classList.add("open");
+      colorModal.setAttribute("aria-hidden","false");
+
+      return new Promise((resolve)=>{
+        colorResolve = resolve;
       });
-      colorModalBack.classList.add("open");
-      setTimeout(()=>colorModalInput.focus(), 50);
     }
     function closeColorModal(){
-      colorModalBack.classList.remove("open");
-      colorTargetInput = null;
+      colorModal.classList.remove("open");
+      colorModal.setAttribute("aria-hidden","true");
+      if(colorResolve){ colorResolve(null); colorResolve=null; }
     }
-    function applyColorModal(){
-      if(!colorTargetInput) return closeColorModal();
-      colorTargetInput.value = colorModalInput.value || "";
-      colorTargetInput.dispatchEvent(new Event("input", { bubbles:true }));
-      closeColorModal();
-    }
-    colorApply.addEventListener("click", applyColorModal);
-    colorCancel.addEventListener("click", closeColorModal);
     colorModalClose.addEventListener("click", closeColorModal);
-    colorModalBack.addEventListener("click", (e)=>{ if(e.target === colorModalBack) closeColorModal(); });
+    colorModal.addEventListener("click", (e)=>{ if(e.target === colorModal) closeColorModal(); });
 
-    // ---------------- Money Modal (Komma schieben) ----------------
-    const moneyModalBack = document.getElementById("moneyModalBack");
-    const moneyModalTitle= document.getElementById("moneyModalTitle");
-    const moneyDisplay   = document.getElementById("moneyDisplay");
-    const keypad         = document.getElementById("keypad");
-    const moneyApply     = document.getElementById("moneyApply");
-    const moneyClear     = document.getElementById("moneyClear");
-    const moneyModalClose= document.getElementById("moneyModalClose");
+    colorGrid.addEventListener("click", (e)=>{
+      const btn = e.target.closest("[data-c]");
+      if(!btn) return;
+      const c = btn.getAttribute("data-c");
+      if(colorResolve){ colorResolve(c); colorResolve=null; }
+      closeColorModal();
+    });
 
-    let moneyCents = 0;
-    let moneyOnApply = null;
-
-    function renderMoney(){
-      moneyDisplay.textContent = euroFromCents(moneyCents);
-    }
-    function openMoneyModal({ title, initialCents, onApply }){
-      moneyModalTitle.textContent = title || "Preis";
-      moneyCents = Number(initialCents ?? 0) || 0;
-      moneyOnApply = onApply || null;
-      renderMoney();
-
-keypad.innerHTML = ["1","2","3","4","5","6","7","8","9","⌫","0","OK"]
-  .map(k => {
-    const cls = "key" + (k === "⌫" ? " secondary" : "");
-    return `<button type="button" class="${cls}" data-key="${esc(k)}">${esc(k)}</button>`;
-  })
-  .join("");
-
-
-      keypad.querySelectorAll("[data-key]").forEach(b=>{
-        b.addEventListener("click", ()=>{
-          const k = b.getAttribute("data-key");
-          if(k === "OK"){ applyMoneyModal(); return; }
-          if(k === "⌫"){
-            moneyCents = Math.floor(moneyCents / 10);
-            renderMoney();
-            return;
-          }
-          // Zahl: Komma schiebt -> cents = cents*10 + digit
-          const d = Number(k);
-          if(Number.isFinite(d)){
-            moneyCents = moneyCents * 10 + d;
-            renderMoney();
-          }
-        });
-      });
-
-      moneyModalBack.classList.add("open");
-    }
-    function closeMoneyModal(){
-      moneyModalBack.classList.remove("open");
-      moneyOnApply = null;
-    }
-    function applyMoneyModal(){
-      moneyOnApply?.(moneyCents);
-      closeMoneyModal();
-    }
-    moneyApply.addEventListener("click", applyMoneyModal);
-    moneyClear.addEventListener("click", ()=>{ moneyCents = 0; renderMoney(); });
-    moneyModalClose.addEventListener("click", closeMoneyModal);
-    moneyModalBack.addEventListener("click", (e)=>{ if(e.target === moneyModalBack) closeMoneyModal(); });
-
-    // ---------------- UI State (New order) ----------------
-    const btnBunny  = document.getElementById("btnBunny");
-    const btnLumi   = document.getElementById("btnLumi");
-    const btnScript = document.getElementById("btnScript");
-    const btnOther  = document.getElementById("btnOther");
-
-    const newTitle  = document.getElementById("newTitle");
-    const productArea = document.getElementById("productArea");
+    // ========= UI refs =========
+    const btnBunny = document.getElementById("btnBunny");
+    const btnLumi  = document.getElementById("btnLumi");
+    const btnText  = document.getElementById("btnText");
+    const btnOther = document.getElementById("btnOther");
+    const newTitle = document.getElementById("newTitle");
 
     const customer = document.getElementById("customer");
     const noteEl   = document.getElementById("note");
@@ -651,7 +445,8 @@ keypad.innerHTML = ["1","2","3","4","5","6","7","8","9","⌫","0","OK"]
     const cartSum  = document.getElementById("cartSum");
 
     const saveOrderBtn = document.getElementById("saveOrderBtn");
-    const saveStatus   = document.getElementById("saveStatus");
+    const saveStatus = document.getElementById("saveStatus");
+    const formError = document.getElementById("formError");
 
     const openOrdersEl = document.getElementById("openOrders");
     const archiveOrdersEl = document.getElementById("archiveOrders");
@@ -661,49 +456,42 @@ keypad.innerHTML = ["1","2","3","4","5","6","7","8","9","⌫","0","OK"]
     const sortDate = document.getElementById("sortDate");
     const sortPrio = document.getElementById("sortPrio");
 
-    let sortMode = "date";
-    let currentProduct = "bunny";
+    const productArea = document.getElementById("productArea");
+
+    // ========= State =========
+    let currentProduct = "bunny"; // bunny|lumi|schriftzug|other
     let priority = null;
     let qty = null;
+    let sortMode = "date";
 
-    // product form state
-    const f = {
-      bunny_size: "",
-      bunny_ears: "", bunny_body:"", bunny_butt:"",
-      lumi_color1:"", lumi_color2:"",
-
-      script_text:"",
-      script_size:"",
-      script_color1:"",
-      script_color2:"",
-      script_price_cents: 0,
-
-      other_name:"",
-      other_size:"",
-      other_color1:"",
-      other_color2:"",
-      other_price_cents: 0
+    // per product fields
+    const fields = {
+      bunny_size: null, bunny_mode: null, bunny_single:null, bunny_ears:null, bunny_body:null, bunny_butt:null,
+      lumi_body:null, lumi_wings:null, lumi_feelers:null,
+      text_name:"Happy Birthday", text_color1:null, text_color2:null, text_price:null,
+      other_name:"", other_size:"", other_color1:null, other_color2:null, other_price:null
     };
 
-    let cart = []; // items for new order
+    let cart = [];
 
-    function prioLabel(p){
-      if(p==="very") return "Sehr wichtig";
-      if(p==="normal") return "Wichtig";
-      return "Nicht wichtig";
+    // ========= UI helpers =========
+    function setChip(el,on){ el.classList.toggle("active",!!on); }
+    function setPrio(el,on){ el.classList.toggle("active",!!on); }
+    function err(msg){
+      formError.style.display = "block";
+      formError.textContent = msg;
     }
-    function prioRank(p){
-      if(p==="very") return 0;
-      if(p==="normal") return 1;
-      return 2;
+    function clearErr(){
+      formError.style.display = "none";
+      formError.textContent = "";
     }
 
     function setProduct(p){
       currentProduct = p;
-      [btnBunny,btnLumi,btnScript,btnOther].forEach(x=>setChip(x,false));
+      [btnBunny,btnLumi,btnText,btnOther].forEach(x=>setChip(x,false));
       setChip(btnBunny, p==="bunny");
       setChip(btnLumi,  p==="lumi");
-      setChip(btnScript,p==="schriftzug");
+      setChip(btnText,  p==="schriftzug");
       setChip(btnOther, p==="other");
 
       newTitle.textContent =
@@ -713,26 +501,23 @@ keypad.innerHTML = ["1","2","3","4","5","6","7","8","9","⌫","0","OK"]
         "Neue Bestellung: Weitere Produkt";
 
       renderProductArea();
+      validateSaveEnabled();
       clearErr();
     }
+
     btnBunny.addEventListener("click", ()=>setProduct("bunny"));
-    btnLumi.addEventListener("click", ()=>setProduct("lumi"));
-    btnScript.addEventListener("click", ()=>setProduct("schriftzug"));
+    btnLumi .addEventListener("click", ()=>setProduct("lumi"));
+    btnText .addEventListener("click", ()=>setProduct("schriftzug"));
     btnOther.addEventListener("click", ()=>setProduct("other"));
 
-    // Priority buttons
-    function setPrio(p){
-      priority = p;
-      [pVery,pNorm,pLow].forEach(x=>x.classList.remove("active"));
-      if(p==="very") pVery.classList.add("active");
-      if(p==="normal") pNorm.classList.add("active");
-      if(p==="low") pLow.classList.add("active");
-    }
-    pVery.addEventListener("click", ()=>setPrio("very"));
-    pNorm.addEventListener("click", ()=>setPrio("normal"));
-    pLow.addEventListener("click", ()=>setPrio("low"));
+    [pVery,pNorm,pLow].forEach(el=>{
+      el.addEventListener("click", ()=>{
+        priority = el===pVery ? "very" : el===pNorm ? "normal" : "low";
+        [pVery,pNorm,pLow].forEach(x=>setPrio(x,false));
+        setPrio(el,true);
+      });
+    });
 
-    // qty buttons
     document.querySelectorAll(".qtyBtn").forEach(b=>{
       b.addEventListener("click", ()=>{
         qty = Number(b.getAttribute("data-q"));
@@ -741,263 +526,355 @@ keypad.innerHTML = ["1","2","3","4","5","6","7","8","9","⌫","0","OK"]
       });
     });
 
-    function makeColorField(id, label, placeholder){
+    // ========= product area renderer =========
+    function pickField(label, value, onPick){
+      const id = "p_" + Math.random().toString(16).slice(2);
+      // input readonly, arrow inside
+      setTimeout(()=>{
+        const arrow = document.getElementById(id+"_a");
+        const inp = document.getElementById(id+"_i");
+        if(!arrow || !inp) return;
+        arrow.addEventListener("click", async ()=>{
+          const picked = await onPick();
+          if(picked!=null){
+            inp.value = picked;
+          }
+        });
+      },0);
+
       return `
-        <div class="colorField">
-          <label for="${esc(id)}">${esc(label)}</label>
-          <input id="${esc(id)}" placeholder="${esc(placeholder)}" autocomplete="off" />
-          <button class="colorArrow" type="button" data-color-arrow="${esc(id)}">▾</button>
+        <div>
+          <label>${esc(label)}</label>
+          <div class="pickWrap">
+            <input id="${id}_i" class="pickInput" value="${esc(value||"")}" readonly />
+            <button type="button" class="pickArrow" id="${id}_a">▾</button>
+          </div>
         </div>
       `;
-    }
-
-    function wireColorField(id, modalTitle, onInput){
-      const input = document.getElementById(id);
-      const arrow = document.querySelector(`[data-color-arrow="${CSS.escape(id)}"]`);
-      if(!input || !arrow) return;
-      input.addEventListener("input", ()=>onInput(input.value||""));
-      arrow.addEventListener("click", ()=>{
-        openColorModal({ title: modalTitle, targetInput: input });
-      });
     }
 
     function renderProductArea(){
       productArea.innerHTML = "";
 
-      if(currentProduct === "bunny"){
+      if(currentProduct==="bunny"){
         productArea.innerHTML = `
           <div class="grid grid-2">
             <div>
               <label>Größe</label>
               <div class="chips">
-                <div class="chip" data-bsize="11 cm">11 cm</div>
-                <div class="chip" data-bsize="15 cm">15 cm</div>
-                <div class="chip" data-bsize="20 cm">20 cm</div>
+                <div class="chip" data-size="11">11 cm</div>
+                <div class="chip" data-size="15">15 cm</div>
+                <div class="chip" data-size="20">20 cm</div>
               </div>
             </div>
-            <div></div>
+            <div>
+              <label>Farbmodus</label>
+              <div class="chips">
+                <div class="chip" data-mode="single">Einfarbig</div>
+                <div class="chip" data-mode="multi">Mehrfarbig</div>
+              </div>
+            </div>
           </div>
 
           <div class="sep"></div>
 
-          <div class="grid grid-3">
-            ${makeColorField("bunny_ears","Ohren","Tippen…")}
-            ${makeColorField("bunny_body","Körper","Tippen…")}
-            ${makeColorField("bunny_butt","Popo","Tippen…")}
-          </div>
+          <div id="bunnyColors"></div>
         `;
 
-        productArea.querySelectorAll("[data-bsize]").forEach(b=>{
+        // size buttons
+        productArea.querySelectorAll("[data-size]").forEach(b=>{
           b.addEventListener("click", ()=>{
-            f.bunny_size = b.getAttribute("data-bsize") || "";
-            productArea.querySelectorAll("[data-bsize]").forEach(x=>x.classList.remove("active"));
-            b.classList.add("active");
+            fields.bunny_size = b.getAttribute("data-size");
+            productArea.querySelectorAll("[data-size]").forEach(x=>x.classList.toggle("active", x===b));
           });
         });
 
-        wireColorField("bunny_ears","Ohren", v=>f.bunny_ears=v);
-        wireColorField("bunny_body","Körper", v=>f.bunny_body=v);
-        wireColorField("bunny_butt","Popo", v=>f.bunny_butt=v);
-      }
-
-      if(currentProduct === "lumi"){
-        productArea.innerHTML = `
-          <div class="grid grid-2">
-            ${makeColorField("lumi_c1","Hauptfarbe","Tippen…")}
-            ${makeColorField("lumi_c2","2. Farbe","Tippen…")}
-          </div>
-        `;
-        wireColorField("lumi_c1","Hauptfarbe", v=>f.lumi_color1=v);
-        wireColorField("lumi_c2","2. Farbe", v=>f.lumi_color2=v);
-      }
-
-      if(currentProduct === "schriftzug"){
-        productArea.innerHTML = `
-          <div class="grid grid-2">
-            <div>
-              <label for="script_text">Name</label>
-              <input id="script_text" placeholder="Happy Birthday" />
-            </div>
-            <div>
-              <label for="script_size">Größe</label>
-              <input id="script_size" placeholder="z. B. 20 cm / groß / 10x5" />
-            </div>
-          </div>
-
-          <div class="sep"></div>
-
-          <div class="grid grid-2">
-            ${makeColorField("script_c1","Hauptfarbe","Tippen…")}
-            ${makeColorField("script_c2","2. Farbe","Tippen…")}
-          </div>
-
-          <div class="sep"></div>
-
-          <div>
-            <label>Preis</label>
-            <button class="btnSoft btn" type="button" id="script_price_btn" style="width:100%; justify-content:space-between;">
-              <span>Preis eingeben</span>
-              <span id="script_price_txt">${euroFromCents(f.script_price_cents)}</span>
-            </button>
-          </div>
-        `;
-
-        const st = document.getElementById("script_text");
-        const ss = document.getElementById("script_size");
-        st.addEventListener("input", ()=>f.script_text = st.value||"");
-        ss.addEventListener("input", ()=>f.script_size = ss.value||"");
-
-        wireColorField("script_c1","Hauptfarbe", v=>f.script_color1=v);
-        wireColorField("script_c2","2. Farbe", v=>f.script_color2=v);
-
-        const priceBtn = document.getElementById("script_price_btn");
-        const priceTxt = document.getElementById("script_price_txt");
-        priceBtn.addEventListener("click", ()=>{
-          openMoneyModal({
-            title: "Preis Schriftzug",
-            initialCents: f.script_price_cents || 0,
-            onApply: (cents)=>{
-              f.script_price_cents = cents;
-              priceTxt.textContent = euroFromCents(cents);
-            }
+        // mode buttons
+        productArea.querySelectorAll("[data-mode]").forEach(b=>{
+          b.addEventListener("click", ()=>{
+            fields.bunny_mode = b.getAttribute("data-mode");
+            productArea.querySelectorAll("[data-mode]").forEach(x=>x.classList.toggle("active", x===b));
+            renderBunnyColors();
           });
         });
+
+        renderBunnyColors();
       }
 
-      if(currentProduct === "other"){
+      if(currentProduct==="lumi"){
+        productArea.innerHTML = `
+          <div class="grid grid-3">
+            ${pickField("Körper", fields.lumi_body, ()=>openColorModal("Lumi: Körper"))}
+            ${pickField("Flügel", fields.lumi_wings, ()=>openColorModal("Lumi: Flügel"))}
+            ${pickField("Fühler", fields.lumi_feelers, ()=>openColorModal("Lumi: Fühler"))}
+          </div>
+        `;
+      }
+
+      if(currentProduct==="schriftzug"){
         productArea.innerHTML = `
           <div class="grid grid-2">
             <div>
-              <label for="other_name">Produktname</label>
-              <input id="other_name" placeholder="z. B. Schlüsselanhänger" />
+              <label>Name</label>
+              <input id="t_name" value="${esc(fields.text_name||"Happy Birthday")}" placeholder="Happy Birthday" />
             </div>
             <div>
-              <label for="other_size">Größe</label>
-              <input id="other_size" placeholder="z. B. groß / 10 cm / XL" />
+              <label>Preis (€)</label>
+              <input id="t_price" inputmode="decimal" placeholder="z. B. 20,00" value="${esc(fields.text_price||"")}" />
             </div>
           </div>
-
           <div class="sep"></div>
-
           <div class="grid grid-2">
-            ${makeColorField("other_c1","Hauptfarbe","Tippen…")}
-            ${makeColorField("other_c2","2. Farbe","Tippen…")}
-          </div>
-
-          <div class="sep"></div>
-
-          <div>
-            <label>Preis</label>
-            <button class="btnSoft btn" type="button" id="other_price_btn" style="width:100%; justify-content:space-between;">
-              <span>Preis eingeben</span>
-              <span id="other_price_txt">${euroFromCents(f.other_price_cents)}</span>
-            </button>
+            ${pickField("Hauptfarbe", fields.text_color1, ()=>openColorModal("Schriftzug: Hauptfarbe"))}
+            ${pickField("2. Farbe", fields.text_color2, ()=>openColorModal("Schriftzug: 2. Farbe"))}
           </div>
         `;
 
-        const on = document.getElementById("other_name");
-        const os = document.getElementById("other_size");
-        on.addEventListener("input", ()=>f.other_name = on.value||"");
-        os.addEventListener("input", ()=>f.other_size = os.value||"");
+        setTimeout(()=>{
+          const n = document.getElementById("t_name");
+          const p = document.getElementById("t_price");
+          n.addEventListener("input", ()=> fields.text_name = n.value || "");
+          p.addEventListener("input", ()=> fields.text_price = p.value || "");
+        },0);
+      }
 
-        wireColorField("other_c1","Hauptfarbe", v=>f.other_color1=v);
-        wireColorField("other_c2","2. Farbe", v=>f.other_color2=v);
+      if(currentProduct==="other"){
+        productArea.innerHTML = `
+          <div class="grid grid-2">
+            <div>
+              <label>Name</label>
+              <input id="o_name" value="${esc(fields.other_name||"")}" placeholder="z. B. Schlüsselanhänger" />
+            </div>
+            <div>
+              <label>Größe</label>
+              <input id="o_size" value="${esc(fields.other_size||"")}" placeholder="z. B. 10 cm / XL" />
+            </div>
+          </div>
+          <div class="sep"></div>
+          <div class="grid grid-2">
+            <div>
+              <label>Preis (€)</label>
+              <input id="o_price" inputmode="decimal" placeholder="z. B. 12,00" value="${esc(fields.other_price||"")}" />
+            </div>
+            <div class="muted" style="align-self:end;">&nbsp;</div>
+          </div>
+          <div class="sep"></div>
+          <div class="grid grid-2">
+            ${pickField("Hauptfarbe", fields.other_color1, ()=>openColorModal("Weitere: Hauptfarbe"))}
+            ${pickField("2. Farbe", fields.other_color2, ()=>openColorModal("Weitere: 2. Farbe"))}
+          </div>
+        `;
 
-        const priceBtn = document.getElementById("other_price_btn");
-        const priceTxt = document.getElementById("other_price_txt");
-        priceBtn.addEventListener("click", ()=>{
-          openMoneyModal({
-            title: "Preis weiteres Produkt",
-            initialCents: f.other_price_cents || 0,
-            onApply: (cents)=>{
-              f.other_price_cents = cents;
-              priceTxt.textContent = euroFromCents(cents);
-            }
-          });
-        });
+        setTimeout(()=>{
+          const n = document.getElementById("o_name");
+          const s = document.getElementById("o_size");
+          const p = document.getElementById("o_price");
+          n.addEventListener("input", ()=> fields.other_name = n.value || "");
+          s.addEventListener("input", ()=> fields.other_size = s.value || "");
+          p.addEventListener("input", ()=> fields.other_price = p.value || "");
+        },0);
       }
     }
 
+    function renderBunnyColors(){
+      const host = document.getElementById("bunnyColors");
+      if(!host) return;
+
+      if(fields.bunny_mode==="single"){
+        host.innerHTML = `
+          <div class="grid grid-1">
+            ${pickField("Einfarbig", fields.bunny_single, ()=>openColorModal("Hase: Einfarbig"))}
+          </div>
+        `;
+        return;
+      }
+      if(fields.bunny_mode==="multi"){
+        host.innerHTML = `
+          <div class="grid grid-3">
+            ${pickField("Ohren", fields.bunny_ears, ()=>openColorModal("Hase: Ohren"))}
+            ${pickField("Körper", fields.bunny_body, ()=>openColorModal("Hase: Körper"))}
+            ${pickField("Popo", fields.bunny_butt, ()=>openColorModal("Hase: Popo"))}
+          </div>
+        `;
+        return;
+      }
+      host.innerHTML = `<div class="muted">Bitte zuerst Farbmodus wählen.</div>`;
+    }
+
+    // ========= Build item =========
     function getQty(){
-      const other = parseQty(qtyOther.value);
-      if(other) return other;
+      const otherQ = Number(String(qtyOther.value||"").replace(",", "."));
+      if(Number.isFinite(otherQ) && otherQ>0) return Math.floor(otherQ);
       if(typeof qty==="number" && qty>0) return qty;
       return null;
     }
 
-    function validateForAdd(){
-      clearErr();
-
-      if(!norm(customer.value)) return showErr("Bitte Kundenname ausfüllen.");
-      if(!priority) return showErr("Bitte Priorität auswählen.");
-
+    function validateItem(){
+      if(!(customer.value||"").trim()) return "Kundenname fehlt";
+      if(!priority) return "Priorität fehlt";
       const q = getQty();
-      if(!q) return showErr("Bitte Menge auswählen.");
+      if(!q) return "Menge fehlt";
 
       if(currentProduct==="bunny"){
-        if(!norm(f.bunny_size)) return showErr("Bitte Größe wählen.");
-        if(!norm(f.bunny_ears) || !norm(f.bunny_body) || !norm(f.bunny_butt)) return showErr("Bitte Ohren / Körper / Popo ausfüllen.");
+        if(!fields.bunny_size) return "Größe fehlt";
+        if(!fields.bunny_mode) return "Farbmodus fehlt";
+        if(fields.bunny_mode==="single" && !fields.bunny_single) return "Einfarbig fehlt";
+        if(fields.bunny_mode==="multi" && (!fields.bunny_ears || !fields.bunny_body || !fields.bunny_butt)) return "Ohren/Körper/Popo fehlt";
       }
+
       if(currentProduct==="lumi"){
-        if(!norm(f.lumi_color1) || !norm(f.lumi_color2)) return showErr("Bitte Hauptfarbe und 2. Farbe ausfüllen.");
+        if(!fields.lumi_body || !fields.lumi_wings || !fields.lumi_feelers) return "Lumi Farben fehlen";
       }
+
       if(currentProduct==="schriftzug"){
-        if(!norm(f.script_text)) return showErr("Bitte Name ausfüllen.");
-        if(!norm(f.script_size)) return showErr("Bitte Größe ausfüllen.");
-        if(!norm(f.script_color1) || !norm(f.script_color2)) return showErr("Bitte Hauptfarbe und 2. Farbe ausfüllen.");
-        if(!(Number(f.script_price_cents||0) > 0)) return showErr("Bitte Preis eingeben.");
+        if(!(fields.text_name||"").trim()) return "Name fehlt";
+        const pc = toCents(fields.text_price);
+        if(pc==null) return "Preis fehlt/ungültig";
+        if(!fields.text_color1 || !fields.text_color2) return "Farben fehlen";
       }
+
       if(currentProduct==="other"){
-        if(!norm(f.other_name)) return showErr("Bitte Produktname ausfüllen.");
-        if(!norm(f.other_size)) return showErr("Bitte Größe ausfüllen.");
-        if(!norm(f.other_color1) || !norm(f.other_color2)) return showErr("Bitte Hauptfarbe und 2. Farbe ausfüllen.");
-        if(!(Number(f.other_price_cents||0) > 0)) return showErr("Bitte Preis eingeben.");
+        if(!(fields.other_name||"").trim()) return "Name fehlt";
+        if(!(fields.other_size||"").trim()) return "Größe fehlt";
+        const pc = toCents(fields.other_price);
+        if(pc==null) return "Preis fehlt/ungültig";
+        if(!fields.other_color1 || !fields.other_color2) return "Farben fehlen";
       }
 
-      return true;
+      return null;
     }
 
-    function itemTitle(it){
-      return it.title;
+    function makeItem(){
+      const q = getQty();
+      const base = {
+        _cid: String(Date.now()) + "-" + Math.random().toString(16).slice(2),
+        product_type: currentProduct,
+        priority,
+        qty: q,
+        produced: false,
+        note: (noteEl.value||"").trim() || null
+      };
+
+      if(currentProduct==="bunny"){
+        base.title = "Hase";
+        base.size = fields.bunny_size + " cm";
+        base.colors = fields.bunny_mode==="single"
+          ? { mode:"single", single: fields.bunny_single }
+          : { mode:"multi", ears: fields.bunny_ears, body: fields.bunny_body, butt: fields.bunny_butt };
+        base.price_cents = null; // Standardpreis
+        return base;
+      }
+
+      if(currentProduct==="lumi"){
+        base.title = "Lumi";
+        base.size = null;
+        base.colors = { body: fields.lumi_body, wings: fields.lumi_wings, feelers: fields.lumi_feelers };
+        base.price_cents = null; // Standardpreis
+        return base;
+      }
+
+      if(currentProduct==="schriftzug"){
+        base.title = "Schriftzug";
+        base.size = fields.text_name; // wir nutzen size als “Text”
+        base.colors = { main: fields.text_color1, second: fields.text_color2 };
+        base.price_cents = toCents(fields.text_price);
+        return base;
+      }
+
+      // other
+      base.title = fields.other_name.trim();
+      base.size = fields.other_size.trim();
+      base.colors = { main: fields.other_color1, second: fields.other_color2 };
+      base.price_cents = toCents(fields.other_price);
+      return base;
     }
 
-    function colorTextStack(it){
-      const c = it.colors || {};
-      if(it.product==="bunny"){
-        return `
-          <div class="colorsStack muted">
-            <div><b>Ohren:</b> ${esc(c.ears||"")}</div>
-            <div><b>Körper:</b> ${esc(c.body||"")}</div>
-            <div><b>Popo:</b> ${esc(c.butt||"")}</div>
-          </div>
-        `;
-      }
-      return `
-        <div class="colorsStack muted">
-          <div><b>Hauptfarbe:</b> ${esc(c.c1||"")}</div>
-          <div><b>2. Farbe:</b> ${esc(c.c2||"")}</div>
-        </div>
-      `;
+    function itemDisplayTitle(it){
+      if(it.product_type==="bunny") return `Hase ${it.size}`;
+      if(it.product_type==="lumi") return "Lumi";
+      if(it.product_type==="schriftzug") return `Schriftzug: ${it.size}`;
+      return `${it.title} (${it.size||"?"})`;
     }
 
-    function basePriceCents(it){
-      if(it.product==="bunny"){
-        return PRICES_CENTS.bunny[it.size] || 0;
+    function itemPricePerUnit(it){
+      if(it.price_cents != null) return fromCents(it.price_cents);
+
+      if(it.product_type==="bunny"){
+        const s = String(it.size||"");
+        const sizeNum = s.includes("11") ? "11" : s.includes("15") ? "15" : "20";
+        return PRICES.bunny[sizeNum] || 0;
       }
-      if(it.product==="lumi"){
-        return PRICES_CENTS.lumi;
-      }
-      if(it.product==="schriftzug"){
-        return Number(it.price_override_cents ?? 0);
-      }
-      if(it.product==="other"){
-        return Number(it.price_override_cents ?? 0);
-      }
+      if(it.product_type==="lumi") return PRICES.lumi;
       return 0;
     }
 
-    function cartTotalCents(){
-      return cart.reduce((s,it)=> s + basePriceCents(it) * Number(it.qty||0), 0);
+    function cartTotal(items){
+      // Bunny combo nur, wenn KEIN bunny-item price_cents override hat
+      const bunnies = items.filter(x=>x.product_type==="bunny");
+      const bunnyHasOverride = bunnies.some(x=>x.price_cents != null);
+
+      let total = 0;
+
+      // non-bunny
+      for(const it of items){
+        if(it.product_type!=="bunny"){
+          total += itemPricePerUnit(it) * it.qty;
+        }
+      }
+
+      if(bunnyHasOverride){
+        for(const it of bunnies){
+          total += itemPricePerUnit(it) * it.qty;
+        }
+        return total;
+      }
+
+      // combo
+      const counts = { "20":0,"15":0,"11":0 };
+      for(const it of bunnies){
+        const s = String(it.size||"");
+        const sizeNum = s.includes("11") ? "11" : s.includes("15") ? "15" : "20";
+        counts[sizeNum] += it.qty;
+      }
+      const combos = Math.min(counts["20"], counts["15"], counts["11"]);
+      if(combos>0){
+        total += combos * PRICES.bunny.comboAllThree;
+        counts["20"] -= combos; counts["15"] -= combos; counts["11"] -= combos;
+      }
+      total += counts["20"] * PRICES.bunny["20"];
+      total += counts["15"] * PRICES.bunny["15"];
+      total += counts["11"] * PRICES.bunny["11"];
+      return total;
+    }
+
+    function validateSaveEnabled(){
+      saveOrderBtn.disabled = cart.length===0;
+    }
+
+    function colorLines(it){
+      const c = it.colors || {};
+      if(it.product_type==="bunny"){
+        if(c.mode==="single"){
+          return `<div class="muted">Einfarbig: ${esc(c.single||"")}</div>`;
+        }
+        return `
+          <div class="muted">Ohren: ${esc(c.ears||"")}</div>
+          <div class="muted">Körper: ${esc(c.body||"")}</div>
+          <div class="muted">Popo: ${esc(c.butt||"")}</div>
+        `;
+      }
+      if(it.product_type==="lumi"){
+        return `
+          <div class="muted">Körper: ${esc(c.body||"")}</div>
+          <div class="muted">Flügel: ${esc(c.wings||"")}</div>
+          <div class="muted">Fühler: ${esc(c.feelers||"")}</div>
+        `;
+      }
+      // schriftzug / other: main + second
+      return `
+        <div class="muted">Hauptfarbe: ${esc(c.main||"")}</div>
+        <div class="muted">2. Farbe: ${esc(c.second||"")}</div>
+      `;
     }
 
     function updateCartUI(){
@@ -1007,14 +884,11 @@ keypad.innerHTML = ["1","2","3","4","5","6","7","8","9","⌫","0","OK"]
       for(const it of cart){
         const card = document.createElement("div");
         card.className = "card pad";
-
         card.innerHTML = `
           <div class="row" style="justify-content:space-between; align-items:flex-start;">
-            <div style="min-width:220px;">
-              <div style="font-weight:1000">${esc(itemTitle(it))} <span class="muted">(${esc(prioLabel(it.priority))})</span></div>
-              ${colorTextStack(it)}
-              <div class="muted" style="margin-top:6px;">👤 ${esc(it.customer_name)}</div>
-              ${it.note ? `<div class="muted" style="margin-top:6px;">📝 ${esc(it.note)}</div>` : ``}
+            <div style="min-width:240px;">
+              <div style="font-weight:1000">${esc(itemDisplayTitle(it))} <span class="muted">(${esc(prioLabel(it.priority))})</span></div>
+              ${colorLines(it)}
             </div>
             <div class="row" style="gap:8px;">
               <span class="badge">× ${esc(it.qty)}</span>
@@ -1028,82 +902,41 @@ keypad.innerHTML = ["1","2","3","4","5","6","7","8","9","⌫","0","OK"]
       cartList.querySelectorAll("[data-del]").forEach(b=>{
         b.addEventListener("click", ()=>{
           const id = b.getAttribute("data-del");
-          cart = cart.filter(x=>String(x._cid)!==String(id));
+          cart = cart.filter(x=>x._cid !== id);
           updateCartUI();
-          saveOrderBtn.disabled = (cart.length===0);
+          validateSaveEnabled();
         });
       });
 
-      cartSum.textContent = "Summe: " + euroFromCents(cartTotalCents());
+      cartSum.textContent = "Summe: " + euro(cartTotal(cart));
     }
 
     addItemBtn.addEventListener("click", ()=>{
-      if(!validateForAdd()) return;
+      clearErr();
+      const msg = validateItem();
+      if(msg){ err("Bitte erst ausfüllen. " + msg); return; }
 
-      const q = getQty();
-      const item = {
-        _cid: String(Date.now()) + "-" + Math.random().toString(16).slice(2),
-        product: currentProduct,
-        title: "",
-        size: "",
-        qty: q,
-        priority,
-        customer_name: norm(customer.value),
-        note: norm(noteEl.value) || null,
-        colors: {},
-        price_override_cents: null
-      };
-
-      if(currentProduct==="bunny"){
-        item.size = f.bunny_size;
-        item.title = `Hase ${f.bunny_size}`;
-        item.colors = { ears:norm(f.bunny_ears), body:norm(f.bunny_body), butt:norm(f.bunny_butt) };
-      }
-      if(currentProduct==="lumi"){
-        item.size = "—";
-        item.title = "Lumi";
-        item.colors = { c1:norm(f.lumi_color1), c2:norm(f.lumi_color2) };
-      }
-      if(currentProduct==="schriftzug"){
-        item.size = norm(f.script_size);
-        item.title = norm(f.script_text);
-        item.colors = { c1:norm(f.script_color1), c2:norm(f.script_color2) };
-        item.price_override_cents = Number(f.script_price_cents||0);
-      }
-      if(currentProduct==="other"){
-        item.size = norm(f.other_size);
-        item.title = norm(f.other_name) + ` (${norm(f.other_size)})`;
-        item.colors = { c1:norm(f.other_color1), c2:norm(f.other_color2) };
-        item.price_override_cents = Number(f.other_price_cents||0);
-      }
-
-      cart.push(item);
-
+      cart.push(makeItem());
       qty = null;
       qtyOther.value = "";
       document.querySelectorAll(".qtyBtn").forEach(x=>x.classList.remove("active"));
 
       updateCartUI();
-      saveOrderBtn.disabled = (cart.length===0);
-      clearErr();
+      validateSaveEnabled();
     });
 
-    // ---------------- Save order to Supabase ----------------
+    // ========= Save order =========
     async function saveOrder(){
       clearErr();
       saveStatus.style.display="none";
-
-      if(cart.length===0){
-        showErr("Füge zuerst mindestens eine Position hinzu.");
-        return;
-      }
+      if(cart.length===0){ err("Füge zuerst mindestens eine Position hinzu."); return; }
 
       saveOrderBtn.disabled = true;
       saveOrderBtn.textContent = "Speichern…";
 
       const orderPayload = {
-        customer_name: norm(customer.value),
-        note: norm(noteEl.value) || null,
+        customer_name: (customer.value||"").trim(),
+        note: (noteEl.value||"").trim() || null,
         archived: false,
         total_override_cents: null
       };
@@ -1115,9 +948,9 @@ keypad.innerHTML = ["1","2","3","4","5","6","7","8","9","⌫","0","OK"]
         .single();
 
       if(orderErr){
-        showErr("Fehler beim Speichern: " + orderErr.message);
-        saveOrderBtn.disabled=false;
-        saveOrderBtn.textContent="✅ Bestellung speichern";
+        err("Fehler beim Speichern (Order): " + orderErr.message);
+        saveOrderBtn.disabled = false;
+        saveOrderBtn.textContent = "✅ Bestellung speichern";
         return;
       }
 
@@ -1125,30 +958,30 @@ keypad.innerHTML = ["1","2","3","4","5","6","7","8","9","⌫","0","OK"]
 
       const itemsPayload = cart.map(it=>({
         order_id: orderId,
-        product: it.product,
+        product_type: it.product_type,
         title: it.title,
-        size: it.size,
-        qty: it.qty,
+        size: it.size ?? null,
+        colors: it.colors ?? null,
         priority: it.priority,
-        colors: it.colors,
-        price_override_cents: it.price_override_cents ?? null,
-        produced: false
+        qty: it.qty,
+        price_cents: it.price_cents ?? null,
+        produced: false,
+        note: it.note ?? null
       }));
 
-      const { error: itemsErr } = await supabase
-        .from("order_items")
-        .insert(itemsPayload);
+      const { error: itemsErr } = await supabase.from("order_items").insert(itemsPayload);
 
       if(itemsErr){
-        showErr("Fehler beim Speichern (Positionen): " + itemsErr.message);
+        err("Fehler beim Speichern (Positionen): " + itemsErr.message);
         await supabase.from("orders").delete().eq("id", orderId);
-        saveOrderBtn.disabled=false;
-        saveOrderBtn.textContent="✅ Bestellung speichern";
+        saveOrderBtn.disabled = false;
+        saveOrderBtn.textContent = "✅ Bestellung speichern";
         return;
       }
 
       cart = [];
       updateCartUI();
+      validateSaveEnabled();
 
       saveStatus.style.display="block";
       saveStatus.textContent="Gespeichert ✅";
@@ -1157,9 +990,68 @@ keypad.innerHTML = ["1","2","3","4","5","6","7","8","9","⌫","0","OK"]
 
       await loadAll();
     }
+
     saveOrderBtn.addEventListener("click", saveOrder);
 
-    // ---------------- Orders List ----------------
+    // ========= Produced toggle + totals + override =========
+    function orderTotal(order){
+      // wenn override gesetzt -> genau der Wert
+      if(order.total_override_cents != null) return fromCents(order.total_override_cents);
+
+      return cartTotal(order.items.map(x=>({
+        product_type: x.product_type,
+        title: x.title,
+        size: x.size,
+        colors: x.colors,
+        priority: x.priority,
+        qty: x.qty,
+        price_cents: x.price_cents
+      })));
+    }
+
+    function allProduced(items){
+      return items.length>0 && items.every(x=>x.produced===true);
+    }
+
+    async function toggleProduced(itemId, newVal){
+      const { error } = await supabase.from("order_items").update({ produced: newVal }).eq("id", itemId);
+      if(error) alert(error.message);
+      await loadAll();
+    }
+
+    async function editOrderOverride(orderId, currentCents){
+      const cur = currentCents==null ? "" : String(fromCents(currentCents)).replace(".", ",");
+      const v = prompt("Neuer Gesamtpreis (€) — leer = zurück auf automatisch:", cur);
+      if(v===null) return;
+
+      const t = String(v).trim();
+      let newCents = null;
+      if(t!==""){
+        const c = toCents(t);
+        if(c==null || c<0){ alert("Bitte gültigen Preis eingeben."); return; }
+        newCents = c;
+      }
+
+      const { error } = await supabase.from("orders").update({ total_override_cents: newCents }).eq("id", orderId);
+      if(error) alert(error.message);
+      await loadAll();
+    }
+
+    async function archiveOrder(orderId){
+      await supabase.from("orders").update({ archived:true }).eq("id", orderId);
+      await loadAll();
+    }
+    async function restoreOrder(orderId){
+      await supabase.from("orders").update({ archived:false }).eq("id", orderId);
+      await loadAll();
+    }
+    async function deleteOrder(orderId){
+      const ok = confirm("Wirklich löschen? Das kann man nicht rückgängig machen.");
+      if(!ok) return;
+      await supabase.from("orders").delete().eq("id", orderId);
+      await loadAll();
+    }
+
     function formatDateOnly(iso){
       const d = new Date(iso);
       const dd = String(d.getDate()).padStart(2,"0");
@@ -1168,117 +1060,72 @@ keypad.innerHTML = ["1","2","3","4","5","6","7","8","9","⌫","0","OK"]
       return `${dd}.${mm}.${yy}`;
     }
 
-    function orderTotalCents(order, items){
-      // Wenn total_override gesetzt -> das nehmen
-      if(order.total_override_cents != null){
-        return Number(order.total_override_cents||0);
-      }
-      // sonst Summe aus Items
-      let sum = 0;
-      for(const it of items){
-        let unit = it.price_override_cents;
-        if(unit == null){
-          if(it.product==="bunny") unit = PRICES_CENTS.bunny[it.size] || 0;
-          else if(it.product==="lumi") unit = PRICES_CENTS.lumi;
-          else unit = 0; // other/script sollten override haben, aber falls nicht -> 0
-        }
-        sum += Number(unit||0) * Number(it.qty||0);
-      }
-      return sum;
-    }
-
-    function renderOrders(target, orders, itemsMap, { archived }){
+    function renderOrders(target, orders, archived){
       target.innerHTML = "";
-
       if(orders.length===0){
         target.innerHTML = `<div class="muted">Keine ${archived ? "archivierten" : "offenen"} Bestellungen.</div>`;
         return;
       }
 
       for(const o of orders){
-        const items = (itemsMap.get(o.id) || []).slice();
-
-        // Sort Items (prio+title)
-        items.sort((a,b)=>{
-          const ap = prioRank(a.priority), bp = prioRank(b.priority);
-          if(ap!==bp) return ap-bp;
-          return String(a.title).localeCompare(String(b.title));
-        });
-
-        const allDone = items.length>0 && items.every(x=>x.produced === true);
-
+        const total = orderTotal(o);
         const date = formatDateOnly(o.created_at);
-        const minPr = Math.min(...items.map(x=>prioRank(x.priority)).concat([2]));
+
+        const minPr = Math.min(...o.items.map(x=>prioRank(x.priority)).concat([2]));
         const prText = minPr===0 ? "Sehr wichtig" : minPr===1 ? "Wichtig" : "Nicht wichtig";
 
-        const totalCents = orderTotalCents(o, items);
+        const fertig = allProduced(o.items);
 
-        const lines = items.map(it=>{
-          const toggleClass = it.produced ? "done" : "notdone";
-          const symbol = it.produced ? "✓" : "✕";
+        const card = document.createElement("div");
+        card.className = "card pad";
 
+        const lines = o.items.map(it=>{
+          const done = !!it.produced;
           return `
             <div style="padding:10px 0; border-top:1px dashed #eef2f7;">
-              <div class="row" style="justify-content:space-between; gap:10px; align-items:flex-start;">
+              <div class="row" style="justify-content:space-between; align-items:flex-start;">
                 <div style="min-width:240px;">
-                  <div style="font-weight:900">${esc(it.title)} <span class="muted">(${esc(prioLabel(it.priority))})</span></div>
-                  ${it.product==="bunny"
-                    ? `<div class="colorsStack muted">
-                         <div><b>Ohren:</b> ${esc(it.colors?.ears||"")}</div>
-                         <div><b>Körper:</b> ${esc(it.colors?.body||"")}</div>
-                         <div><b>Popo:</b> ${esc(it.colors?.butt||"")}</div>
-                       </div>`
-                    : `<div class="colorsStack muted">
-                         <div><b>Hauptfarbe:</b> ${esc(it.colors?.c1||"")}</div>
-                         <div><b>2. Farbe:</b> ${esc(it.colors?.c2||"")}</div>
-                       </div>`
-                  }
+                  <div style="font-weight:900">${esc(itemDisplayTitle(it))} <span class="muted">(${esc(prioLabel(it.priority))})</span></div>
+                  ${colorLines(it)}
                 </div>
 
                 <div class="row" style="gap:10px;">
-                  <button class="prodToggle ${toggleClass}" data-toggle-produced="${esc(it.id)}" title="Produziert">
-                    ${symbol}
+                  <button class="prodBtn ${done?'done':''}" data-prod="${it.id}" data-val="${done ? "0" : "1"}" title="Produziert">
+                    ${done ? "✅" : "✖"}
                   </button>
-
                   <span class="badge">× ${esc(it.qty)}</span>
-
-                  <button class="iconBtn" title="Preis pro Stück ändern" data-edit-item="${esc(it.id)}">✏</button>
                 </div>
               </div>
             </div>
           `;
         }).join("");
 
-        const card = document.createElement("div");
-        card.className = "card pad orderCard";
-
         card.innerHTML = `
           <div class="row" style="justify-content:space-between; align-items:flex-start;">
             <div>
               <div class="row" style="gap:10px; align-items:center;">
-                <div class="orderTitle">${archived ? "Archiv" : "Offen"} • ${esc(date)}</div>
+                <div style="font-weight:1000">${archived ? "Archiv" : "Offen"} • ${esc(date)}</div>
                 <span class="badge">${esc(prText)}</span>
-                ${allDone ? `<span class="badge ok">FERTIG</span>` : ``}
+                ${fertig ? `<span class="badge ok">FERTIG</span>` : ``}
               </div>
-              <div class="muted" style="margin-top:6px;">👤 ${esc(o.customer_name||"")}</div>
-              ${o.note ? `<div class="muted" style="margin-top:6px;">📝 ${esc(o.note)}</div>` : ``}
+              <div class="muted" style="margin-top:6px;">👤 ${esc(o.customer_name)}</div>
+              ${o.note ? `<div class="muted" style="margin-top:4px;">📝 ${esc(o.note)}</div>` : ``}
             </div>
 
             <div class="row" style="gap:8px; align-items:center;">
-              <div style="font-weight:1000">${euroFromCents(totalCents)}</div>
-
-              <!-- Gesamtpreis Override NUR über Stift -->
-              <button class="iconBtn" title="Gesamtpreis setzen" data-edit-total="${esc(o.id)}">✏</button>
+              <div style="font-weight:1000">${euro(total)}</div>
+              <!-- Stift: Override nur hier, NICHT als extra Button -->
+              <button class="iconBtn" title="Gesamtpreis überschreiben" data-edit-total="${o.id}" data-cur="${o.total_override_cents ?? ""}">✏</button>
 
               ${
                 archived
                   ? `
-                    <button class="iconBtn" data-restore="${esc(o.id)}" title="Zurück holen">↩</button>
-                    <button class="iconBtn danger" data-delete="${esc(o.id)}" title="Löschen">🗑</button>
+                    <button class="iconBtn" title="Zurück holen" data-restore="${o.id}">↩</button>
+                    <button class="iconBtn danger" title="Löschen" data-delete="${o.id}">🗑</button>
                   `
                   : `
-                    <button class="iconBtn" data-archive="${esc(o.id)}" title="Ins Archiv">📦</button>
-                    <button class="iconBtn danger" data-delete="${esc(o.id)}" title="Löschen">🗑</button>
+                    <button class="iconBtn" title="Ins Archiv" data-archive="${o.id}">📦</button>
+                    <button class="iconBtn danger" title="Löschen" data-delete="${o.id}">🗑</button>
                   `
               }
             </div>
@@ -1292,95 +1139,23 @@ keypad.innerHTML = ["1","2","3","4","5","6","7","8","9","⌫","0","OK"]
       }
 
       // handlers
-      target.querySelectorAll("[data-toggle-produced]").forEach(b=>{
-        b.addEventListener("click", async ()=>{
-          const id = b.getAttribute("data-toggle-produced");
-          // read current from dataset? simplest: refetch value by toggling locally after update
-          // we just flip in db using select+update:
-          const { data, error } = await supabase.from("order_items").select("produced").eq("id", id).single();
-          if(error) return alert(error.message);
-          const next = !data.produced;
-          const { error: uErr } = await supabase.from("order_items").update({ produced: next }).eq("id", id);
-          if(uErr) return alert(uErr.message);
-          await loadAll();
+      target.querySelectorAll("[data-prod]").forEach(b=>{
+        b.addEventListener("click", ()=>{
+          const id = b.getAttribute("data-prod");
+          const val = b.getAttribute("data-val")==="1";
+          toggleProduced(id, val);
         });
       });
-
-      target.querySelectorAll("[data-edit-item]").forEach(b=>{
-        b.addEventListener("click", async ()=>{
-          const id = b.getAttribute("data-edit-item");
-          // current price:
-          const { data, error } = await supabase.from("order_items").select("price_override_cents,product,size").eq("id", id).single();
-          if(error) return alert(error.message);
-
-          let initial = data.price_override_cents;
-          if(initial == null){
-            if(data.product==="bunny") initial = PRICES_CENTS.bunny[data.size] || 0;
-            else if(data.product==="lumi") initial = PRICES_CENTS.lumi;
-            else initial = 0;
-          }
-
-          openMoneyModal({
-            title: "Preis pro Stück",
-            initialCents: initial,
-            onApply: async (cents)=>{
-              const { error: uErr } = await supabase.from("order_items").update({ price_override_cents: cents }).eq("id", id);
-              if(uErr) return alert(uErr.message);
-              await loadAll();
-            }
-          });
-        });
-      });
-
       target.querySelectorAll("[data-edit-total]").forEach(b=>{
-        b.addEventListener("click", async ()=>{
-          const orderId = b.getAttribute("data-edit-total");
-          const { data: order, error } = await supabase.from("orders").select("total_override_cents").eq("id", orderId).single();
-          if(error) return alert(error.message);
-
-          // wenn null -> initial aus berechnetem total
-          let initial = order.total_override_cents;
-          if(initial == null){
-            // calculate from itemsMap:
-            const items = (itemsMap.get(orderId) || []);
-            initial = orderTotalCents({ total_override_cents:null }, items);
-          }
-
-          openMoneyModal({
-            title: "Gesamtpreis setzen",
-            initialCents: initial || 0,
-            onApply: async (cents)=>{
-              const { error: uErr } = await supabase.from("orders").update({ total_override_cents: cents }).eq("id", orderId);
-              if(uErr) return alert(uErr.message);
-              await loadAll();
-            }
-          });
+        b.addEventListener("click", ()=>{
+          const id = b.getAttribute("data-edit-total");
+          const cur = b.getAttribute("data-cur");
+          editOrderOverride(id, cur==="" ? null : Number(cur));
         });
       });
-
-      target.querySelectorAll("[data-archive]").forEach(b=>{
-        b.addEventListener("click", async ()=>{
-          const id = b.getAttribute("data-archive");
-          await supabase.from("orders").update({ archived:true }).eq("id", id);
-          await loadAll();
-        });
-      });
-      target.querySelectorAll("[data-restore]").forEach(b=>{
-        b.addEventListener("click", async ()=>{
-          const id = b.getAttribute("data-restore");
-          await supabase.from("orders").update({ archived:false }).eq("id", id);
-          await loadAll();
-        });
-      });
-      target.querySelectorAll("[data-delete]").forEach(b=>{
-        b.addEventListener("click", async ()=>{
-          const id = b.getAttribute("data-delete");
-          const ok = confirm("Wirklich löschen?");
-          if(!ok) return;
-          await supabase.from("orders").delete().eq("id", id);
-          await loadAll();
-        });
-      });
+      target.querySelectorAll("[data-archive]").forEach(b=> b.addEventListener("click", ()=>archiveOrder(b.getAttribute("data-archive"))) );
+      target.querySelectorAll("[data-restore]").forEach(b=> b.addEventListener("click", ()=>restoreOrder(b.getAttribute("data-restore"))) );
+      target.querySelectorAll("[data-delete]").forEach(b=> b.addEventListener("click", ()=>deleteOrder(b.getAttribute("data-delete"))) );
     }
 
     async function loadAll(){
@@ -1390,7 +1165,7 @@ keypad.innerHTML = ["1","2","3","4","5","6","7","8","9","⌫","0","OK"]
         .order("created_at", { ascending:false });
 
       if(oErr){
-        openSumEl.textContent = "Fehler: " + oErr.message;
+        openOrdersEl.innerHTML = `<div class="error">Fehler: ${esc(oErr.message)}</div>`;
         return;
       }
 
@@ -1400,61 +1175,59 @@ keypad.innerHTML = ["1","2","3","4","5","6","7","8","9","⌫","0","OK"]
         .order("created_at", { ascending:false });
 
       if(iErr){
-        openSumEl.textContent = "Fehler: " + iErr.message;
+        openOrdersEl.innerHTML = `<div class="error">Fehler: ${esc(iErr.message)}</div>`;
         return;
       }
 
-      // map orderId -> items
-      const itemsMap = new Map();
+      const map = new Map();
+      for(const o of (orders||[])) map.set(o.id, { ...o, items: [] });
       for(const it of (items||[])){
-        if(!itemsMap.has(it.order_id)) itemsMap.set(it.order_id, []);
-        itemsMap.get(it.order_id).push(it);
+        const o = map.get(it.order_id);
+        if(o) o.items.push({ ...it, colors: it.colors || {} });
       }
 
-      const all = (orders||[]).map(o=>({ ...o, items: itemsMap.get(o.id) || [] }));
-
-      const open = all.filter(x=>!x.archived);
+      const all = Array.from(map.values());
+      let open = all.filter(x=>!x.archived);
       const archived = all.filter(x=>x.archived);
 
       if(sortMode==="prio"){
         open.sort((a,b)=>{
-          const ap = Math.min(...(a.items||[]).map(x=>prioRank(x.priority)).concat([2]));
-          const bp = Math.min(...(b.items||[]).map(x=>prioRank(x.priority)).concat([2]));
+          const ap = Math.min(...a.items.map(x=>prioRank(x.priority)).concat([2]));
+          const bp = Math.min(...b.items.map(x=>prioRank(x.priority)).concat([2]));
           if(ap!==bp) return ap-bp;
           return new Date(b.created_at)-new Date(a.created_at);
         });
-      } else {
+      }else{
         open.sort((a,b)=> new Date(b.created_at)-new Date(a.created_at));
       }
 
-      // sums
-      const openTotal = open.reduce((s,o)=> s + orderTotalCents(o, o.items||[]), 0);
-      openSumEl.textContent = `Summe offen: ${euroFromCents(openTotal)}`;
+      const openTotal = open.reduce((s,o)=> s + orderTotal(o), 0);
+      openSumEl.textContent = "Summe offen: " + euro(openTotal);
 
-      const archTotal = archived.reduce((s,o)=> s + orderTotalCents(o, o.items||[]), 0);
-      archivedTotalEl.textContent = `Archiv gesamt: ${euroFromCents(archTotal)}`;
+      const archTotal = archived.reduce((s,o)=> s + orderTotal(o), 0);
+      archivedTotalEl.textContent = "Archiv gesamt: " + euro(archTotal);
 
-      renderOrders(openOrdersEl, open, itemsMap, { archived:false });
-      renderOrders(archiveOrdersEl, archived, itemsMap, { archived:true });
+      renderOrders(openOrdersEl, open, false);
+      renderOrders(archiveOrdersEl, archived, true);
     }
 
     sortDate.addEventListener("click", ()=>{
-      sortMode = "date";
+      sortMode="date";
       sortDate.classList.add("btnDark"); sortDate.classList.remove("btnSoft");
       sortPrio.classList.add("btnSoft"); sortPrio.classList.remove("btnDark");
       loadAll();
     });
     sortPrio.addEventListener("click", ()=>{
-      sortMode = "prio";
+      sortMode="prio";
       sortPrio.classList.add("btnDark"); sortPrio.classList.remove("btnSoft");
       sortDate.classList.add("btnSoft"); sortDate.classList.remove("btnDark");
       loadAll();
     });
 
-    // Init
+    // init
     setProduct("bunny");
+    validateSaveEnabled();
     updateCartUI();
-    saveOrderBtn.disabled = true;
     await loadAll();
   </script>
 </body>
