@@ -1721,10 +1721,10 @@
         return;
       }
 
-      const { data: items, error: iErr } = await supabase
-        .from("order_items")
-        .select("*")
-        .order("created_at", { ascending:false });
+const { data: items, error: iErr } = await supabase
+  .from("order_items")
+  .select("*")
+  .order("id", { ascending:false });
 
       if(iErr){
         openSumEl.textContent = "Fehler: " + iErr.message;
