@@ -19,7 +19,6 @@
       --ok:#047857;
       --warn:#b45309;
       --radius:18px;
-      --soft:#f1f5f9;
     }
     *{ box-sizing:border-box; }
     body{
@@ -29,7 +28,7 @@
       color:var(--text);
     }
     .container{ max-width:1100px; margin:0 auto; padding:24px; }
-    h1{ margin:0; font-size:34px; letter-spacing:-.02em; }
+    h1{ margin:0; font-size:38px; letter-spacing:-.02em; }
     .topbar{ display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin-bottom:18px; }
     .hint{ color:var(--muted); font-size:13px; }
 
@@ -45,13 +44,13 @@
     .title2{ font-size:18px; font-weight:900; margin:0 0 8px; }
     label{ font-weight:900; font-size:13px; display:block; margin:0 0 6px; }
 
-    /* iOS Zoom-Fix: inputs >=16px */
+    /* iOS Zoom Bug vermeiden: input font-size >= 16px */
     input, textarea{
       width:100%;
       border:1px solid var(--border);
       border-radius:14px;
       padding:11px 14px;
-      font-size:16px; /* ✅ wichtig gegen iPhone Zoom */
+      font-size:16px;
       outline:none;
       background:#fff;
     }
@@ -88,6 +87,7 @@
       font-weight:900;
     }
     .btnDark{ background:linear-gradient(180deg, #0b1220, #0f172a); }
+    .btnDanger{ background:var(--danger); }
 
     .chips{ display:flex; gap:10px; flex-wrap:wrap; }
     .chip{
@@ -126,50 +126,11 @@
 
     .row{ display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
     .muted{ color:var(--muted); font-size:13px; }
-
     .status{ margin-top:10px; font-size:13px; color:var(--muted); }
     .error{ color:var(--danger); font-weight:900; }
     .ok{ color:var(--ok); font-weight:900; }
 
-    /* Dropdown */
-    .ddWrap{ position:relative; }
-    .ddBtn{
-      position:absolute;
-      right:10px;
-      top:50%;
-      transform:translateY(-50%);
-      background:none;
-      border:none;
-      font-size:18px;
-      cursor:pointer;
-      z-index:3;
-    }
-    .ddInput{ padding-right:36px; }
-    .ddMenu{
-      position:absolute;
-      top:100%;
-      left:0; right:0;
-      background:#fff;
-      border:1px solid var(--border);
-      border-radius:12px;
-      margin-top:4px;
-      max-height:200px;
-      overflow:auto;
-      display:none;
-      z-index:999;
-    }
-    .ddMenu.open{ display:block; }
-    .ddItem{ padding:10px 12px; cursor:pointer; }
-    .ddItem:hover{ background:var(--soft); }
-    .ddEmpty{ padding:10px; color:var(--muted); }
-
-    /* Orders cards */
-    .orderCard{
-      border:1px solid var(--border);
-      border-radius:16px;
-      padding:12px;
-      background:#fff;
-    }
+    .orderCard{ border:1px solid var(--border); border-radius:16px; padding:12px; background:#fff; }
     .orderTitle{ font-weight:1000; }
 
     .badge{
@@ -184,7 +145,6 @@
     .badge.ok{ border-color:#bbf7d0; background:#f0fdf4; color:#166534; }
     .badge.warn{ border-color:#fed7aa; background:#fff7ed; color:#9a3412; }
     .badge.bad{ border-color:#fecaca; background:#fff1f2; color:#991b1b; }
-    .badge.neutral{ border-color:#e5e7eb; background:#f9fafb; color:#111827; }
 
     .iconBtn{
       border:1px solid var(--border);
@@ -211,118 +171,141 @@
     .colorsStack{ display:grid; gap:2px; margin-top:4px; }
     .colorsStack div{ line-height:1.25; }
 
-    /* Produziert checkbox look */
-    .prodBox{
-      display:flex; align-items:center; gap:8px;
-      padding:8px 10px;
+    /* Menge 3x3 am Handy */
+    .qtyGrid{
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:10px;
+    }
+    .qtyGrid .chip{ min-width:0; }
+
+    /* Color field mit Pfeil (öffnet Modal) */
+    .colorField{ position:relative; }
+    .colorField input{ padding-right:42px; }
+    .colorArrow{
+      position:absolute;
+      right:10px;
+      top:50%;
+      transform:translateY(-50%);
       border:1px solid var(--border);
-      border-radius:12px;
       background:#fff;
+      width:30px;
+      height:30px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:1000;
+    }
+
+    /* Produced toggle (nur Icon) */
+    .prodToggle{
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:10px 12px;
       cursor:pointer;
       user-select:none;
-      white-space:nowrap;
-      font-weight:900;
-    }
-    .prodMark{
-      width:22px; height:22px;
-      border-radius:8px;
-      display:flex;
+      display:inline-flex;
       align-items:center;
       justify-content:center;
-      border:2px solid #ef4444;
-      color:#ef4444;
+      min-width:46px;
       background:#fff;
-      line-height:1;
-      font-size:14px;
     }
-    .prodBox.done .prodMark{
-      border-color:#16a34a;
-      background:#16a34a;
-      color:#fff;
+    .prodToggle.done{
+      border-color:#bbf7d0;
+      background:#f0fdf4;
+      color:#166534;
+    }
+    .prodToggle.notdone{
+      border-color:#fecaca;
+      background:#fff1f2;
+      color:#991b1b;
     }
 
-    /* Price field (opens NumPad) */
-    .pricePick{
-      border:1px solid var(--border);
-      background:#fff;
-      border-radius:14px;
-      padding:11px 14px;
-      font-size:16px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      cursor:pointer;
-      user-select:none;
-    }
-    .pricePick .muted{ font-size:13px; }
-
-    /* NumPad Modal */
+    /* Modal */
     .modalBack{
       position:fixed; inset:0;
-      background:rgba(0,0,0,.45);
+      background:rgba(15,23,42,.45);
       display:none;
       align-items:flex-end;
       justify-content:center;
-      z-index:99999;
       padding:14px;
+      z-index:9999;
     }
     .modalBack.open{ display:flex; }
     .modal{
-      width:min(520px, 100%);
+      width:min(560px, 100%);
       background:#fff;
-      border-radius:18px;
+      border-radius:22px;
       border:1px solid var(--border);
       box-shadow:var(--shadow);
       overflow:hidden;
     }
     .modalHead{
-      padding:12px 14px;
+      padding:14px 16px;
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:10px;
       border-bottom:1px solid var(--border);
-      background:#fff;
     }
     .modalTitle{ font-weight:1000; }
-    .modalBody{ padding:14px; }
-    .numDisplay{
-      border:1px solid var(--border);
-      border-radius:14px;
-      padding:14px;
-      font-size:22px;
-      font-weight:1000;
-      text-align:right;
-      background:#fff;
-    }
-    .numGrid{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
+    .modalBody{ padding:14px 16px; }
+    .modalFoot{
+      padding:14px 16px;
+      display:flex;
       gap:10px;
-      margin-top:12px;
+      justify-content:flex-end;
+      border-top:1px solid var(--border);
     }
-    .numBtn{
+
+    /* Color buttons */
+    .colorGrid{
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:10px;
+    }
+    @media(min-width:900px){
+      .colorGrid{ grid-template-columns:repeat(4, 1fr); }
+    }
+    .colorBtn{
       border:1px solid var(--border);
       background:#fff;
       border-radius:14px;
-      padding:14px 0;
-      font-size:18px;
-      font-weight:1000;
+      padding:10px 10px;
+      font-weight:900;
       cursor:pointer;
       user-select:none;
       text-align:center;
     }
-    .numBtn:active{ transform:scale(.98); }
-    .numBtn.dark{ background:var(--dark2); color:#fff; border-color:var(--dark2); }
-    .numBtn.soft{ background:var(--soft); }
-    .numActions{
-      display:flex;
+    .colorBtn:hover{ background:#f9fafb; }
+
+    /* Preis-Keypad */
+    .moneyDisplay{
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:14px 14px;
+      font-weight:1000;
+      font-size:22px;
+      text-align:center;
+      background:#fff;
+    }
+    .keypad{
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
       gap:10px;
       margin-top:12px;
     }
-    .numActions .numBtn{ flex:1; }
-
+    .key{
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:16px;
+      padding:14px 0;
+      font-weight:1000;
+      cursor:pointer;
+      user-select:none;
+      text-align:center;
+      font-size:18px;
+    }
+    .key:hover{ background:#f9fafb; }
+    .key.secondary{ color:var(--muted); }
   </style>
 </head>
 
@@ -339,7 +322,7 @@
         <div class="chips">
           <div class="chip" id="btnBunny">🐰 Hase</div>
           <div class="chip" id="btnLumi">✨🪲 Lumi</div>
-          <div class="chip" id="btnText">🖊️ Schriftzug</div>
+          <div class="chip" id="btnScript">✍️ Schriftzug</div>
           <div class="chip" id="btnOther">➕ Weitere Produkt</div>
         </div>
 
@@ -349,10 +332,18 @@
         <div id="productArea"></div>
         <div class="sep"></div>
 
-        <div id="colorArea"></div>
-        <div class="sep"></div>
+        <!-- Kundenname immer über Priorität -->
+        <div class="grid grid-2">
+          <div>
+            <label for="customer">Kundenname</label>
+            <input id="customer" placeholder="z. B. Max Mustermann" />
+          </div>
+          <div>
+            <label for="note">Beschreibung (optional)</label>
+            <textarea id="note" placeholder="z. B. Sonderwunsch, Hinweis …"></textarea>
+          </div>
+        </div>
 
-        <div id="priceArea"></div>
         <div class="sep"></div>
 
         <label>Priorität</label>
@@ -364,22 +355,8 @@
 
         <div class="sep"></div>
 
-        <div class="grid grid-2">
-          <div>
-            <label for="customer">Kundenname <span class="muted">(bei Schriftzug Pflicht)</span></label>
-            <input id="customer" placeholder="z. B. Max Mustermann" />
-          </div>
-
-          <div>
-            <label for="note">Beschreibung (optional)</label>
-            <textarea id="note" placeholder="z. B. Sonderwunsch, Hinweis …"></textarea>
-          </div>
-        </div>
-
-        <div class="sep"></div>
-
         <label>Menge</label>
-        <div class="chips" id="qtyRow" style="gap:10px;">
+        <div class="qtyGrid" id="qtyGrid">
           <div class="chip qtyBtn" data-q="1">1</div>
           <div class="chip qtyBtn" data-q="2">2</div>
           <div class="chip qtyBtn" data-q="3">3</div>
@@ -396,15 +373,13 @@
             <label for="qtyOther">Andere Menge (optional)</label>
             <input id="qtyOther" inputmode="numeric" placeholder="z. B. 12" />
           </div>
-
           <div style="display:flex; justify-content:flex-end;">
             <button class="btn btnDark" id="addItemBtn" style="min-width:280px;">+ Position hinzufügen</button>
           </div>
         </div>
 
         <div class="status">
-          <div class="error" id="formError" style="display:none;">Bitte erst ausfüllen.</div>
-          <div class="muted" id="missing" style="display:none;"></div>
+          <div class="error" id="formError" style="display:none;"></div>
         </div>
 
         <div class="sep"></div>
@@ -456,52 +431,59 @@
         </details>
       </div>
     </div>
-
   </div>
 
-  <!-- NumPad Modal -->
-  <div class="modalBack" id="numPadBack">
-    <div class="modal" role="dialog" aria-modal="true">
+  <!-- MODALS -->
+  <div class="modalBack" id="colorModalBack">
+    <div class="modal">
       <div class="modalHead">
-        <div class="modalTitle" id="numPadTitle">Preis eingeben</div>
-        <button class="iconBtn" id="numPadClose" title="Schließen">✖</button>
+        <div class="modalTitle" id="colorModalTitle">Farbe wählen</div>
+        <button class="iconBtn" id="colorModalClose">✕</button>
       </div>
       <div class="modalBody">
-        <div class="numDisplay" id="numPadDisplay">0</div>
-
-        <div class="numGrid">
-          <div class="numBtn" data-k="1">1</div>
-          <div class="numBtn" data-k="2">2</div>
-          <div class="numBtn" data-k="3">3</div>
-          <div class="numBtn" data-k="4">4</div>
-          <div class="numBtn" data-k="5">5</div>
-          <div class="numBtn" data-k="6">6</div>
-          <div class="numBtn" data-k="7">7</div>
-          <div class="numBtn" data-k="8">8</div>
-          <div class="numBtn" data-k="9">9</div>
-          <div class="numBtn soft" data-k="del">⌫</div>
-          <div class="numBtn" data-k="0">0</div>
-          <div class="numBtn soft" data-k=".">,</div>
+        <div class="muted" style="margin-bottom:10px;">Tippe eine Farbe an — oder tippe selbst ins Feld.</div>
+        <div class="grid grid-1">
+          <input id="colorModalInput" placeholder="Farbe eintippen…" />
         </div>
-
-        <div class="numActions">
-          <div class="numBtn soft" id="numPadClear">Clear</div>
-          <div class="numBtn dark" id="numPadOk">OK</div>
-        </div>
+        <div style="height:10px"></div>
+        <div class="colorGrid" id="colorGrid"></div>
+      </div>
+      <div class="modalFoot">
+        <button class="btnSmall btnSoft" id="colorCancel">Abbrechen</button>
+        <button class="btnSmall btnDark" id="colorApply">Übernehmen</button>
       </div>
     </div>
   </div>
 
-  <!-- TEIL 2/3 kommt danach -->
+  <div class="modalBack" id="moneyModalBack">
+    <div class="modal">
+      <div class="modalHead">
+        <div class="modalTitle" id="moneyModalTitle">Preis</div>
+        <button class="iconBtn" id="moneyModalClose">✕</button>
+      </div>
+      <div class="modalBody">
+        <div class="moneyDisplay" id="moneyDisplay">0,00 €</div>
+        <div class="keypad" id="keypad"></div>
+        <div class="muted" style="margin-top:10px;">
+          Eingabe funktioniert wie Kassensystem: jede Zahl schiebt das Komma.
+        </div>
+      </div>
+      <div class="modalFoot">
+        <button class="btnSmall btnSoft" id="moneyClear">Löschen</button>
+        <button class="btnSmall btnDark" id="moneyApply">Übernehmen</button>
+      </div>
+    </div>
+  </div>
+
   <script type="module">
     import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
     // ✅ Supabase
     const SUPABASE_URL = "https://htgrzmlcdolxxzvkppon.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0Z3J6bWxjZG9seHh6dmtwcG9uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0MzM2ODIsImV4cCI6MjA4NTAwOTY4Mn0.B0PxMAzmuvsHNd2n_mgNspjlPkaBpQlkrNzGu7p78fY";
+    const SUPABASE_ANON_KEY = "REPLACE_WITH_YOUR_KEY";
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // ---------------- constants ----------------
+    // Farben (Buttons in Modal)
     const COLOR_SUGGESTIONS = [
       "weiß","schwarz","grau","dunkelgrau","hellgrau",
       "beige","creme","braun","oak",
@@ -509,170 +491,153 @@
       "pink","rosa","gold","silber"
     ];
 
-    const PRICES = {
-      bunny: { "20": 12.0, "15": 9.0, "11": 6.0, comboAllThree: 22.50 },
-      lumi: 8.50
+    // Standardpreise in CENT
+    const PRICES_CENTS = {
+      bunny: { "11 cm": 600, "15 cm": 900, "20 cm": 1200 },
+      lumi: 850
     };
 
-    // ---------------- helpers ----------------
-    const euro = (n)=> (Number(n)||0).toFixed(2).replace(".", ",") + " €";
+    // Helpers
     const esc = (s)=> String(s??"").replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
-    const norm = (s)=> String(s||"").trim().toLowerCase();
-    const num = (s)=> {
-      const t = String(s??"").trim().replace(",", ".");
-      const n = Number(t);
-      return Number.isFinite(n) ? n : NaN;
+    const norm = (s)=> String(s||"").trim();
+    const euroFromCents = (c)=> {
+      const n = Number(c||0);
+      const euros = Math.floor(n/100);
+      const cents = String(Math.abs(n%100)).padStart(2,"0");
+      return `${euros},${cents} €`.replace("-0,", "-0,");
+    };
+    const parseQty = (v)=> {
+      const n = Number(String(v??"").replace(",", "."));
+      if(!Number.isFinite(n) || n<=0) return null;
+      return Math.floor(n);
     };
 
     function setChip(el, on){ el?.classList.toggle("active", !!on); }
-    function show(el){ el.style.display="block"; }
-    function hide(el){ el.style.display="none"; el.textContent=""; }
-    function showErr(el,msg){ el.style.display="block"; el.textContent=msg; }
-
-    // ---------------- dropdown ----------------
-    function buildDropdown({ id, label, placeholder }){
-      return `
-        <div class="field" data-dd-wrap="${id}">
-          <label for="${id}">${esc(label)}</label>
-          <div class="ddWrap">
-            <input id="${id}" class="ddInput" placeholder="${esc(placeholder)}" autocomplete="off" />
-            <button type="button" class="ddBtn" aria-label="Dropdown öffnen" data-dd-btn="${id}">▾</button>
-            <div class="ddMenu" data-dd-menu="${id}"></div>
-          </div>
-        </div>
-      `;
+    function showErr(msg){
+      const el = document.getElementById("formError");
+      el.style.display="block";
+      el.textContent = msg;
+    }
+    function clearErr(){
+      const el = document.getElementById("formError");
+      el.style.display="none";
+      el.textContent = "";
     }
 
-    function setupDropdown(inputId, onChange){
-      const input = document.getElementById(inputId);
-      const menu  = document.querySelector(`[data-dd-menu="${inputId}"]`);
-      const btn   = document.querySelector(`[data-dd-btn="${inputId}"]`);
-      const wrap  = document.querySelector(`[data-dd-wrap="${inputId}"]`);
-      if(!input || !menu || !btn || !wrap) return;
+    // ---------------- Color Modal ----------------
+    const colorModalBack = document.getElementById("colorModalBack");
+    const colorModalTitle= document.getElementById("colorModalTitle");
+    const colorModalInput= document.getElementById("colorModalInput");
+    const colorGrid      = document.getElementById("colorGrid");
+    const colorApply     = document.getElementById("colorApply");
+    const colorCancel    = document.getElementById("colorCancel");
+    const colorModalClose= document.getElementById("colorModalClose");
 
-      function renderMenu(filter=""){
-        const f = filter.trim().toLowerCase();
-        const list = COLOR_SUGGESTIONS.filter(x => x.toLowerCase().includes(f));
-        menu.innerHTML = list.length
-          ? list.map(x=>`<div class="ddItem" data-val="${esc(x)}">${esc(x)}</div>`).join("")
-          : `<div class="ddEmpty">Keine Vorschläge</div>`;
+    let colorTargetInput = null;
 
-        menu.querySelectorAll(".ddItem").forEach(it=>{
-          it.addEventListener("click", ()=>{
-            const v = it.getAttribute("data-val") || "";
-            input.value = v;
-            menu.classList.remove("open");
-            onChange?.(v);
-          });
+    function openColorModal({ title, targetInput }){
+      colorTargetInput = targetInput;
+      colorModalTitle.textContent = title || "Farbe wählen";
+      colorModalInput.value = targetInput?.value || "";
+      colorGrid.innerHTML = COLOR_SUGGESTIONS.map(c=>`<button class="colorBtn" type="button" data-color="${esc(c)}">${esc(c)}</button>`).join("");
+      colorGrid.querySelectorAll("[data-color]").forEach(b=>{
+        b.addEventListener("click", ()=>{
+          const v = b.getAttribute("data-color") || "";
+          colorModalInput.value = v;
+          applyColorModal();
         });
-      }
-
-      input.addEventListener("input", ()=>{
-        if(menu.classList.contains("open")) renderMenu(input.value||"");
-        onChange?.(input.value||"");
       });
-
-      btn.addEventListener("click", (e)=>{
-        e.preventDefault(); e.stopPropagation();
-        menu.classList.toggle("open");
-        if(menu.classList.contains("open")) renderMenu(input.value||"");
-        input.focus();
-      });
-
-      document.addEventListener("click", (e)=>{
-        if(!wrap.contains(e.target)) menu.classList.remove("open");
-      });
+      colorModalBack.classList.add("open");
+      setTimeout(()=>colorModalInput.focus(), 50);
     }
+    function closeColorModal(){
+      colorModalBack.classList.remove("open");
+      colorTargetInput = null;
+    }
+    function applyColorModal(){
+      if(!colorTargetInput) return closeColorModal();
+      colorTargetInput.value = colorModalInput.value || "";
+      colorTargetInput.dispatchEvent(new Event("input", { bubbles:true }));
+      closeColorModal();
+    }
+    colorApply.addEventListener("click", applyColorModal);
+    colorCancel.addEventListener("click", closeColorModal);
+    colorModalClose.addEventListener("click", closeColorModal);
+    colorModalBack.addEventListener("click", (e)=>{ if(e.target === colorModalBack) closeColorModal(); });
 
-    // ---------------- NumPad Modal ----------------
-    const numPadBack = document.getElementById("numPadBack");
-    const numPadTitle = document.getElementById("numPadTitle");
-    const numPadDisplay = document.getElementById("numPadDisplay");
-    const numPadClose = document.getElementById("numPadClose");
-    const numPadOk = document.getElementById("numPadOk");
-    const numPadClear = document.getElementById("numPadClear");
+    // ---------------- Money Modal (Komma schieben) ----------------
+    const moneyModalBack = document.getElementById("moneyModalBack");
+    const moneyModalTitle= document.getElementById("moneyModalTitle");
+    const moneyDisplay   = document.getElementById("moneyDisplay");
+    const keypad         = document.getElementById("keypad");
+    const moneyApply     = document.getElementById("moneyApply");
+    const moneyClear     = document.getElementById("moneyClear");
+    const moneyModalClose= document.getElementById("moneyModalClose");
 
-    let numPadValue = "0";
-    let numPadResolve = null;
+    let moneyCents = 0;
+    let moneyOnApply = null;
 
-    function openNumPad({ title, startValue }){
-      numPadTitle.textContent = title || "Eingabe";
-      numPadValue = String(startValue ?? "0").trim();
-      if(numPadValue === "") numPadValue = "0";
-      numPadDisplay.textContent = numPadValue.replace(".", ",");
+    function renderMoney(){
+      moneyDisplay.textContent = euroFromCents(moneyCents);
+    }
+    function openMoneyModal({ title, initialCents, onApply }){
+      moneyModalTitle.textContent = title || "Preis";
+      moneyCents = Number(initialCents ?? 0) || 0;
+      moneyOnApply = onApply || null;
+      renderMoney();
 
-      numPadBack.classList.add("open");
+      keypad.innerHTML = [
+        "1","2","3","4","5","6","7","8","9","⌫","0","OK"
+      ].map(k=>`<button type="button" class="key ${k==='⌫'?'secondary':''} ${k==='OK'?'':'']}" data-key="${esc(k)}">${esc(k)}</button>`).join("");
 
-      return new Promise((resolve)=>{
-        numPadResolve = resolve;
+      keypad.querySelectorAll("[data-key]").forEach(b=>{
+        b.addEventListener("click", ()=>{
+          const k = b.getAttribute("data-key");
+          if(k === "OK"){ applyMoneyModal(); return; }
+          if(k === "⌫"){
+            moneyCents = Math.floor(moneyCents / 10);
+            renderMoney();
+            return;
+          }
+          // Zahl: Komma schiebt -> cents = cents*10 + digit
+          const d = Number(k);
+          if(Number.isFinite(d)){
+            moneyCents = moneyCents * 10 + d;
+            renderMoney();
+          }
+        });
       });
+
+      moneyModalBack.classList.add("open");
     }
-
-    function closeNumPad(result){
-      numPadBack.classList.remove("open");
-      const r = numPadResolve;
-      numPadResolve = null;
-      if(r) r(result);
+    function closeMoneyModal(){
+      moneyModalBack.classList.remove("open");
+      moneyOnApply = null;
     }
-
-    function setDisplay(){
-      numPadDisplay.textContent = numPadValue.replace(".", ",");
+    function applyMoneyModal(){
+      moneyOnApply?.(moneyCents);
+      closeMoneyModal();
     }
+    moneyApply.addEventListener("click", applyMoneyModal);
+    moneyClear.addEventListener("click", ()=>{ moneyCents = 0; renderMoney(); });
+    moneyModalClose.addEventListener("click", closeMoneyModal);
+    moneyModalBack.addEventListener("click", (e)=>{ if(e.target === moneyModalBack) closeMoneyModal(); });
 
-    numPadBack.querySelectorAll("[data-k]").forEach(b=>{
-      b.addEventListener("click", ()=>{
-        const k = b.getAttribute("data-k");
-        if(k === "del"){
-          numPadValue = numPadValue.length <= 1 ? "0" : numPadValue.slice(0, -1);
-          if(numPadValue === "-" || numPadValue === "") numPadValue = "0";
-          setDisplay();
-          return;
-        }
-        if(k === "."){
-          if(!numPadValue.includes(".")) numPadValue += ".";
-          setDisplay();
-          return;
-        }
-        // digits
-        if(numPadValue === "0") numPadValue = k;
-        else numPadValue += k;
-        setDisplay();
-      });
-    });
+    // ---------------- UI State (New order) ----------------
+    const btnBunny  = document.getElementById("btnBunny");
+    const btnLumi   = document.getElementById("btnLumi");
+    const btnScript = document.getElementById("btnScript");
+    const btnOther  = document.getElementById("btnOther");
 
-    numPadClear.addEventListener("click", ()=>{
-      numPadValue = "0";
-      setDisplay();
-    });
-
-    numPadClose.addEventListener("click", ()=> closeNumPad(null));
-    numPadBack.addEventListener("click", (e)=>{
-      if(e.target === numPadBack) closeNumPad(null);
-    });
-
-    numPadOk.addEventListener("click", ()=>{
-      const v = num(numPadValue);
-      if(!Number.isFinite(v)) return alert("Ungültige Zahl.");
-      closeNumPad(v);
-    });
-
-    // ---------------- DOM ----------------
-    const btnBunny = document.getElementById("btnBunny");
-    const btnLumi  = document.getElementById("btnLumi");
-    const btnText  = document.getElementById("btnText");
-    const btnOther = document.getElementById("btnOther");
-
-    const newTitle = document.getElementById("newTitle");
+    const newTitle  = document.getElementById("newTitle");
     const productArea = document.getElementById("productArea");
-    const colorArea = document.getElementById("colorArea");
-    const priceArea = document.getElementById("priceArea");
+
+    const customer = document.getElementById("customer");
+    const noteEl   = document.getElementById("note");
 
     const pVery = document.getElementById("pVery");
     const pNorm = document.getElementById("pNorm");
     const pLow  = document.getElementById("pLow");
-
-    const customer = document.getElementById("customer");
-    const noteEl   = document.getElementById("note");
 
     const qtyOther = document.getElementById("qtyOther");
     const addItemBtn = document.getElementById("addItemBtn");
@@ -684,9 +649,6 @@
     const saveOrderBtn = document.getElementById("saveOrderBtn");
     const saveStatus   = document.getElementById("saveStatus");
 
-    const formError = document.getElementById("formError");
-    const missingEl = document.getElementById("missing");
-
     const openOrdersEl = document.getElementById("openOrders");
     const archiveOrdersEl = document.getElementById("archiveOrders");
     const openSumEl = document.getElementById("openSum");
@@ -695,42 +657,31 @@
     const sortDate = document.getElementById("sortDate");
     const sortPrio = document.getElementById("sortPrio");
 
-    // ---------------- state ----------------
-    let currentProduct = null; // bunny | lumi | text | other
-    let priority = null;       // very|normal|low
-    let qty = null;
     let sortMode = "date";
+    let currentProduct = "bunny";
+    let priority = null;
+    let qty = null;
 
-    // bunny specifics
-    let bunnySize = null; // 20|15|11
-    let bunnyMode = null; // single|multi
+    // product form state
+    const f = {
+      bunny_size: "",
+      bunny_ears: "", bunny_body:"", bunny_butt:"",
+      lumi_color1:"", lumi_color2:"",
 
-    // price for “text” and “other” (required)
-    let customUnitPrice = null;
+      script_text:"",
+      script_size:"",
+      script_color1:"",
+      script_color2:"",
+      script_price_cents: 0,
 
-    const fields = {
-      bunny_single:"",
-      bunny_ears:"", bunny_body:"", bunny_butt:"",
-      lumi_body:"", lumi_wings:"", lumi_feelers:"",
-      text_name:"", text_size:"", text_main:"", text_second:"",
-      other_name:"", other_size:"", other_main:"", other_second:"",
+      other_name:"",
+      other_size:"",
+      other_color1:"",
+      other_color2:"",
+      other_price_cents: 0
     };
 
-    let cart = [];
-
-    function setChipActive(el,on){ el?.classList.toggle("active", !!on); }
-    function setPrioActive(el,on){ el?.classList.toggle("active", !!on); }
-
-    function showMissing(msg){
-      formError.style.display="block";
-      missingEl.style.display="block";
-      missingEl.textContent = msg;
-    }
-    function clearErrorUI(){
-      formError.style.display="none";
-      missingEl.style.display="none";
-      missingEl.textContent="";
-    }
+    let cart = []; // items for new order
 
     function prioLabel(p){
       if(p==="very") return "Sehr wichtig";
@@ -743,32 +694,272 @@
       return 2;
     }
 
-    function formatDateOnly(iso){
-      const d = new Date(iso);
-      const dd = String(d.getDate()).padStart(2,"0");
-      const mm = String(d.getMonth()+1).padStart(2,"0");
-      const yy = d.getFullYear();
-      return `${dd}.${mm}.${yy}`;
-    }
+    function setProduct(p){
+      currentProduct = p;
+      [btnBunny,btnLumi,btnScript,btnOther].forEach(x=>setChip(x,false));
+      setChip(btnBunny, p==="bunny");
+      setChip(btnLumi,  p==="lumi");
+      setChip(btnScript,p==="schriftzug");
+      setChip(btnOther, p==="other");
 
-    function buildPricePick({ id, label, valueText, hint }){
+      newTitle.textContent =
+        p==="bunny" ? "Neue Bestellung: Hase" :
+        p==="lumi" ? "Neue Bestellung: Lumi" :
+        p==="schriftzug" ? "Neue Bestellung: Schriftzug" :
+        "Neue Bestellung: Weitere Produkt";
+
+      renderProductArea();
+      clearErr();
+    }
+    btnBunny.addEventListener("click", ()=>setProduct("bunny"));
+    btnLumi.addEventListener("click", ()=>setProduct("lumi"));
+    btnScript.addEventListener("click", ()=>setProduct("schriftzug"));
+    btnOther.addEventListener("click", ()=>setProduct("other"));
+
+    // Priority buttons
+    function setPrio(p){
+      priority = p;
+      [pVery,pNorm,pLow].forEach(x=>x.classList.remove("active"));
+      if(p==="very") pVery.classList.add("active");
+      if(p==="normal") pNorm.classList.add("active");
+      if(p==="low") pLow.classList.add("active");
+    }
+    pVery.addEventListener("click", ()=>setPrio("very"));
+    pNorm.addEventListener("click", ()=>setPrio("normal"));
+    pLow.addEventListener("click", ()=>setPrio("low"));
+
+    // qty buttons
+    document.querySelectorAll(".qtyBtn").forEach(b=>{
+      b.addEventListener("click", ()=>{
+        qty = Number(b.getAttribute("data-q"));
+        document.querySelectorAll(".qtyBtn").forEach(x=>x.classList.remove("active"));
+        b.classList.add("active");
+      });
+    });
+
+    function makeColorField(id, label, placeholder){
       return `
-        <div class="field">
-          <label>${esc(label)}</label>
-          <div class="pricePick" id="${esc(id)}">
-            <div style="font-weight:1000">${esc(valueText || "Preis wählen…")}</div>
-            <div class="muted">${esc(hint || "NumPad")}</div>
-          </div>
+        <div class="colorField">
+          <label for="${esc(id)}">${esc(label)}</label>
+          <input id="${esc(id)}" placeholder="${esc(placeholder)}" autocomplete="off" />
+          <button class="colorArrow" type="button" data-color-arrow="${esc(id)}">▾</button>
         </div>
       `;
+    }
+
+    function wireColorField(id, modalTitle, onInput){
+      const input = document.getElementById(id);
+      const arrow = document.querySelector(`[data-color-arrow="${CSS.escape(id)}"]`);
+      if(!input || !arrow) return;
+      input.addEventListener("input", ()=>onInput(input.value||""));
+      arrow.addEventListener("click", ()=>{
+        openColorModal({ title: modalTitle, targetInput: input });
+      });
+    }
+
+    function renderProductArea(){
+      productArea.innerHTML = "";
+
+      if(currentProduct === "bunny"){
+        productArea.innerHTML = `
+          <div class="grid grid-2">
+            <div>
+              <label>Größe</label>
+              <div class="chips">
+                <div class="chip" data-bsize="11 cm">11 cm</div>
+                <div class="chip" data-bsize="15 cm">15 cm</div>
+                <div class="chip" data-bsize="20 cm">20 cm</div>
+              </div>
+            </div>
+            <div></div>
+          </div>
+
+          <div class="sep"></div>
+
+          <div class="grid grid-3">
+            ${makeColorField("bunny_ears","Ohren","Tippen…")}
+            ${makeColorField("bunny_body","Körper","Tippen…")}
+            ${makeColorField("bunny_butt","Popo","Tippen…")}
+          </div>
+        `;
+
+        productArea.querySelectorAll("[data-bsize]").forEach(b=>{
+          b.addEventListener("click", ()=>{
+            f.bunny_size = b.getAttribute("data-bsize") || "";
+            productArea.querySelectorAll("[data-bsize]").forEach(x=>x.classList.remove("active"));
+            b.classList.add("active");
+          });
+        });
+
+        wireColorField("bunny_ears","Ohren", v=>f.bunny_ears=v);
+        wireColorField("bunny_body","Körper", v=>f.bunny_body=v);
+        wireColorField("bunny_butt","Popo", v=>f.bunny_butt=v);
+      }
+
+      if(currentProduct === "lumi"){
+        productArea.innerHTML = `
+          <div class="grid grid-2">
+            ${makeColorField("lumi_c1","Hauptfarbe","Tippen…")}
+            ${makeColorField("lumi_c2","2. Farbe","Tippen…")}
+          </div>
+        `;
+        wireColorField("lumi_c1","Hauptfarbe", v=>f.lumi_color1=v);
+        wireColorField("lumi_c2","2. Farbe", v=>f.lumi_color2=v);
+      }
+
+      if(currentProduct === "schriftzug"){
+        productArea.innerHTML = `
+          <div class="grid grid-2">
+            <div>
+              <label for="script_text">Name</label>
+              <input id="script_text" placeholder="Happy Birthday" />
+            </div>
+            <div>
+              <label for="script_size">Größe</label>
+              <input id="script_size" placeholder="z. B. 20 cm / groß / 10x5" />
+            </div>
+          </div>
+
+          <div class="sep"></div>
+
+          <div class="grid grid-2">
+            ${makeColorField("script_c1","Hauptfarbe","Tippen…")}
+            ${makeColorField("script_c2","2. Farbe","Tippen…")}
+          </div>
+
+          <div class="sep"></div>
+
+          <div>
+            <label>Preis</label>
+            <button class="btnSoft btn" type="button" id="script_price_btn" style="width:100%; justify-content:space-between;">
+              <span>Preis eingeben</span>
+              <span id="script_price_txt">${euroFromCents(f.script_price_cents)}</span>
+            </button>
+          </div>
+        `;
+
+        const st = document.getElementById("script_text");
+        const ss = document.getElementById("script_size");
+        st.addEventListener("input", ()=>f.script_text = st.value||"");
+        ss.addEventListener("input", ()=>f.script_size = ss.value||"");
+
+        wireColorField("script_c1","Hauptfarbe", v=>f.script_color1=v);
+        wireColorField("script_c2","2. Farbe", v=>f.script_color2=v);
+
+        const priceBtn = document.getElementById("script_price_btn");
+        const priceTxt = document.getElementById("script_price_txt");
+        priceBtn.addEventListener("click", ()=>{
+          openMoneyModal({
+            title: "Preis Schriftzug",
+            initialCents: f.script_price_cents || 0,
+            onApply: (cents)=>{
+              f.script_price_cents = cents;
+              priceTxt.textContent = euroFromCents(cents);
+            }
+          });
+        });
+      }
+
+      if(currentProduct === "other"){
+        productArea.innerHTML = `
+          <div class="grid grid-2">
+            <div>
+              <label for="other_name">Produktname</label>
+              <input id="other_name" placeholder="z. B. Schlüsselanhänger" />
+            </div>
+            <div>
+              <label for="other_size">Größe</label>
+              <input id="other_size" placeholder="z. B. groß / 10 cm / XL" />
+            </div>
+          </div>
+
+          <div class="sep"></div>
+
+          <div class="grid grid-2">
+            ${makeColorField("other_c1","Hauptfarbe","Tippen…")}
+            ${makeColorField("other_c2","2. Farbe","Tippen…")}
+          </div>
+
+          <div class="sep"></div>
+
+          <div>
+            <label>Preis</label>
+            <button class="btnSoft btn" type="button" id="other_price_btn" style="width:100%; justify-content:space-between;">
+              <span>Preis eingeben</span>
+              <span id="other_price_txt">${euroFromCents(f.other_price_cents)}</span>
+            </button>
+          </div>
+        `;
+
+        const on = document.getElementById("other_name");
+        const os = document.getElementById("other_size");
+        on.addEventListener("input", ()=>f.other_name = on.value||"");
+        os.addEventListener("input", ()=>f.other_size = os.value||"");
+
+        wireColorField("other_c1","Hauptfarbe", v=>f.other_color1=v);
+        wireColorField("other_c2","2. Farbe", v=>f.other_color2=v);
+
+        const priceBtn = document.getElementById("other_price_btn");
+        const priceTxt = document.getElementById("other_price_txt");
+        priceBtn.addEventListener("click", ()=>{
+          openMoneyModal({
+            title: "Preis weiteres Produkt",
+            initialCents: f.other_price_cents || 0,
+            onApply: (cents)=>{
+              f.other_price_cents = cents;
+              priceTxt.textContent = euroFromCents(cents);
+            }
+          });
+        });
+      }
+    }
+
+    function getQty(){
+      const other = parseQty(qtyOther.value);
+      if(other) return other;
+      if(typeof qty==="number" && qty>0) return qty;
+      return null;
+    }
+
+    function validateForAdd(){
+      clearErr();
+
+      if(!norm(customer.value)) return showErr("Bitte Kundenname ausfüllen.");
+      if(!priority) return showErr("Bitte Priorität auswählen.");
+
+      const q = getQty();
+      if(!q) return showErr("Bitte Menge auswählen.");
+
+      if(currentProduct==="bunny"){
+        if(!norm(f.bunny_size)) return showErr("Bitte Größe wählen.");
+        if(!norm(f.bunny_ears) || !norm(f.bunny_body) || !norm(f.bunny_butt)) return showErr("Bitte Ohren / Körper / Popo ausfüllen.");
+      }
+      if(currentProduct==="lumi"){
+        if(!norm(f.lumi_color1) || !norm(f.lumi_color2)) return showErr("Bitte Hauptfarbe und 2. Farbe ausfüllen.");
+      }
+      if(currentProduct==="schriftzug"){
+        if(!norm(f.script_text)) return showErr("Bitte Name ausfüllen.");
+        if(!norm(f.script_size)) return showErr("Bitte Größe ausfüllen.");
+        if(!norm(f.script_color1) || !norm(f.script_color2)) return showErr("Bitte Hauptfarbe und 2. Farbe ausfüllen.");
+        if(!(Number(f.script_price_cents||0) > 0)) return showErr("Bitte Preis eingeben.");
+      }
+      if(currentProduct==="other"){
+        if(!norm(f.other_name)) return showErr("Bitte Produktname ausfüllen.");
+        if(!norm(f.other_size)) return showErr("Bitte Größe ausfüllen.");
+        if(!norm(f.other_color1) || !norm(f.other_color2)) return showErr("Bitte Hauptfarbe und 2. Farbe ausfüllen.");
+        if(!(Number(f.other_price_cents||0) > 0)) return showErr("Bitte Preis eingeben.");
+      }
+
+      return true;
+    }
+
+    function itemTitle(it){
+      return it.title;
     }
 
     function colorTextStack(it){
       const c = it.colors || {};
       if(it.product==="bunny"){
-        if(it.mode==="single"){
-          return `<div class="colorsStack muted"><div><b>Einfarbig:</b> ${esc(c.single||"")}</div></div>`;
-        }
         return `
           <div class="colorsStack muted">
             <div><b>Ohren:</b> ${esc(c.ears||"")}</div>
@@ -777,497 +968,49 @@
           </div>
         `;
       }
-      if(it.product==="lumi"){
-        return `
-          <div class="colorsStack muted">
-            <div><b>Körper:</b> ${esc(c.body||"")}</div>
-            <div><b>Flügel:</b> ${esc(c.wings||"")}</div>
-            <div><b>Fühler:</b> ${esc(c.feelers||"")}</div>
-          </div>
-        `;
-      }
-      // text/other
       return `
         <div class="colorsStack muted">
-          ${it.size ? `<div><b>Größe:</b> ${esc(it.size)}</div>` : ``}
-          ${c.main ? `<div><b>Hauptfarbe:</b> ${esc(c.main)}</div>` : ``}
-          ${c.second ? `<div><b>2. Farbe:</b> ${esc(c.second)}</div>` : ``}
+          <div><b>Hauptfarbe:</b> ${esc(c.c1||"")}</div>
+          <div><b>2. Farbe:</b> ${esc(c.c2||"")}</div>
         </div>
       `;
     }
 
-    function buildItemTitle(it){
-      if(it.product==="bunny") return `Hase ${it.size} cm`;
-      if(it.product==="lumi") return `Lumi`;
-      if(it.product==="text") return `Schriftzug: ${it.name || ""}`.trim();
-      return `Weitere Produkt: ${it.name || ""}`.trim();
+    function basePriceCents(it){
+      if(it.product==="bunny"){
+        return PRICES_CENTS.bunny[it.size] || 0;
+      }
+      if(it.product==="lumi"){
+        return PRICES_CENTS.lumi;
+      }
+      if(it.product==="schriftzug"){
+        return Number(it.price_override_cents ?? 0);
+      }
+      if(it.product==="other"){
+        return Number(it.price_override_cents ?? 0);
+      }
+      return 0;
     }
 
-    // ---------------- UI render: product area ----------------
-    function renderProductArea(){
-      productArea.innerHTML = "";
-      colorArea.innerHTML = "";
-      priceArea.innerHTML = "";
-      customUnitPrice = null;
-
-      if(currentProduct==="bunny"){
-        newTitle.textContent = "Neue Bestellung: Hase";
-        productArea.innerHTML = `
-          <div>
-            <label>Größe</label>
-            <div class="chips">
-              <div class="chip" id="size20">20 cm</div>
-              <div class="chip" id="size15">15 cm</div>
-              <div class="chip" id="size11">11 cm</div>
-            </div>
-          </div>
-          <div class="sep"></div>
-          <div>
-            <label>Farbmodus</label>
-            <div class="chips">
-              <div class="chip" id="modeMulti">Mehrfarbig</div>
-              <div class="chip" id="modeSingle">Einfarbig</div>
-            </div>
-          </div>
-        `;
-
-        const s20 = document.getElementById("size20");
-        const s15 = document.getElementById("size15");
-        const s11 = document.getElementById("size11");
-        [s20,s15,s11].forEach(el=>{
-          el.addEventListener("click", ()=>{
-            bunnySize = el.id==="size20" ? "20" : el.id==="size15" ? "15" : "11";
-            [s20,s15,s11].forEach(x=>setChipActive(x, x===el));
-            validateForAdd();
-          });
-        });
-
-        const mMulti = document.getElementById("modeMulti");
-        const mSingle= document.getElementById("modeSingle");
-        [mMulti,mSingle].forEach(el=>{
-          el.addEventListener("click", ()=>{
-            bunnyMode = (el.id==="modeSingle") ? "single" : "multi";
-            [mMulti,mSingle].forEach(x=>setChipActive(x, x===el));
-            fields.bunny_single=""; fields.bunny_ears=""; fields.bunny_body=""; fields.bunny_butt="";
-            renderColorArea();
-            validateForAdd();
-          });
-        });
-
-        renderColorArea();
-        renderPriceArea();
-        return;
-      }
-
-      if(currentProduct==="lumi"){
-        newTitle.textContent = "Neue Bestellung: Lumi";
-        productArea.innerHTML = `<div class="muted">Lumi hat keine Größe – wähle Farben.</div>`;
-        renderColorArea();
-        renderPriceArea();
-        return;
-      }
-
-      if(currentProduct==="text"){
-        newTitle.textContent = "Neue Bestellung: Schriftzug";
-        productArea.innerHTML = `
-          <div class="grid grid-2">
-            <div>
-              <label for="text_name">Name *</label>
-              <input id="text_name" placeholder="z. B. Sophia" />
-            </div>
-            <div>
-              <label for="text_size">Größe *</label>
-              <input id="text_size" placeholder="z. B. 10 cm / klein / XL" />
-            </div>
-          </div>
-        `;
-        const tn = document.getElementById("text_name");
-        const ts = document.getElementById("text_size");
-        tn.addEventListener("input", ()=>{ fields.text_name = tn.value||""; validateForAdd(); });
-        ts.addEventListener("input", ()=>{ fields.text_size = ts.value||""; validateForAdd(); });
-
-        renderColorArea();
-        renderPriceArea();
-        return;
-      }
-
-      if(currentProduct==="other"){
-        newTitle.textContent = "Neue Bestellung: Weitere Produkt";
-        productArea.innerHTML = `
-          <div class="grid grid-2">
-            <div>
-              <label for="other_name">Name *</label>
-              <input id="other_name" placeholder="z. B. Schlüsselanhänger" />
-            </div>
-            <div>
-              <label for="other_size">Größe *</label>
-              <input id="other_size" placeholder="z. B. 10 cm / groß / XL" />
-            </div>
-          </div>
-        `;
-        const on = document.getElementById("other_name");
-        const os = document.getElementById("other_size");
-        on.addEventListener("input", ()=>{ fields.other_name = on.value||""; validateForAdd(); });
-        os.addEventListener("input", ()=>{ fields.other_size = os.value||""; validateForAdd(); });
-
-        renderColorArea();
-        renderPriceArea();
-        return;
-      }
+    function cartTotalCents(){
+      return cart.reduce((s,it)=> s + basePriceCents(it) * Number(it.qty||0), 0);
     }
 
-    function renderColorArea(){
-      colorArea.innerHTML = "";
-
-      if(currentProduct==="bunny"){
-        if(bunnyMode==="single"){
-          colorArea.innerHTML = `
-            <div class="grid">
-              ${buildDropdown({ id:"bunny_single", label:"Einfarbig", placeholder:"Tippen oder auswählen…" })}
-            </div>
-          `;
-          setupDropdown("bunny_single", v=>{ fields.bunny_single=v; validateForAdd(); });
-          return;
-        }
-        if(bunnyMode==="multi"){
-          colorArea.innerHTML = `
-            <div class="grid grid-3">
-              ${buildDropdown({ id:"bunny_ears", label:"Ohren", placeholder:"Tippen oder auswählen…" })}
-              ${buildDropdown({ id:"bunny_body", label:"Körper", placeholder:"Tippen oder auswählen…" })}
-              ${buildDropdown({ id:"bunny_butt", label:"Popo",  placeholder:"Tippen oder auswählen…" })}
-            </div>
-          `;
-          setupDropdown("bunny_ears", v=>{ fields.bunny_ears=v; validateForAdd(); });
-          setupDropdown("bunny_body", v=>{ fields.bunny_body=v; validateForAdd(); });
-          setupDropdown("bunny_butt", v=>{ fields.bunny_butt=v; validateForAdd(); });
-          return;
-        }
-        colorArea.innerHTML = `<div class="muted">Bitte zuerst <b>Farbmodus</b> wählen.</div>`;
-        return;
-      }
-
-      if(currentProduct==="lumi"){
-        colorArea.innerHTML = `
-          <div class="grid grid-3">
-            ${buildDropdown({ id:"lumi_body",   label:"Körper", placeholder:"Tippen oder auswählen…" })}
-            ${buildDropdown({ id:"lumi_wings",  label:"Flügel", placeholder:"Tippen oder auswählen…" })}
-            ${buildDropdown({ id:"lumi_feelers",label:"Fühler", placeholder:"Tippen oder auswählen…" })}
-          </div>
-        `;
-        setupDropdown("lumi_body",   v=>{ fields.lumi_body=v; validateForAdd(); });
-        setupDropdown("lumi_wings",  v=>{ fields.lumi_wings=v; validateForAdd(); });
-        setupDropdown("lumi_feelers",v=>{ fields.lumi_feelers=v; validateForAdd(); });
-        return;
-      }
-
-      if(currentProduct==="text"){
-        colorArea.innerHTML = `
-          <div class="grid grid-2">
-            ${buildDropdown({ id:"text_main", label:"Hauptfarbe *", placeholder:"Tippen oder auswählen…" })}
-            ${buildDropdown({ id:"text_second", label:"2. Farbe *", placeholder:"Tippen oder auswählen…" })}
-          </div>
-        `;
-        setupDropdown("text_main", v=>{ fields.text_main=v; validateForAdd(); });
-        setupDropdown("text_second", v=>{ fields.text_second=v; validateForAdd(); });
-        return;
-      }
-
-      if(currentProduct==="other"){
-        colorArea.innerHTML = `
-          <div class="grid grid-2">
-            ${buildDropdown({ id:"other_main", label:"Hauptfarbe *", placeholder:"Tippen oder auswählen…" })}
-            ${buildDropdown({ id:"other_second", label:"2. Farbe *", placeholder:"Tippen oder auswählen…" })}
-          </div>
-        `;
-        setupDropdown("other_main", v=>{ fields.other_main=v; validateForAdd(); });
-        setupDropdown("other_second", v=>{ fields.other_second=v; validateForAdd(); });
-        return;
-      }
-    }
-
-    function renderPriceArea(){
-      priceArea.innerHTML = "";
-
-      if(currentProduct==="text" || currentProduct==="other"){
-        const label = "Preis pro Stück *";
-        const valueText = (customUnitPrice==null) ? "Preis wählen…" : euro(customUnitPrice);
-        priceArea.innerHTML = buildPricePick({
-          id:"pickPrice",
-          label,
-          valueText,
-          hint:"NumPad"
-        });
-
-        document.getElementById("pickPrice").addEventListener("click", async ()=>{
-          const v = await openNumPad({
-            title: "Preis pro Stück (€)",
-            startValue: customUnitPrice==null ? "0" : String(customUnitPrice)
-          });
-          if(v==null) return;
-          customUnitPrice = v;
-          renderPriceArea();
-          validateForAdd();
-        });
-        return;
-      }
-
-      // bunny/lumi: kein Pflichtpreis-Feld (Standardpreise)
-      priceArea.innerHTML = `<div class="muted">Preis: Standard (später per ✏ pro Position änderbar)</div>`;
-    }
-    // ---------------- selection + priority + qty ----------------
-    function resetSelections(){
-      priority=null; qty=null;
-      qtyOther.value="";
-      customer.value="";
-      noteEl.value="";
-
-      bunnySize=null; bunnyMode=null;
-      customUnitPrice=null;
-
-      // clear fields
-      for(const k of Object.keys(fields)) fields[k]="";
-
-      clearErrorUI();
-      [pVery,pNorm,pLow].forEach(x=>setPrioActive(x,false));
-      document.querySelectorAll(".qtyBtn").forEach(b=>b.classList.remove("active"));
-    }
-
-    function setProduct(p){
-      currentProduct=p;
-      [btnBunny,btnLumi,btnText,btnOther].forEach(x=>setChipActive(x,false));
-      setChipActive(btnBunny, p==="bunny");
-      setChipActive(btnLumi,  p==="lumi");
-      setChipActive(btnText,  p==="text");
-      setChipActive(btnOther, p==="other");
-
-      resetSelections();
-      renderProductArea();
-      validateForAdd();
-      validateSaveEnabled();
-    }
-
-    btnBunny.addEventListener("click", ()=>setProduct("bunny"));
-    btnLumi .addEventListener("click", ()=>setProduct("lumi"));
-    btnText .addEventListener("click", ()=>setProduct("text"));
-    btnOther.addEventListener("click", ()=>setProduct("other"));
-
-    pVery.addEventListener("click", ()=>{
-      priority="very";
-      [pVery,pNorm,pLow].forEach(x=>setPrioActive(x,false));
-      setPrioActive(pVery,true);
-      validateForAdd();
-    });
-    pNorm.addEventListener("click", ()=>{
-      priority="normal";
-      [pVery,pNorm,pLow].forEach(x=>setPrioActive(x,false));
-      setPrioActive(pNorm,true);
-      validateForAdd();
-    });
-    pLow.addEventListener("click", ()=>{
-      priority="low";
-      [pVery,pNorm,pLow].forEach(x=>setPrioActive(x,false));
-      setPrioActive(pLow,true);
-      validateForAdd();
-    });
-
-    document.querySelectorAll(".qtyBtn").forEach(btn=>{
-      btn.addEventListener("click", ()=>{
-        qty = Number(btn.getAttribute("data-q"));
-        document.querySelectorAll(".qtyBtn").forEach(b=>b.classList.remove("active"));
-        btn.classList.add("active");
-        validateForAdd();
-      });
-    });
-    qtyOther.addEventListener("input", ()=> validateForAdd());
-
-    function getQty(){
-      const otherQ = Number(String(qtyOther.value||"").replace(",", "."));
-      if(Number.isFinite(otherQ) && otherQ>0) return Math.floor(otherQ);
-      if(typeof qty==="number" && qty>0) return qty;
-      return null;
-    }
-
-    // ---------------- validation ----------------
-    function requiredOk(){
-      const missing = [];
-      const q = getQty();
-
-      if(!currentProduct) missing.push("Produkt");
-      if(!priority) missing.push("Priorität");
-      if(!q) missing.push("Menge");
-
-      const cust = (customer.value||"").trim();
-      // Schriftzug: Kunde Pflicht
-      if(currentProduct==="text" && !cust) missing.push("Kundenname");
-
-      if(currentProduct==="bunny"){
-        if(!bunnySize) missing.push("Größe");
-        if(!bunnyMode) missing.push("Farbmodus");
-        if(bunnyMode==="single" && !norm(fields.bunny_single)) missing.push("Einfarbig");
-        if(bunnyMode==="multi"){
-          if(!norm(fields.bunny_ears)) missing.push("Ohren");
-          if(!norm(fields.bunny_body)) missing.push("Körper");
-          if(!norm(fields.bunny_butt)) missing.push("Popo");
-        }
-      }
-
-      if(currentProduct==="lumi"){
-        if(!norm(fields.lumi_body)) missing.push("Körper");
-        if(!norm(fields.lumi_wings)) missing.push("Flügel");
-        if(!norm(fields.lumi_feelers)) missing.push("Fühler");
-      }
-
-      if(currentProduct==="text"){
-        if(!norm(fields.text_name)) missing.push("Name");
-        if(!norm(fields.text_size)) missing.push("Größe");
-        if(!norm(fields.text_main)) missing.push("Hauptfarbe");
-        if(!norm(fields.text_second)) missing.push("2. Farbe");
-        if(!(Number.isFinite(customUnitPrice) && customUnitPrice>=0)) missing.push("Preis pro Stück");
-      }
-
-      if(currentProduct==="other"){
-        if(!norm(fields.other_name)) missing.push("Name");
-        if(!norm(fields.other_size)) missing.push("Größe");
-        if(!norm(fields.other_main)) missing.push("Hauptfarbe");
-        if(!norm(fields.other_second)) missing.push("2. Farbe");
-        if(!(Number.isFinite(customUnitPrice) && customUnitPrice>=0)) missing.push("Preis pro Stück");
-      }
-
-      return missing;
-    }
-
-    function validateForAdd(){
-      clearErrorUI();
-      const missing = requiredOk();
-      if(missing.length){
-        showMissing("Bitte erst ausfüllen: " + missing.join(", "));
-        return false;
-      }
-      return true;
-    }
-
-    function validateSaveEnabled(){
-      saveOrderBtn.disabled = (cart.length===0);
-    }
-
-    // ---------------- pricing rules ----------------
-    function itemBasePrice(it){
-      if(it.product==="bunny") return PRICES.bunny[String(it.size)] || 0;
-      if(it.product==="lumi") return PRICES.lumi;
-      // text/other: must have price_override
-      return Number(it.price_override || 0);
-    }
-
-    function priceForItems(items){
-      // bunny combo nur wenn KEIN bunny override existiert
-      let total = 0;
-
-      // text/other + lumi (inkl. overrides)
-      for(const it of items){
-        if(it.product!=="bunny"){
-          const unit = (it.price_override!=null ? Number(it.price_override) : itemBasePrice(it));
-          total += unit * Number(it.qty||0);
-        }
-      }
-
-      const bunny = items.filter(x=>x.product==="bunny");
-      const anyOverride = bunny.some(x=>x.price_override!=null);
-
-      if(anyOverride){
-        for(const it of bunny){
-          const unit = (it.price_override!=null ? Number(it.price_override) : itemBasePrice(it));
-          total += unit * Number(it.qty||0);
-        }
-        return total;
-      }
-
-      const counts = { "20":0, "15":0, "11":0 };
-      for(const it of bunny) counts[String(it.size)] += Number(it.qty||0);
-
-      const combos = Math.min(counts["20"], counts["15"], counts["11"]);
-      if(combos>0){
-        total += combos * PRICES.bunny.comboAllThree;
-        counts["20"] -= combos; counts["15"] -= combos; counts["11"] -= combos;
-      }
-      total += counts["20"] * PRICES.bunny["20"];
-      total += counts["15"] * PRICES.bunny["15"];
-      total += counts["11"] * PRICES.bunny["11"];
-      return total;
-    }
-
-    function cartTotal(){ return priceForItems(cart); }
-
-    // ---------------- make item ----------------
-    function makeItem(){
-      const q = getQty();
-      const item = {
-        _cid: String(Date.now()) + "-" + Math.random().toString(16).slice(2),
-        product: currentProduct,
-        name: null,
-        size: null,
-        mode: null,
-        colors: {},
-        qty: q,
-        priority,
-        customer_name: (customer.value||"").trim() || null,
-        note: (noteEl.value||"").trim() || null,
-        price_override: null,
-        produced: false
-      };
-
-      if(currentProduct==="bunny"){
-        item.size = bunnySize;
-        item.mode = bunnyMode;
-        if(bunnyMode==="single") item.colors = { single: norm(fields.bunny_single) };
-        else item.colors = { ears:norm(fields.bunny_ears), body:norm(fields.bunny_body), butt:norm(fields.bunny_butt) };
-      }
-
-      if(currentProduct==="lumi"){
-        item.colors = { body:norm(fields.lumi_body), wings:norm(fields.lumi_wings), feelers:norm(fields.lumi_feelers) };
-      }
-
-      if(currentProduct==="text"){
-        item.product = "text";
-        item.name = (fields.text_name||"").trim();
-        item.size = (fields.text_size||"").trim();
-        item.colors = { main:norm(fields.text_main), second:norm(fields.text_second) };
-        item.price_override = Number(customUnitPrice);
-      }
-
-      if(currentProduct==="other"){
-        item.product = "other";
-        item.name = (fields.other_name||"").trim();
-        item.size = (fields.other_size||"").trim();
-        item.colors = { main:norm(fields.other_main), second:norm(fields.other_second) };
-        item.price_override = Number(customUnitPrice);
-      }
-
-      return item;
-    }
-
-    // ---------------- cart UI ----------------
     function updateCartUI(){
-      cartList.innerHTML="";
+      cartList.innerHTML = "";
       cartHint.style.display = cart.length===0 ? "block" : "none";
 
       for(const it of cart){
         const card = document.createElement("div");
         card.className = "card pad";
 
-        const unit = (it.price_override!=null ? Number(it.price_override) : (it.product==="bunny"||it.product==="lumi") ? null : 0);
-        const priceLine =
-          (unit!=null && (it.product==="text" || it.product==="other"))
-            ? `<div class="muted" style="margin-top:4px;">💶 Preis/Stk: ${euro(unit)}</div>`
-            : ``;
-
         card.innerHTML = `
           <div class="row" style="justify-content:space-between; align-items:flex-start;">
             <div style="min-width:220px;">
-              <div style="font-weight:1000">${esc(buildItemTitle(it))} <span class="muted">(${esc(prioLabel(it.priority))})</span></div>
+              <div style="font-weight:1000">${esc(itemTitle(it))} <span class="muted">(${esc(prioLabel(it.priority))})</span></div>
               ${colorTextStack(it)}
-              ${it.customer_name ? `<div class="muted" style="margin-top:6px;">👤 ${esc(it.customer_name)}</div>` : ``}
+              <div class="muted" style="margin-top:6px;">👤 ${esc(it.customer_name)}</div>
               ${it.note ? `<div class="muted" style="margin-top:6px;">📝 ${esc(it.note)}</div>` : ``}
-              ${priceLine}
             </div>
             <div class="row" style="gap:8px;">
               <span class="badge">× ${esc(it.qty)}</span>
@@ -1283,63 +1026,94 @@
           const id = b.getAttribute("data-del");
           cart = cart.filter(x=>String(x._cid)!==String(id));
           updateCartUI();
-          validateSaveEnabled();
+          saveOrderBtn.disabled = (cart.length===0);
         });
       });
 
-      cartSum.textContent = "Summe: " + euro(cartTotal());
+      cartSum.textContent = "Summe: " + euroFromCents(cartTotalCents());
     }
 
     addItemBtn.addEventListener("click", ()=>{
       if(!validateForAdd()) return;
-      cart.push(makeItem());
 
-      qty=null;
-      qtyOther.value="";
-      document.querySelectorAll(".qtyBtn").forEach(b=>b.classList.remove("active"));
+      const q = getQty();
+      const item = {
+        _cid: String(Date.now()) + "-" + Math.random().toString(16).slice(2),
+        product: currentProduct,
+        title: "",
+        size: "",
+        qty: q,
+        priority,
+        customer_name: norm(customer.value),
+        note: norm(noteEl.value) || null,
+        colors: {},
+        price_override_cents: null
+      };
+
+      if(currentProduct==="bunny"){
+        item.size = f.bunny_size;
+        item.title = `Hase ${f.bunny_size}`;
+        item.colors = { ears:norm(f.bunny_ears), body:norm(f.bunny_body), butt:norm(f.bunny_butt) };
+      }
+      if(currentProduct==="lumi"){
+        item.size = "—";
+        item.title = "Lumi";
+        item.colors = { c1:norm(f.lumi_color1), c2:norm(f.lumi_color2) };
+      }
+      if(currentProduct==="schriftzug"){
+        item.size = norm(f.script_size);
+        item.title = norm(f.script_text);
+        item.colors = { c1:norm(f.script_color1), c2:norm(f.script_color2) };
+        item.price_override_cents = Number(f.script_price_cents||0);
+      }
+      if(currentProduct==="other"){
+        item.size = norm(f.other_size);
+        item.title = norm(f.other_name) + ` (${norm(f.other_size)})`;
+        item.colors = { c1:norm(f.other_color1), c2:norm(f.other_color2) };
+        item.price_override_cents = Number(f.other_price_cents||0);
+      }
+
+      cart.push(item);
+
+      qty = null;
+      qtyOther.value = "";
+      document.querySelectorAll(".qtyBtn").forEach(x=>x.classList.remove("active"));
 
       updateCartUI();
-      validateSaveEnabled();
-      clearErrorUI();
+      saveOrderBtn.disabled = (cart.length===0);
+      clearErr();
     });
 
-    // ---------------- sorting buttons ----------------
-    sortDate.addEventListener("click", ()=>{
-      sortMode="date";
-      sortDate.classList.add("btnDark"); sortDate.classList.remove("btnSoft");
-      sortPrio.classList.add("btnSoft"); sortPrio.classList.remove("btnDark");
-      loadAll();
-    });
-    sortPrio.addEventListener("click", ()=>{
-      sortMode="prio";
-      sortPrio.classList.add("btnDark"); sortPrio.classList.remove("btnSoft");
-      sortDate.classList.add("btnSoft"); sortDate.classList.remove("btnDark");
-      loadAll();
-    });
-
-    // ---------------- save order ----------------
+    // ---------------- Save order to Supabase ----------------
     async function saveOrder(){
-      clearErrorUI();
+      clearErr();
       saveStatus.style.display="none";
 
       if(cart.length===0){
-        showMissing("Füge zuerst mindestens eine Position hinzu.");
+        showErr("Füge zuerst mindestens eine Position hinzu.");
         return;
       }
 
       saveOrderBtn.disabled = true;
       saveOrderBtn.textContent = "Speichern…";
 
-      const { data: orderData, error: oErr } = await supabase
+      const orderPayload = {
+        customer_name: norm(customer.value),
+        note: norm(noteEl.value) || null,
+        archived: false,
+        total_override_cents: null
+      };
+
+      const { data: orderData, error: orderErr } = await supabase
         .from("orders")
-        .insert({ archived:false, total_override: null })
+        .insert(orderPayload)
         .select("id")
         .single();
 
-      if(oErr){
-        showMissing("Fehler beim Speichern: " + oErr.message);
-        saveOrderBtn.disabled = false;
-        saveOrderBtn.textContent = "✅ Bestellung speichern";
+      if(orderErr){
+        showErr("Fehler beim Speichern: " + orderErr.message);
+        saveOrderBtn.disabled=false;
+        saveOrderBtn.textContent="✅ Bestellung speichern";
         return;
       }
 
@@ -1348,31 +1122,29 @@
       const itemsPayload = cart.map(it=>({
         order_id: orderId,
         product: it.product,
-        name: it.name ?? null,
-        size: it.size ?? null,
-        mode: it.mode ?? null,
-        colors: it.colors ?? {},
+        title: it.title,
+        size: it.size,
         qty: it.qty,
         priority: it.priority,
-        customer_name: it.customer_name ?? null,
-        note: it.note ?? null,
-        price_override: it.price_override ?? null,
-        produced: it.produced ?? false
+        colors: it.colors,
+        price_override_cents: it.price_override_cents ?? null,
+        produced: false
       }));
 
-      const { error: iErr } = await supabase.from("order_items").insert(itemsPayload);
+      const { error: itemsErr } = await supabase
+        .from("order_items")
+        .insert(itemsPayload);
 
-      if(iErr){
-        showMissing("Fehler beim Speichern (Positionen): " + iErr.message);
+      if(itemsErr){
+        showErr("Fehler beim Speichern (Positionen): " + itemsErr.message);
         await supabase.from("orders").delete().eq("id", orderId);
-        saveOrderBtn.disabled = false;
-        saveOrderBtn.textContent = "✅ Bestellung speichern";
+        saveOrderBtn.disabled=false;
+        saveOrderBtn.textContent="✅ Bestellung speichern";
         return;
       }
 
-      cart=[];
+      cart = [];
       updateCartUI();
-      validateSaveEnabled();
 
       saveStatus.style.display="block";
       saveStatus.textContent="Gespeichert ✅";
@@ -1381,77 +1153,37 @@
 
       await loadAll();
     }
-
     saveOrderBtn.addEventListener("click", saveOrder);
 
-    // ---------------- order actions ----------------
-    async function deleteOrder(orderId){
-      const ok = confirm("Bist du sicher? Diese Bestellung wird endgültig gelöscht.");
-      if(!ok) return;
-      await supabase.from("orders").delete().eq("id", orderId); // cascade löscht items
-      await loadAll();
+    // ---------------- Orders List ----------------
+    function formatDateOnly(iso){
+      const d = new Date(iso);
+      const dd = String(d.getDate()).padStart(2,"0");
+      const mm = String(d.getMonth()+1).padStart(2,"0");
+      const yy = d.getFullYear();
+      return `${dd}.${mm}.${yy}`;
     }
 
-    async function archiveOrder(orderId){
-      await supabase.from("orders").update({ archived:true }).eq("id", orderId);
-      await loadAll();
-    }
-
-    async function restoreOrder(orderId){
-      await supabase.from("orders").update({ archived:false }).eq("id", orderId);
-      await loadAll();
-    }
-
-    async function toggleProduced(itemId, newVal){
-      const { error } = await supabase.from("order_items").update({ produced: !!newVal }).eq("id", itemId);
-      if(error) alert(error.message);
-      await loadAll();
-    }
-
-    async function editItemPrice(itemId, cur){
-      const v = await openNumPad({
-        title: "Preis pro Stück (€)",
-        startValue: (cur==null || cur==="") ? "0" : String(cur)
-      });
-      if(v==null) return;
-      const { error } = await supabase.from("order_items").update({ price_override: v }).eq("id", itemId);
-      if(error) alert(error.message);
-      await loadAll();
-    }
-
-    async function editOrderTotal(orderId, cur){
-      const start = (cur==null || cur==="") ? "0" : String(cur);
-      const v = await openNumPad({
-        title: "Neuer Gesamtpreis (€)",
-        startValue: start
-      });
-      if(v==null) return;
-      const { error } = await supabase.from("orders").update({ total_override: v }).eq("id", orderId);
-      if(error) alert(error.message);
-      await loadAll();
-    }
-
-    async function clearOrderTotalOverride(orderId){
-      const ok = confirm("Gesamtpreis-Override löschen? Danach wird wieder normal berechnet.");
-      if(!ok) return;
-      const { error } = await supabase.from("orders").update({ total_override: null }).eq("id", orderId);
-      if(error) alert(error.message);
-      await loadAll();
-    }
-
-    // ---------------- render orders ----------------
-    function itemSortKey(it){
-      // bunny 11->15->20, dann lumi, dann text, dann other
-      if(it.product==="bunny"){
-        const r = (String(it.size)==="11") ? 0 : (String(it.size)==="15") ? 1 : 2;
-        return "0-"+r;
+    function orderTotalCents(order, items){
+      // Wenn total_override gesetzt -> das nehmen
+      if(order.total_override_cents != null){
+        return Number(order.total_override_cents||0);
       }
-      if(it.product==="lumi") return "1";
-      if(it.product==="text") return "2";
-      return "3";
+      // sonst Summe aus Items
+      let sum = 0;
+      for(const it of items){
+        let unit = it.price_override_cents;
+        if(unit == null){
+          if(it.product==="bunny") unit = PRICES_CENTS.bunny[it.size] || 0;
+          else if(it.product==="lumi") unit = PRICES_CENTS.lumi;
+          else unit = 0; // other/script sollten override haben, aber falls nicht -> 0
+        }
+        sum += Number(unit||0) * Number(it.qty||0);
+      }
+      return sum;
     }
 
-    function renderOrders(target, orders, { archived }){
+    function renderOrders(target, orders, itemsMap, { archived }){
       target.innerHTML = "";
 
       if(orders.length===0){
@@ -1460,51 +1192,53 @@
       }
 
       for(const o of orders){
-        const items = (o.items||[]).slice().sort((a,b)=>{
-          const ka=itemSortKey(a), kb=itemSortKey(b);
-          return ka<kb?-1:ka>kb?1:0;
+        const items = (itemsMap.get(o.id) || []).slice();
+
+        // Sort Items (prio+title)
+        items.sort((a,b)=>{
+          const ap = prioRank(a.priority), bp = prioRank(b.priority);
+          if(ap!==bp) return ap-bp;
+          return String(a.title).localeCompare(String(b.title));
         });
 
-        const computed = priceForItems(items);
-        const total = (o.total_override!=null ? Number(o.total_override) : computed);
+        const allDone = items.length>0 && items.every(x=>x.produced === true);
 
-        // FERTIG?
-        const allDone = items.length>0 && items.every(x=>!!x.produced);
-
+        const date = formatDateOnly(o.created_at);
         const minPr = Math.min(...items.map(x=>prioRank(x.priority)).concat([2]));
         const prText = minPr===0 ? "Sehr wichtig" : minPr===1 ? "Wichtig" : "Nicht wichtig";
 
-        const date = formatDateOnly(o.created_at);
+        const totalCents = orderTotalCents(o, items);
 
         const lines = items.map(it=>{
-          const prodClass = it.produced ? "prodBox done" : "prodBox";
-          const prodIcon = it.produced ? "✓" : "✖";
-
-          const unit = (it.price_override!=null) ? Number(it.price_override) : null;
-          const priceTxt = (unit!=null)
-            ? `<div class="muted" style="margin-top:4px;">💶 Preis/Stk: ${euro(unit)}</div>`
-            : ``;
+          const toggleClass = it.produced ? "done" : "notdone";
+          const symbol = it.produced ? "✓" : "✕";
 
           return `
             <div style="padding:10px 0; border-top:1px dashed #eef2f7;">
               <div class="row" style="justify-content:space-between; gap:10px; align-items:flex-start;">
                 <div style="min-width:240px;">
-                  <div style="font-weight:900">${esc(buildItemTitle(it))} <span class="muted">(${esc(prioLabel(it.priority))})</span></div>
-                  ${colorTextStack(it)}
-                  ${it.customer_name ? `<div class="muted" style="margin-top:6px;">👤 ${esc(it.customer_name)}</div>` : ``}
-                  ${it.note ? `<div class="muted" style="margin-top:6px;">📝 ${esc(it.note)}</div>` : ``}
-                  ${priceTxt}
+                  <div style="font-weight:900">${esc(it.title)} <span class="muted">(${esc(prioLabel(it.priority))})</span></div>
+                  ${it.product==="bunny"
+                    ? `<div class="colorsStack muted">
+                         <div><b>Ohren:</b> ${esc(it.colors?.ears||"")}</div>
+                         <div><b>Körper:</b> ${esc(it.colors?.body||"")}</div>
+                         <div><b>Popo:</b> ${esc(it.colors?.butt||"")}</div>
+                       </div>`
+                    : `<div class="colorsStack muted">
+                         <div><b>Hauptfarbe:</b> ${esc(it.colors?.c1||"")}</div>
+                         <div><b>2. Farbe:</b> ${esc(it.colors?.c2||"")}</div>
+                       </div>`
+                  }
                 </div>
 
                 <div class="row" style="gap:10px;">
-                  <div class="${prodClass}" data-prod="${esc(it.id)}" data-prodval="${it.produced ? "1":"0"}">
-                    <div class="prodMark">${prodIcon}</div>
-                    Produziert
-                  </div>
+                  <button class="prodToggle ${toggleClass}" data-toggle-produced="${esc(it.id)}" title="Produziert">
+                    ${symbol}
+                  </button>
 
                   <span class="badge">× ${esc(it.qty)}</span>
 
-                  <button class="iconBtn" title="Preis pro Stück ändern" data-edit-item="${esc(it.id)}" data-cur-price="${it.price_override ?? ""}">✏</button>
+                  <button class="iconBtn" title="Preis pro Stück ändern" data-edit-item="${esc(it.id)}">✏</button>
                 </div>
               </div>
             </div>
@@ -1514,30 +1248,23 @@
         const card = document.createElement("div");
         card.className = "card pad orderCard";
 
-        const overrideBadge = (o.total_override!=null)
-          ? `<span class="badge warn" title="Override aktiv">Gesamt überschrieben</span>`
-          : ``;
-
-        const fertigBadge = allDone
-          ? `<span class="badge ok">FERTIG ✓</span>`
-          : `<span class="badge neutral">Offen</span>`;
-
         card.innerHTML = `
           <div class="row" style="justify-content:space-between; align-items:flex-start;">
             <div>
               <div class="row" style="gap:10px; align-items:center;">
                 <div class="orderTitle">${archived ? "Archiv" : "Offen"} • ${esc(date)}</div>
                 <span class="badge">${esc(prText)}</span>
-                ${fertigBadge}
-                ${overrideBadge}
+                ${allDone ? `<span class="badge ok">FERTIG</span>` : ``}
               </div>
+              <div class="muted" style="margin-top:6px;">👤 ${esc(o.customer_name||"")}</div>
+              ${o.note ? `<div class="muted" style="margin-top:6px;">📝 ${esc(o.note)}</div>` : ``}
             </div>
 
             <div class="row" style="gap:8px; align-items:center;">
-              <div style="font-weight:1000">${euro(total)}</div>
+              <div style="font-weight:1000">${euroFromCents(totalCents)}</div>
 
-              <button class="iconBtn" title="Gesamtpreis neu setzen" data-edit-order="${esc(o.id)}" data-cur-total="${o.total_override ?? ""}">✏</button>
-              <button class="iconBtn" title="Gesamtpreis-Override löschen" data-clear-order="${esc(o.id)}">↺</button>
+              <!-- Gesamtpreis Override NUR über Stift -->
+              <button class="iconBtn" title="Gesamtpreis setzen" data-edit-total="${esc(o.id)}">✏</button>
 
               ${
                 archived
@@ -1560,54 +1287,102 @@
         target.appendChild(card);
       }
 
-      // Handlers
-      target.querySelectorAll("[data-archive]").forEach(b=>{
-        b.addEventListener("click", ()=>archiveOrder(b.getAttribute("data-archive")));
-      });
-      target.querySelectorAll("[data-restore]").forEach(b=>{
-        b.addEventListener("click", ()=>restoreOrder(b.getAttribute("data-restore")));
-      });
-      target.querySelectorAll("[data-delete]").forEach(b=>{
-        b.addEventListener("click", ()=>deleteOrder(b.getAttribute("data-delete")));
-      });
-
-      target.querySelectorAll("[data-prod]").forEach(b=>{
-        b.addEventListener("click", ()=>{
-          const id = b.getAttribute("data-prod");
-          const cur = b.getAttribute("data-prodval")==="1";
-          toggleProduced(id, !cur);
+      // handlers
+      target.querySelectorAll("[data-toggle-produced]").forEach(b=>{
+        b.addEventListener("click", async ()=>{
+          const id = b.getAttribute("data-toggle-produced");
+          // read current from dataset? simplest: refetch value by toggling locally after update
+          // we just flip in db using select+update:
+          const { data, error } = await supabase.from("order_items").select("produced").eq("id", id).single();
+          if(error) return alert(error.message);
+          const next = !data.produced;
+          const { error: uErr } = await supabase.from("order_items").update({ produced: next }).eq("id", id);
+          if(uErr) return alert(uErr.message);
+          await loadAll();
         });
       });
 
       target.querySelectorAll("[data-edit-item]").forEach(b=>{
-        b.addEventListener("click", ()=>{
+        b.addEventListener("click", async ()=>{
           const id = b.getAttribute("data-edit-item");
-          const cur = b.getAttribute("data-cur-price");
-          editItemPrice(id, cur==="" ? null : cur);
+          // current price:
+          const { data, error } = await supabase.from("order_items").select("price_override_cents,product,size").eq("id", id).single();
+          if(error) return alert(error.message);
+
+          let initial = data.price_override_cents;
+          if(initial == null){
+            if(data.product==="bunny") initial = PRICES_CENTS.bunny[data.size] || 0;
+            else if(data.product==="lumi") initial = PRICES_CENTS.lumi;
+            else initial = 0;
+          }
+
+          openMoneyModal({
+            title: "Preis pro Stück",
+            initialCents: initial,
+            onApply: async (cents)=>{
+              const { error: uErr } = await supabase.from("order_items").update({ price_override_cents: cents }).eq("id", id);
+              if(uErr) return alert(uErr.message);
+              await loadAll();
+            }
+          });
         });
       });
 
-      target.querySelectorAll("[data-edit-order]").forEach(b=>{
-        b.addEventListener("click", ()=>{
-          const id = b.getAttribute("data-edit-order");
-          const cur = b.getAttribute("data-cur-total");
-          editOrderTotal(id, cur==="" ? null : cur);
+      target.querySelectorAll("[data-edit-total]").forEach(b=>{
+        b.addEventListener("click", async ()=>{
+          const orderId = b.getAttribute("data-edit-total");
+          const { data: order, error } = await supabase.from("orders").select("total_override_cents").eq("id", orderId).single();
+          if(error) return alert(error.message);
+
+          // wenn null -> initial aus berechnetem total
+          let initial = order.total_override_cents;
+          if(initial == null){
+            // calculate from itemsMap:
+            const items = (itemsMap.get(orderId) || []);
+            initial = orderTotalCents({ total_override_cents:null }, items);
+          }
+
+          openMoneyModal({
+            title: "Gesamtpreis setzen",
+            initialCents: initial || 0,
+            onApply: async (cents)=>{
+              const { error: uErr } = await supabase.from("orders").update({ total_override_cents: cents }).eq("id", orderId);
+              if(uErr) return alert(uErr.message);
+              await loadAll();
+            }
+          });
         });
       });
 
-      target.querySelectorAll("[data-clear-order]").forEach(b=>{
-        b.addEventListener("click", ()=>{
-          const id = b.getAttribute("data-clear-order");
-          clearOrderTotalOverride(id);
+      target.querySelectorAll("[data-archive]").forEach(b=>{
+        b.addEventListener("click", async ()=>{
+          const id = b.getAttribute("data-archive");
+          await supabase.from("orders").update({ archived:true }).eq("id", id);
+          await loadAll();
+        });
+      });
+      target.querySelectorAll("[data-restore]").forEach(b=>{
+        b.addEventListener("click", async ()=>{
+          const id = b.getAttribute("data-restore");
+          await supabase.from("orders").update({ archived:false }).eq("id", id);
+          await loadAll();
+        });
+      });
+      target.querySelectorAll("[data-delete]").forEach(b=>{
+        b.addEventListener("click", async ()=>{
+          const id = b.getAttribute("data-delete");
+          const ok = confirm("Wirklich löschen?");
+          if(!ok) return;
+          await supabase.from("orders").delete().eq("id", id);
+          await loadAll();
         });
       });
     }
 
-    // ---------------- load all ----------------
     async function loadAll(){
       const { data: orders, error: oErr } = await supabase
         .from("orders")
-        .select("id,created_at,archived,total_override")
+        .select("id,created_at,customer_name,note,archived,total_override_cents")
         .order("created_at", { ascending:false });
 
       if(oErr){
@@ -1625,23 +1400,22 @@
         return;
       }
 
-      const map = new Map();
-      for(const o of (orders||[])) map.set(o.id, { ...o, items: [] });
+      // map orderId -> items
+      const itemsMap = new Map();
       for(const it of (items||[])){
-        const o = map.get(it.order_id);
-        if(o){
-          o.items.push({ ...it, colors: it.colors || {} });
-        }
+        if(!itemsMap.has(it.order_id)) itemsMap.set(it.order_id, []);
+        itemsMap.get(it.order_id).push(it);
       }
 
-      const all = Array.from(map.values());
+      const all = (orders||[]).map(o=>({ ...o, items: itemsMap.get(o.id) || [] }));
+
       const open = all.filter(x=>!x.archived);
       const archived = all.filter(x=>x.archived);
 
       if(sortMode==="prio"){
         open.sort((a,b)=>{
-          const ap = Math.min(...a.items.map(x=>prioRank(x.priority)).concat([2]));
-          const bp = Math.min(...b.items.map(x=>prioRank(x.priority)).concat([2]));
+          const ap = Math.min(...(a.items||[]).map(x=>prioRank(x.priority)).concat([2]));
+          const bp = Math.min(...(b.items||[]).map(x=>prioRank(x.priority)).concat([2]));
           if(ap!==bp) return ap-bp;
           return new Date(b.created_at)-new Date(a.created_at);
         });
@@ -1649,31 +1423,35 @@
         open.sort((a,b)=> new Date(b.created_at)-new Date(a.created_at));
       }
 
-      const openTotal = open.reduce((s,o)=>{
-        const computed = priceForItems(o.items);
-        const total = (o.total_override!=null ? Number(o.total_override) : computed);
-        return s + total;
-      }, 0);
+      // sums
+      const openTotal = open.reduce((s,o)=> s + orderTotalCents(o, o.items||[]), 0);
+      openSumEl.textContent = `Summe offen: ${euroFromCents(openTotal)}`;
 
-      const archivedTotal = archived.reduce((s,o)=>{
-        const computed = priceForItems(o.items);
-        const total = (o.total_override!=null ? Number(o.total_override) : computed);
-        return s + total;
-      }, 0);
+      const archTotal = archived.reduce((s,o)=> s + orderTotalCents(o, o.items||[]), 0);
+      archivedTotalEl.textContent = `Archiv gesamt: ${euroFromCents(archTotal)}`;
 
-      openSumEl.textContent = `Summe offen: ${euro(openTotal)}`;
-      archivedTotalEl.textContent = `Archiv gesamt: ${euro(archivedTotal)}`;
-
-      renderOrders(openOrdersEl, open, { archived:false });
-      renderOrders(archiveOrdersEl, archived, { archived:true });
+      renderOrders(openOrdersEl, open, itemsMap, { archived:false });
+      renderOrders(archiveOrdersEl, archived, itemsMap, { archived:true });
     }
 
-    // ---------------- start ----------------
+    sortDate.addEventListener("click", ()=>{
+      sortMode = "date";
+      sortDate.classList.add("btnDark"); sortDate.classList.remove("btnSoft");
+      sortPrio.classList.add("btnSoft"); sortPrio.classList.remove("btnDark");
+      loadAll();
+    });
+    sortPrio.addEventListener("click", ()=>{
+      sortMode = "prio";
+      sortPrio.classList.add("btnDark"); sortPrio.classList.remove("btnSoft");
+      sortDate.classList.add("btnSoft"); sortDate.classList.remove("btnDark");
+      loadAll();
+    });
+
+    // Init
     setProduct("bunny");
     updateCartUI();
-    validateSaveEnabled();
+    saveOrderBtn.disabled = true;
     await loadAll();
-
   </script>
 </body>
 </html>
