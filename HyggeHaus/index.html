@@ -1476,22 +1476,35 @@
       await supabase.from("orders").delete().eq("id", orderId);
       await loadAll();
     }
+async function editOrderAdjust(orderId, baseTotal, currentTotal){
+  const v = prompt(
+    "Neuen GESAMTPREIS der Bestellung in € eingeben (z.B. 20 oder 19,50):",
+    String(currentTotal ?? baseTotal ?? 0).replace(".", ",")
+  );
+  if(v === null) return;
+
+  const newTotal = num(v);
+  if(!Number.isFinite(newTotal) || newTotal < 0) {
+    return alert("Bitte eine gültige Zahl >= 0 eingeben.");
+  }
+
+  const adjust = newTotal - Number(baseTotal || 0);
+
+  const { error } = await supabase
+    .from("orders")
+    .update({ amount_adjust: adjust })
+    .eq("id", orderId);
+
+  if(error) return alert(error.message);
+  await loadAll();
+}
 
     async function restoreOrder(orderId){
       await supabase.from("orders").update({ archived:false }).eq("id", orderId);
       await loadAll();
     }
 
-    async function editOrderAdjust(orderId, currentAdjust){
-      const v = prompt("Korrektur / Preis-Anpassung für diese Bestellung in € (z.B. -2 oder 3.50):", String(currentAdjust ?? 0));
-      if(v===null) return;
-      const n = num(v);
-      if(!Number.isFinite(n)) return alert("Bitte eine Zahl eingeben (z.B. 2 oder -1.50).");
 
-      const { error } = await supabase.from("orders").update({ amount_adjust: n }).eq("id", orderId);
-      if(error) return alert(error.message);
-      await loadAll();
-    }
 
     async function editItemPrice(itemId, currentPrice){
       const v = prompt("Preis pro Stück in € (leer = Standardpreis):", currentPrice==null ? "" : String(currentPrice));
@@ -1642,7 +1655,14 @@
               <div style="font-weight:1000">${euro(total)}</div>
 
               <!-- Stift: Korrektur pro Bestellung -->
-              <button class="iconBtn" title="Bestellung-Korrektur ändern" data-edit-order="${o.id}" data-cur-adjust="${o.amount_adjust ?? 0}">✏</button>
+              <button
+  class="iconBtn"
+  title="Gesamtpreis der Bestellung setzen"
+  data-edit-order="${o.id}"
+  data-base-total="${baseTotal}"
+  data-cur-total="${total}"
+>✏</button>
+
 
               ${
                 archived
@@ -1682,13 +1702,15 @@
       });
 
       // Stift pro Bestellung (Korrektur)
-      target.querySelectorAll("[data-edit-order]").forEach(b=>{
-        b.addEventListener("click", ()=>{
-          const id = b.getAttribute("data-edit-order");
-          const cur = b.getAttribute("data-cur-adjust");
-          editOrderAdjust(id, cur);
-        });
-      });
+target.querySelectorAll("[data-edit-order]").forEach(b=>{
+  b.addEventListener("click", ()=>{
+    const id = b.getAttribute("data-edit-order");
+    const base = num(b.getAttribute("data-base-total"));
+    const curTotal = num(b.getAttribute("data-cur-total"));
+    editOrderAdjust(id, base, curTotal);
+  });
+});
+
 
       // Stift pro Item (Preis/Stk)
       target.querySelectorAll("[data-edit-item]").forEach(b=>{
