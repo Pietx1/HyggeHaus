@@ -1,1234 +1,1241 @@
 <!doctype html>
 <html lang="de">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>HyggeHaus • Bestellungen</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>HyggeHaus • Bestellungen</title>
 
-  <style>
-    :root{
-      --bg:#f6f7fb; --card:#fff; --text:#111827; --muted:#6b7280; --border:#e5e7eb;
-      --shadow:0 10px 30px rgba(0,0,0,.08);
-      --dark:#0f172a; --dark2:#111827;
-      --danger:#b91c1c; --ok:#047857; --warn:#b45309;
-      --radius:18px;
-    }
-    *{ box-sizing:border-box; }
-    body{ margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; background:var(--bg); color:var(--text); }
-    .container{ max-width:1100px; margin:0 auto; padding:24px; }
-    h1{ margin:0; font-size:34px; letter-spacing:-.02em; }
-    .topbar{ display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin-bottom:18px; }
-    .hint{ color:var(--muted); font-size:13px; }
+<style>
+:root{
+  --bg:#f7f8fa;
+  --card:#ffffff;
+  --border:#e6e8ee;
+  --text:#111827;
+  --muted:#6b7280;
+  --dark:#111827;
+  --danger:#b91c1c;
+  --ok:#047857;
+  --radius:16px;
+}
 
-    .card{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); }
-    .pad{ padding:18px; }
-    .sep{ height:1px; background:var(--border); margin:14px 0; }
-    .title2{ font-size:18px; font-weight:900; margin:0 0 8px; }
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
 
-    /* Mobile Zoom Fix: mind. 16px */
-    input, textarea{
-      width:100%;
-      border:1px solid var(--border);
-      border-radius:14px;
-      padding:11px 14px;
-      font-size:16px;
-      outline:none;
-      background:#fff;
-    }
-    textarea{ min-height:90px; resize:vertical; }
-    input:focus, textarea:focus{ border-color:#c7d2fe; box-shadow:0 0 0 4px rgba(99,102,241,.12); }
+.container{
+  max-width:1100px;
+  margin:auto;
+  padding:24px;
+}
 
-    label{ font-weight:900; font-size:13px; display:block; margin:0 0 6px; }
+h1{
+  margin:0 0 20px;
+  font-size:28px;
+  font-weight:800;
+}
 
-    .grid{ display:grid; gap:14px; }
-    @media(min-width:900px){
-      .grid-2{ grid-template-columns:repeat(2,1fr); }
-      .grid-3{ grid-template-columns:repeat(3,1fr); }
-      .grid-4{ grid-template-columns:repeat(4,1fr); }
-    }
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:20px;
+  margin-bottom:20px;
+}
 
-    .btn{
-      border:0; cursor:pointer;
-      border-radius:14px;
-      padding:12px 14px;
-      font-weight:900; font-size:14px;
-      background:var(--dark2); color:#fff;
-      display:inline-flex; align-items:center; justify-content:center; gap:8px;
-      user-select:none;
-    }
-    .btn:disabled{ opacity:.45; cursor:not-allowed; }
-    .btnSmall{ padding:8px 10px; border-radius:12px; font-size:13px; }
-    .btnSoft{ background:#fff; border:1px solid var(--border); color:var(--text); font-weight:900; }
-    .btnDark{ background:linear-gradient(180deg, #0b1220, #0f172a); }
-    .btnDanger{ background:var(--danger); }
+.sep{
+  height:1px;
+  background:var(--border);
+  margin:18px 0;
+}
 
-    .row{ display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
-    .muted{ color:var(--muted); font-size:13px; }
+label{
+  display:block;
+  font-size:13px;
+  font-weight:700;
+  margin-bottom:6px;
+}
 
-    .chips{ display:flex; gap:10px; flex-wrap:wrap; }
-    .chip{
-      border:1px solid var(--border);
-      background:#fff;
-      color:var(--text);
-      padding:11px 14px;
-      border-radius:999px;
-      font-weight:900;
-      cursor:pointer;
-      user-select:none;
-      min-width:108px;
-      text-align:center;
-    }
-    .chip.active{ background:linear-gradient(180deg, #0b1220, #0f172a); color:#fff; border-color:#0f172a; }
+input, textarea{
+  width:100%;
+  padding:10px 12px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  font-size:16px;
+  background:#fff;
+}
 
-    .prioRow{ display:flex; gap:10px; align-items:stretch; }
-    .prioBtn{
-      flex:1; border:1px solid var(--border); background:#fff; border-radius:14px;
-      font-weight:900; cursor:pointer; padding:10px 12px; text-align:center; user-select:none;
-    }
-    .prioBtn.small{ flex:.85; } .prioBtn.big{ flex:1.3; }
-    .prioBtn.active{ background:var(--dark2); color:#fff; border-color:var(--dark2); }
+textarea{resize:vertical;}
 
-    /* Menge 3x3 am Handy */
-    .qtyGrid{
-      display:grid;
-      grid-template-columns:repeat(3, 1fr);
-      gap:10px;
-    }
-    .qtyGrid .chip{ min-width:0; }
+.grid{
+  display:grid;
+  gap:16px;
+}
 
-    .badge{
-      font-size:12px; font-weight:900; padding:6px 10px; border-radius:999px;
-      border:1px solid var(--border); background:#fff; white-space:nowrap;
-    }
-    .badge.ok{ border-color:#bbf7d0; background:#f0fdf4; color:#166534; }
-    .badge.neutral{ border-color:#e5e7eb; background:#f9fafb; color:#111827; }
+.grid-2{
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+}
 
-    .iconBtn{
-      border:1px solid var(--border);
-      background:#fff;
-      width:36px; height:36px;
-      border-radius:12px;
-      cursor:pointer;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight:900;
-    }
-    .iconBtn:hover{ background:#f9fafb; }
-    .iconBtn.danger{ border-color:#fecaca; color:#991b1b; }
+.chips{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
 
-    /* Produced toggle */
-    .prodBtn{
-      border:1px solid var(--border);
-      background:#fff;
-      height:36px;
-      padding:0 10px;
-      border-radius:12px;
-      cursor:pointer;
-      font-weight:900;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-    }
-    .prodBtn.done{
-      border-color:#bbf7d0;
-      background:#f0fdf4;
-      color:#166534;
-    }
+.chip{
+  border:1px solid var(--border);
+  padding:8px 14px;
+  border-radius:999px;
+  font-weight:600;
+  cursor:pointer;
+  background:#fff;
+  font-size:14px;
+}
 
-    /* Color field with arrow inside */
-    .pickWrap{ position:relative; }
-    .pickInput{ padding-right:44px; }
-    .pickArrow{
-      position:absolute;
-      right:8px;
-      top:50%;
-      transform:translateY(-50%);
-      width:34px; height:34px;
-      border-radius:12px;
-      border:1px solid var(--border);
-      background:#fff;
-      cursor:pointer;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight:900;
-      line-height:1;
-    }
+.chip.active{
+  background:var(--dark);
+  color:#fff;
+  border-color:var(--dark);
+}
 
-    /* Modal */
-    .modal{
-      position:fixed; inset:0;
-      background:rgba(15,23,42,.45);
-      display:none;
-      align-items:flex-end;
-      justify-content:center;
-      z-index:9999;
-      padding:14px;
-    }
-    .modal.open{ display:flex; }
-    .sheet{
-      width:min(740px, 100%);
-      background:#fff;
-      border-radius:18px;
-      border:1px solid var(--border);
-      box-shadow:var(--shadow);
-      overflow:hidden;
-    }
-    .sheetHead{
-      padding:12px 14px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      border-bottom:1px solid var(--border);
-      font-weight:1000;
-    }
-    .sheetBody{ padding:14px; }
-    .colorGrid{
-      display:grid;
-      grid-template-columns:repeat(3, 1fr);
-      gap:10px;
-    }
-    @media(min-width:700px){
-      .colorGrid{ grid-template-columns:repeat(5, 1fr); }
-    }
-    .cBtn{
-      border:1px solid var(--border);
-      background:#fff;
-      border-radius:14px;
-      padding:10px 10px;
-      cursor:pointer;
-      font-weight:900;
-      text-align:center;
-      user-select:none;
-    }
-    .cBtn:hover{ background:#f9fafb; }
+.btn{
+  border:none;
+  padding:10px 16px;
+  border-radius:10px;
+  font-weight:700;
+  cursor:pointer;
+  background:var(--dark);
+  color:#fff;
+  font-size:14px;
+}
 
-    details.archive > summary{
-      cursor:pointer;
-      user-select:none;
-      font-weight:900;
-      color:#1f3a8a;
-    }
+.btnSoft{
+  background:#fff;
+  border:1px solid var(--border);
+  color:var(--text);
+}
 
-    .error{ color:var(--danger); font-weight:900; }
-    .ok{ color:var(--ok); font-weight:900; }
+.iconBtn{
+  width:32px;
+  height:32px;
+  border-radius:8px;
+  border:1px solid var(--border);
+  background:#fff;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
 
-  </style>
+.iconBtn.danger{
+  border-color:#f5c2c2;
+  color:var(--danger);
+}
+
+.badge{
+  font-size:12px;
+  padding:4px 8px;
+  border-radius:999px;
+  border:1px solid var(--border);
+}
+
+.badge.ok{
+  background:#f0fdf4;
+  border-color:#bbf7d0;
+  color:#166534;
+}
+
+.qtyGrid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+}
+
+.colorRow{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  margin-bottom:10px;
+}
+
+.colorRow input{
+  flex:1;
+}
+
+.colorRow button{
+  width:36px;
+}
+
+.orderCard{
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:14px;
+  margin-bottom:14px;
+}
+
+.orderHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px;
+}
+
+.orderItems{
+  border-top:1px solid var(--border);
+  padding-top:10px;
+}
+
+.orderItem{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:6px;
+}
+
+.checkboxBtn{
+  width:26px;
+  height:26px;
+  border:1px solid var(--border);
+  border-radius:6px;
+  background:#fff;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:14px;
+}
+
+.checkboxBtn.done{
+  background:#e6f9f1;
+  border-color:#bbf7d0;
+  color:var(--ok);
+}
+
+.sectionTitle{
+  font-weight:800;
+  margin-bottom:12px;
+}
+</style>
 </head>
 
 <body>
-  <div class="container">
-    <div class="topbar">
-      <h1>Bestellungen</h1>
-      <div class="hint">GitHub Pages • Supabase</div>
+<div class="container">
+
+<h1>Bestellungen</h1>
+
+<!-- Neue Bestellung -->
+<div class="card">
+
+  <div class="chips">
+    <div class="chip active" id="btnBunny">🐰 Hase</div>
+    <div class="chip" id="btnLumi">✨ Lumi</div>
+    <div class="chip" id="btnText">✍️ Schriftzug</div>
+    <div class="chip" id="btnOther">➕ Weitere</div>
+  </div>
+
+  <div class="sep"></div>
+
+  <div class="grid grid-2">
+    <div>
+      <label>Kundenname</label>
+      <input id="customer">
     </div>
-
-    <!-- NEUE BESTELLUNG -->
-    <div class="card">
-      <div class="pad">
-        <div class="chips">
-          <div class="chip" id="btnBunny">🐰 Hase</div>
-          <div class="chip" id="btnLumi">✨🪲 Lumi</div>
-          <div class="chip" id="btnText">✍️ Schriftzug</div>
-          <div class="chip" id="btnOther">➕ Weitere Produkt</div>
-        </div>
-
-        <div style="height:10px"></div>
-        <div class="title2" id="newTitle">Neue Bestellung</div>
-
-        <div class="sep"></div>
-
-        <!-- Kunde IMMER über Priorität -->
-        <div class="grid grid-2">
-          <div>
-            <label for="customer">Kundenname</label>
-            <input id="customer" placeholder="z. B. Max Mustermann" />
-          </div>
-          <div>
-            <label for="note">Beschreibung (optional)</label>
-            <textarea id="note" placeholder="Hinweis …"></textarea>
-          </div>
-        </div>
-
-        <div class="sep"></div>
-
-        <div id="productArea"></div>
-
-        <div class="sep"></div>
-
-        <label>Priorität</label>
-        <div class="prioRow">
-          <div class="prioBtn small" id="pVery">Sehr wichtig</div>
-          <div class="prioBtn big" id="pNorm">Wichtig</div>
-          <div class="prioBtn small" id="pLow">Nicht wichtig</div>
-        </div>
-
-        <div class="sep"></div>
-
-        <label>Menge</label>
-        <div class="qtyGrid" id="qtyGrid">
-          <div class="chip qtyBtn" data-q="1">1</div>
-          <div class="chip qtyBtn" data-q="2">2</div>
-          <div class="chip qtyBtn" data-q="3">3</div>
-          <div class="chip qtyBtn" data-q="4">4</div>
-          <div class="chip qtyBtn" data-q="5">5</div>
-          <div class="chip qtyBtn" data-q="6">6</div>
-          <div class="chip qtyBtn" data-q="7">7</div>
-          <div class="chip qtyBtn" data-q="8">8</div>
-          <div class="chip qtyBtn" data-q="9">9</div>
-        </div>
-
-        <div class="grid grid-2" style="align-items:end; margin-top:10px;">
-          <div>
-            <label for="qtyOther">Andere Menge (optional)</label>
-            <input id="qtyOther" inputmode="numeric" placeholder="z. B. 12" />
-          </div>
-          <div style="display:flex; justify-content:flex-end;">
-            <button class="btn btnDark" id="addItemBtn" style="min-width:280px;">+ Position hinzufügen</button>
-          </div>
-        </div>
-
-        <div class="sep"></div>
-
-        <div class="row" style="justify-content:space-between; align-items:flex-end;">
-          <div class="title2" style="margin:0;">Positionen in dieser Bestellung</div>
-          <div class="muted" id="cartSum">Summe: 0,00 €</div>
-        </div>
-
-        <div id="cartList" class="grid" style="margin-top:10px;"></div>
-        <div class="muted" id="cartHint">Noch keine Position hinzugefügt.</div>
-
-        <div class="sep"></div>
-
-        <button id="saveOrderBtn" class="btn" disabled>✅ Bestellung speichern</button>
-        <div class="error" id="formError" style="display:none; margin-top:10px;"></div>
-        <div class="ok" id="saveStatus" style="display:none; margin-top:10px;">Gespeichert ✅</div>
-      </div>
-    </div>
-
-    <div style="height:16px"></div>
-
-    <!-- OFFENE BESTELLUNGEN -->
-    <div class="card">
-      <div class="pad">
-        <div class="row" style="justify-content:space-between; align-items:flex-start;">
-          <div>
-            <div class="title2" style="margin:0;">Offene Bestellungen</div>
-            <div class="muted" id="openSum">Summe offen: 0,00 €</div>
-          </div>
-          <div class="row" style="gap:10px;">
-            <button class="btnSmall btnDark" id="sortDate">Sort: Datum</button>
-            <button class="btnSmall btnSoft" id="sortPrio">Sort: Priorität</button>
-          </div>
-        </div>
-
-        <div class="sep"></div>
-        <div id="openOrders" class="grid"></div>
-
-        <div class="sep"></div>
-
-        <details class="archive">
-          <summary>Archiv (alte Bestellungen anzeigen)</summary>
-          <div style="margin-top:10px;">
-            <div class="muted" id="archivedTotal">Archiv gesamt: 0,00 €</div>
-            <div style="height:8px"></div>
-            <div id="archiveOrders" class="grid"></div>
-          </div>
-        </details>
-      </div>
+    <div>
+      <label>Beschreibung</label>
+      <textarea id="note"></textarea>
     </div>
   </div>
 
-  <!-- Color Modal -->
-  <div class="modal" id="colorModal" aria-hidden="true">
-    <div class="sheet">
-      <div class="sheetHead">
-        <div id="colorModalTitle">Farbe wählen</div>
-        <button class="btnSmall btnSoft" id="colorModalClose" type="button">Schließen</button>
-      </div>
-      <div class="sheetBody">
-        <div class="colorGrid" id="colorGrid"></div>
-      </div>
-    </div>
+  <div class="sep"></div>
+
+  <div id="productArea"></div>
+
+  <div class="sep"></div>
+
+  <label>Priorität</label>
+  <div class="chips">
+    <div class="chip" data-prio="very">Sehr wichtig</div>
+    <div class="chip active" data-prio="normal">Wichtig</div>
+    <div class="chip" data-prio="low">Nicht wichtig</div>
   </div>
 
-  <script type="module">
-    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+  <div class="sep"></div>
 
-    // ========= Supabase =========
-    const SUPABASE_URL = "https://htgrzmlcdolxxzvkppon.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0Z3J6bWxjZG9seHh6dmtwcG9uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0MzM2ODIsImV4cCI6MjA4NTAwOTY4Mn0.B0PxMAzmuvsHNd2n_mgNspjlPkaBpQlkrNzGu7p78fY";
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  <label>Menge</label>
+  <div class="qtyGrid" id="qtyGrid"></div>
 
-    // ========= Farben (ohne creme) =========
-    const COLORS = [
-      "weiß","schwarz","grau","dunkelgrau","hellgrau",
-      "beige","braun","oak",
-      "rot","orange","gelb","grün","blau","lila",
-      "pink","rosa","gold","silber"
-    ];
+  <div class="sep"></div>
 
-    // ========= Standardpreise =========
-    const PRICES = {
-      bunny: { "20": 12.0, "15": 9.0, "11": 6.0, comboAllThree: 22.50 },
-      lumi: 8.50
-    };
+  <button class="btn" id="addItemBtn">+ Position hinzufügen</button>
 
-    // ========= Helpers =========
-    const esc = (s)=> String(s??"").replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
-    const euro = (n)=> (Number(n)||0).toFixed(2).replace(".", ",") + " €";
-    const num = (s)=> Number(String(s??"").replace(",", "."));
-    const toCents = (val)=> {
-      const n = num(val);
-      if(!Number.isFinite(n)) return null;
-      return Math.round(n * 100);
-    };
-    const fromCents = (c)=> (Number(c||0)/100);
+  <div class="sep"></div>
 
-    function prioLabel(p){ return p==="very" ? "Sehr wichtig" : p==="normal" ? "Wichtig" : "Nicht wichtig"; }
-    function prioRank(p){ return p==="very" ? 0 : p==="normal" ? 1 : 2; }
+  <div id="cartList"></div>
 
-    // ========= Color modal =========
-    const colorModal = document.getElementById("colorModal");
-    const colorGrid  = document.getElementById("colorGrid");
-    const colorModalTitle = document.getElementById("colorModalTitle");
-    const colorModalClose = document.getElementById("colorModalClose");
-    let colorResolve = null;
+  <div class="sep"></div>
 
-    function openColorModal(title){
-      colorModalTitle.textContent = title || "Farbe wählen";
-      colorGrid.innerHTML = COLORS.map(c => `<button type="button" class="cBtn" data-c="${esc(c)}">${esc(c)}</button>`).join("");
-      colorModal.classList.add("open");
-      colorModal.setAttribute("aria-hidden","false");
+  <button class="btn" id="saveOrderBtn">Bestellung speichern</button>
 
-      return new Promise((resolve)=>{
-        colorResolve = resolve;
-      });
-    }
-    function closeColorModal(){
+</div>
+
+<!-- Offene Bestellungen -->
+<div class="card">
+  <div class="sectionTitle">Offene Bestellungen</div>
+  <div id="openOrders"></div>
+</div>
+
+<!-- Archiv -->
+<div class="card">
+  <div class="sectionTitle">Archiv</div>
+  <div id="archiveOrders"></div>
+</div>
+
+<!-- Farb Modal -->
+<div class="modal" id="colorModal" style="display:none;">
+  <div class="card" style="max-width:600px;margin:auto;">
+    <div class="sectionTitle">Farbe wählen</div>
+    <div class="colorGrid" id="colorGrid"></div>
+  </div>
+</div>
+<script type="module">
+
+/* =============================
+   BASIS DATEN
+============================= */
+
+const COLORS = [
+  "weiß","schwarz","grau","beige","braun",
+  "rot","orange","gelb","grün","blau",
+  "lila","pink","rosa","gold","silber"
+];
+
+let currentProduct = "bunny";
+let priority = "normal";
+let qty = 1;
+let cart = [];
+
+/* =============================
+   STATE PRO PRODUKT
+============================= */
+
+function createColorArray(){
+  return [
+    { label:"Hauptfarbe", value:"" },
+    { label:"2. Farbe", value:"" }
+  ];
+}
+
+let fields = {
+  bunny:{ size:null, mode:null, single:"", ears:"", body:"", butt:"" },
+  lumi:{ body:"", wings:"", feelers:"" },
+  schriftzug:{ name:"", price:"", colors:createColorArray() },
+  other:{ name:"", size:"", price:"", colors:createColorArray() }
+};
+
+/* =============================
+   HELPER
+============================= */
+
+const esc = s => String(s ?? "").replace(/[&<>"']/g,m=>(
+  {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]
+));
+
+/* =============================
+   PRODUKT SWITCH
+============================= */
+
+const btnBunny = document.getElementById("btnBunny");
+const btnLumi  = document.getElementById("btnLumi");
+const btnText  = document.getElementById("btnText");
+const btnOther = document.getElementById("btnOther");
+
+function setProduct(p){
+  currentProduct = p;
+
+  [btnBunny,btnLumi,btnText,btnOther].forEach(b=>b.classList.remove("active"));
+  if(p==="bunny") btnBunny.classList.add("active");
+  if(p==="lumi") btnLumi.classList.add("active");
+  if(p==="schriftzug") btnText.classList.add("active");
+  if(p==="other") btnOther.classList.add("active");
+
+  renderProductArea();
+}
+
+btnBunny.addEventListener("click",()=>setProduct("bunny"));
+btnLumi.addEventListener("click",()=>setProduct("lumi"));
+btnText.addEventListener("click",()=>setProduct("schriftzug"));
+btnOther.addEventListener("click",()=>setProduct("other"));
+
+/* =============================
+   PRIORITY
+============================= */
+
+document.querySelectorAll("[data-prio]").forEach(ch=>{
+  ch.addEventListener("click",()=>{
+    priority = ch.dataset.prio;
+    document.querySelectorAll("[data-prio]").forEach(x=>x.classList.remove("active"));
+    ch.classList.add("active");
+  });
+});
+
+/* =============================
+   MENGE
+============================= */
+
+const qtyGrid = document.getElementById("qtyGrid");
+
+for(let i=1;i<=9;i++){
+  const div = document.createElement("div");
+  div.className="chip"+(i===1?" active":"");
+  div.textContent=i;
+  div.addEventListener("click",()=>{
+    qty=i;
+    [...qtyGrid.children].forEach(x=>x.classList.remove("active"));
+    div.classList.add("active");
+  });
+  qtyGrid.appendChild(div);
+}
+
+/* =============================
+   FARBMENU
+============================= */
+
+const colorModal = document.getElementById("colorModal");
+const colorGrid  = document.getElementById("colorGrid");
+
+let colorCallback = null;
+
+function openColorModal(callback){
+  colorCallback = callback;
+  colorGrid.innerHTML = COLORS.map(c=>`
+    <div class="chip">${c}</div>
+  `).join("");
+
+  colorModal.classList.add("open");
+
+  [...colorGrid.children].forEach((el,i)=>{
+    el.addEventListener("click",()=>{
+      const val = COLORS[i];
       colorModal.classList.remove("open");
-      colorModal.setAttribute("aria-hidden","true");
-      if(colorResolve){ colorResolve(null); colorResolve=null; }
-    }
-    colorModalClose.addEventListener("click", closeColorModal);
-    colorModal.addEventListener("click", (e)=>{ if(e.target === colorModal) closeColorModal(); });
-
-    colorGrid.addEventListener("click", (e)=>{
-      const btn = e.target.closest("[data-c]");
-      if(!btn) return;
-      const c = btn.getAttribute("data-c");
-      if(colorResolve){ colorResolve(c); colorResolve=null; }
-      closeColorModal();
+      if(colorCallback) colorCallback(val);
     });
+  });
+}
 
-    // ========= UI refs =========
-    const btnBunny = document.getElementById("btnBunny");
-    const btnLumi  = document.getElementById("btnLumi");
-    const btnText  = document.getElementById("btnText");
-    const btnOther = document.getElementById("btnOther");
-    const newTitle = document.getElementById("newTitle");
+colorModal.addEventListener("click",e=>{
+  if(e.target===colorModal){
+    colorModal.classList.remove("open");
+  }
+});
 
-    const customer = document.getElementById("customer");
-    const noteEl   = document.getElementById("note");
+/* =============================
+   PRODUKT RENDER
+============================= */
 
-    const pVery = document.getElementById("pVery");
-    const pNorm = document.getElementById("pNorm");
-    const pLow  = document.getElementById("pLow");
+const productArea = document.getElementById("productArea");
 
-    const qtyOther = document.getElementById("qtyOther");
-    const addItemBtn = document.getElementById("addItemBtn");
+function renderProductArea(){
 
-    const cartList = document.getElementById("cartList");
-    const cartHint = document.getElementById("cartHint");
-    const cartSum  = document.getElementById("cartSum");
+  /* ---------- SCHRIFTZUG ---------- */
+  if(currentProduct==="schriftzug"){
+    const p = fields.schriftzug;
 
-    const saveOrderBtn = document.getElementById("saveOrderBtn");
-    const saveStatus = document.getElementById("saveStatus");
-    const formError = document.getElementById("formError");
+    productArea.innerHTML = `
+      <label>Text</label>
+      <input id="textName" value="${esc(p.name)}" placeholder="z.B. Happy Birthday">
 
-    const openOrdersEl = document.getElementById("openOrders");
-    const archiveOrdersEl = document.getElementById("archiveOrders");
-    const openSumEl = document.getElementById("openSum");
-    const archivedTotalEl = document.getElementById("archivedTotal");
+      <div class="sep"></div>
 
-    const sortDate = document.getElementById("sortDate");
-    const sortPrio = document.getElementById("sortPrio");
+      <label>Preis (€)</label>
+      <button class="btnSoft" id="openPriceUI">Preis eingeben</button>
+      <div id="priceDisplay">${esc(p.price||"")}</div>
 
-    const productArea = document.getElementById("productArea");
+      <div class="sep"></div>
 
-    // ========= State =========
-    let currentProduct = "bunny"; // bunny|lumi|schriftzug|other
-    let priority = null;
-    let qty = null;
-    let sortMode = "date";
+      <label>Farben</label>
+      <div id="colorContainer"></div>
+      ${p.colors.length<4?'<button class="btnSoft" id="addColorBtn">+ Farbe</button>':''}
+    `;
 
-    // per product fields
-    const fields = {
-      bunny_size: null, bunny_mode: null, bunny_single:null, bunny_ears:null, bunny_body:null, bunny_butt:null,
-      lumi_body:null, lumi_wings:null, lumi_feelers:null,
-      text_name:"Happy Birthday", text_color1:null, text_color2:null, text_price:null,
-      other_name:"", other_size:"", other_color1:null, other_color2:null, other_price:null
-    };
+    document.getElementById("textName")
+      .addEventListener("input",e=>p.name=e.target.value);
 
-    let cart = [];
+    document.getElementById("openPriceUI")
+      .addEventListener("click",()=>openPricePad(p));
 
-    // ========= UI helpers =========
-    function setChip(el,on){ el.classList.toggle("active",!!on); }
-    function setPrio(el,on){ el.classList.toggle("active",!!on); }
-    function err(msg){
-      formError.style.display = "block";
-      formError.textContent = msg;
-    }
-    function clearErr(){
-      formError.style.display = "none";
-      formError.textContent = "";
-    }
+    renderColorFields(p);
+  }
 
-    function setProduct(p){
-      currentProduct = p;
-      [btnBunny,btnLumi,btnText,btnOther].forEach(x=>setChip(x,false));
-      setChip(btnBunny, p==="bunny");
-      setChip(btnLumi,  p==="lumi");
-      setChip(btnText,  p==="schriftzug");
-      setChip(btnOther, p==="other");
+  /* ---------- OTHER ---------- */
+  if(currentProduct==="other"){
+    const p = fields.other;
 
-      newTitle.textContent =
-        p==="bunny" ? "Neue Bestellung: Hase" :
-        p==="lumi" ? "Neue Bestellung: Lumi" :
-        p==="schriftzug" ? "Neue Bestellung: Schriftzug" :
-        "Neue Bestellung: Weitere Produkt";
+    productArea.innerHTML = `
+      <label>Name</label>
+      <input id="otherName" value="${esc(p.name)}">
 
-      renderProductArea();
-      validateSaveEnabled();
-      clearErr();
-    }
+      <label>Größe</label>
+      <input id="otherSize" value="${esc(p.size)}">
 
-    btnBunny.addEventListener("click", ()=>setProduct("bunny"));
-    btnLumi .addEventListener("click", ()=>setProduct("lumi"));
-    btnText .addEventListener("click", ()=>setProduct("schriftzug"));
-    btnOther.addEventListener("click", ()=>setProduct("other"));
+      <div class="sep"></div>
 
-    [pVery,pNorm,pLow].forEach(el=>{
-      el.addEventListener("click", ()=>{
-        priority = el===pVery ? "very" : el===pNorm ? "normal" : "low";
-        [pVery,pNorm,pLow].forEach(x=>setPrio(x,false));
-        setPrio(el,true);
+      <label>Preis (€)</label>
+      <button class="btnSoft" id="openPriceUI">Preis eingeben</button>
+      <div id="priceDisplay">${esc(p.price||"")}</div>
+
+      <div class="sep"></div>
+
+      <label>Farben</label>
+      <div id="colorContainer"></div>
+      ${p.colors.length<4?'<button class="btnSoft" id="addColorBtn">+ Farbe</button>':''}
+    `;
+
+    document.getElementById("otherName")
+      .addEventListener("input",e=>p.name=e.target.value);
+
+    document.getElementById("otherSize")
+      .addEventListener("input",e=>p.size=e.target.value);
+
+    document.getElementById("openPriceUI")
+      .addEventListener("click",()=>openPricePad(p));
+
+    renderColorFields(p);
+  }
+
+  /* ---------- HASE ---------- */
+  if(currentProduct==="bunny"){
+    const p = fields.bunny;
+
+    productArea.innerHTML = `
+      <label>Größe</label>
+      <div class="chips">
+        <div class="chip ${p.size==="11"?"active":""}" data-size="11">11 cm</div>
+        <div class="chip ${p.size==="15"?"active":""}" data-size="15">15 cm</div>
+        <div class="chip ${p.size==="20"?"active":""}" data-size="20">20 cm</div>
+      </div>
+
+      <div class="sep"></div>
+
+      <label>Modus</label>
+      <div class="chips">
+        <div class="chip ${p.mode==="single"?"active":""}" data-mode="single">Einfarbig</div>
+        <div class="chip ${p.mode==="multi"?"active":""}" data-mode="multi">Mehrfarbig</div>
+      </div>
+
+      <div id="bunnyColors"></div>
+    `;
+
+    productArea.querySelectorAll("[data-size]").forEach(el=>{
+      el.addEventListener("click",()=>{
+        p.size = el.dataset.size;
+        renderProductArea();
       });
     });
 
-    document.querySelectorAll(".qtyBtn").forEach(b=>{
-      b.addEventListener("click", ()=>{
-        qty = Number(b.getAttribute("data-q"));
-        document.querySelectorAll(".qtyBtn").forEach(x=>x.classList.remove("active"));
-        b.classList.add("active");
+    productArea.querySelectorAll("[data-mode]").forEach(el=>{
+      el.addEventListener("click",()=>{
+        p.mode = el.dataset.mode;
+        renderProductArea();
       });
     });
 
-    // ========= product area renderer =========
-    function pickField(label, value, onPick){
-      const id = "p_" + Math.random().toString(16).slice(2);
-      // input readonly, arrow inside
-      setTimeout(()=>{
-        const arrow = document.getElementById(id+"_a");
-        const inp = document.getElementById(id+"_i");
-        if(!arrow || !inp) return;
-        arrow.addEventListener("click", async ()=>{
-          const picked = await onPick();
-          if(picked!=null){
-            inp.value = picked;
-          }
-        });
-      },0);
+    renderBunnyColors();
+  }
 
-      return `
-        <div>
-          <label>${esc(label)}</label>
-          <div class="pickWrap">
-            <input id="${id}_i" class="pickInput" value="${esc(value||"")}" readonly />
-            <button type="button" class="pickArrow" id="${id}_a">▾</button>
-          </div>
-        </div>
-      `;
-    }
+  /* ---------- LUMI ---------- */
+  if(currentProduct==="lumi"){
+    const p = fields.lumi;
 
-    function renderProductArea(){
-      productArea.innerHTML = "";
+    productArea.innerHTML = `
+      <label>Körper</label>
+      <button class="btnSoft" id="bodyBtn">${p.body||"Farbe wählen"}</button>
 
-      if(currentProduct==="bunny"){
-        productArea.innerHTML = `
-          <div class="grid grid-2">
-            <div>
-              <label>Größe</label>
-              <div class="chips">
-                <div class="chip" data-size="11">11 cm</div>
-                <div class="chip" data-size="15">15 cm</div>
-                <div class="chip" data-size="20">20 cm</div>
-              </div>
-            </div>
-            <div>
-              <label>Farbmodus</label>
-              <div class="chips">
-                <div class="chip" data-mode="single">Einfarbig</div>
-                <div class="chip" data-mode="multi">Mehrfarbig</div>
-              </div>
-            </div>
-          </div>
+      <label>Flügel</label>
+      <button class="btnSoft" id="wingBtn">${p.wings||"Farbe wählen"}</button>
 
-          <div class="sep"></div>
+      <label>Fühler</label>
+      <button class="btnSoft" id="feelBtn">${p.feelers||"Farbe wählen"}</button>
+    `;
 
-          <div id="bunnyColors"></div>
-        `;
-
-        // size buttons
-        productArea.querySelectorAll("[data-size]").forEach(b=>{
-          b.addEventListener("click", ()=>{
-            fields.bunny_size = b.getAttribute("data-size");
-            productArea.querySelectorAll("[data-size]").forEach(x=>x.classList.toggle("active", x===b));
-          });
-        });
-
-        // mode buttons
-        productArea.querySelectorAll("[data-mode]").forEach(b=>{
-          b.addEventListener("click", ()=>{
-            fields.bunny_mode = b.getAttribute("data-mode");
-            productArea.querySelectorAll("[data-mode]").forEach(x=>x.classList.toggle("active", x===b));
-            renderBunnyColors();
-          });
-        });
-
-        renderBunnyColors();
-      }
-
-      if(currentProduct==="lumi"){
-        productArea.innerHTML = `
-          <div class="grid grid-3">
-            ${pickField("Körper", fields.lumi_body, ()=>openColorModal("Lumi: Körper"))}
-            ${pickField("Flügel", fields.lumi_wings, ()=>openColorModal("Lumi: Flügel"))}
-            ${pickField("Fühler", fields.lumi_feelers, ()=>openColorModal("Lumi: Fühler"))}
-          </div>
-        `;
-      }
-
-      if(currentProduct==="schriftzug"){
-        productArea.innerHTML = `
-          <div class="grid grid-2">
-            <div>
-              <label>Name</label>
-              <input id="t_name" value="${esc(fields.text_name||"Happy Birthday")}" placeholder="Happy Birthday" />
-            </div>
-            <div>
-              <label>Preis (€)</label>
-              <input id="t_price" inputmode="decimal" placeholder="z. B. 20,00" value="${esc(fields.text_price||"")}" />
-            </div>
-          </div>
-          <div class="sep"></div>
-          <div class="grid grid-2">
-            ${pickField("Hauptfarbe", fields.text_color1, ()=>openColorModal("Schriftzug: Hauptfarbe"))}
-            ${pickField("2. Farbe", fields.text_color2, ()=>openColorModal("Schriftzug: 2. Farbe"))}
-          </div>
-        `;
-
-        setTimeout(()=>{
-          const n = document.getElementById("t_name");
-          const p = document.getElementById("t_price");
-          n.addEventListener("input", ()=> fields.text_name = n.value || "");
-          p.addEventListener("input", ()=> fields.text_price = p.value || "");
-        },0);
-      }
-
-      if(currentProduct==="other"){
-        productArea.innerHTML = `
-          <div class="grid grid-2">
-            <div>
-              <label>Name</label>
-              <input id="o_name" value="${esc(fields.other_name||"")}" placeholder="z. B. Schlüsselanhänger" />
-            </div>
-            <div>
-              <label>Größe</label>
-              <input id="o_size" value="${esc(fields.other_size||"")}" placeholder="z. B. 10 cm / XL" />
-            </div>
-          </div>
-          <div class="sep"></div>
-          <div class="grid grid-2">
-            <div>
-              <label>Preis (€)</label>
-              <input id="o_price" inputmode="decimal" placeholder="z. B. 12,00" value="${esc(fields.other_price||"")}" />
-            </div>
-            <div class="muted" style="align-self:end;">&nbsp;</div>
-          </div>
-          <div class="sep"></div>
-          <div class="grid grid-2">
-            ${pickField("Hauptfarbe", fields.other_color1, ()=>openColorModal("Weitere: Hauptfarbe"))}
-            ${pickField("2. Farbe", fields.other_color2, ()=>openColorModal("Weitere: 2. Farbe"))}
-          </div>
-        `;
-
-        setTimeout(()=>{
-          const n = document.getElementById("o_name");
-          const s = document.getElementById("o_size");
-          const p = document.getElementById("o_price");
-          n.addEventListener("input", ()=> fields.other_name = n.value || "");
-          s.addEventListener("input", ()=> fields.other_size = s.value || "");
-          p.addEventListener("input", ()=> fields.other_price = p.value || "");
-        },0);
-      }
-    }
-
-    function renderBunnyColors(){
-      const host = document.getElementById("bunnyColors");
-      if(!host) return;
-
-      if(fields.bunny_mode==="single"){
-        host.innerHTML = `
-          <div class="grid grid-1">
-            ${pickField("Einfarbig", fields.bunny_single, ()=>openColorModal("Hase: Einfarbig"))}
-          </div>
-        `;
-        return;
-      }
-      if(fields.bunny_mode==="multi"){
-        host.innerHTML = `
-          <div class="grid grid-3">
-            ${pickField("Ohren", fields.bunny_ears, ()=>openColorModal("Hase: Ohren"))}
-            ${pickField("Körper", fields.bunny_body, ()=>openColorModal("Hase: Körper"))}
-            ${pickField("Popo", fields.bunny_butt, ()=>openColorModal("Hase: Popo"))}
-          </div>
-        `;
-        return;
-      }
-      host.innerHTML = `<div class="muted">Bitte zuerst Farbmodus wählen.</div>`;
-    }
-
-    // ========= Build item =========
-    function getQty(){
-      const otherQ = Number(String(qtyOther.value||"").replace(",", "."));
-      if(Number.isFinite(otherQ) && otherQ>0) return Math.floor(otherQ);
-      if(typeof qty==="number" && qty>0) return qty;
-      return null;
-    }
-
-    function validateItem(){
-      if(!(customer.value||"").trim()) return "Kundenname fehlt";
-      if(!priority) return "Priorität fehlt";
-      const q = getQty();
-      if(!q) return "Menge fehlt";
-
-      if(currentProduct==="bunny"){
-        if(!fields.bunny_size) return "Größe fehlt";
-        if(!fields.bunny_mode) return "Farbmodus fehlt";
-        if(fields.bunny_mode==="single" && !fields.bunny_single) return "Einfarbig fehlt";
-        if(fields.bunny_mode==="multi" && (!fields.bunny_ears || !fields.bunny_body || !fields.bunny_butt)) return "Ohren/Körper/Popo fehlt";
-      }
-
-      if(currentProduct==="lumi"){
-        if(!fields.lumi_body || !fields.lumi_wings || !fields.lumi_feelers) return "Lumi Farben fehlen";
-      }
-
-      if(currentProduct==="schriftzug"){
-        if(!(fields.text_name||"").trim()) return "Name fehlt";
-        const pc = toCents(fields.text_price);
-        if(pc==null) return "Preis fehlt/ungültig";
-        if(!fields.text_color1 || !fields.text_color2) return "Farben fehlen";
-      }
-
-      if(currentProduct==="other"){
-        if(!(fields.other_name||"").trim()) return "Name fehlt";
-        if(!(fields.other_size||"").trim()) return "Größe fehlt";
-        const pc = toCents(fields.other_price);
-        if(pc==null) return "Preis fehlt/ungültig";
-        if(!fields.other_color1 || !fields.other_color2) return "Farben fehlen";
-      }
-
-      return null;
-    }
-
-    function makeItem(){
-      const q = getQty();
-      const base = {
-        _cid: String(Date.now()) + "-" + Math.random().toString(16).slice(2),
-        product_type: currentProduct,
-        priority,
-        qty: q,
-        produced: false,
-        note: (noteEl.value||"").trim() || null
-      };
-
-      if(currentProduct==="bunny"){
-        base.title = "Hase";
-        base.size = fields.bunny_size + " cm";
-        base.colors = fields.bunny_mode==="single"
-          ? { mode:"single", single: fields.bunny_single }
-          : { mode:"multi", ears: fields.bunny_ears, body: fields.bunny_body, butt: fields.bunny_butt };
-        base.price_cents = null; // Standardpreis
-        return base;
-      }
-
-      if(currentProduct==="lumi"){
-        base.title = "Lumi";
-        base.size = null;
-        base.colors = { body: fields.lumi_body, wings: fields.lumi_wings, feelers: fields.lumi_feelers };
-        base.price_cents = null; // Standardpreis
-        return base;
-      }
-
-      if(currentProduct==="schriftzug"){
-        base.title = "Schriftzug";
-        base.size = fields.text_name; // wir nutzen size als “Text”
-        base.colors = { main: fields.text_color1, second: fields.text_color2 };
-        base.price_cents = toCents(fields.text_price);
-        return base;
-      }
-
-      // other
-      base.title = fields.other_name.trim();
-      base.size = fields.other_size.trim();
-      base.colors = { main: fields.other_color1, second: fields.other_color2 };
-      base.price_cents = toCents(fields.other_price);
-      return base;
-    }
-
-    function itemDisplayTitle(it){
-      if(it.product_type==="bunny") return `Hase ${it.size}`;
-      if(it.product_type==="lumi") return "Lumi";
-      if(it.product_type==="schriftzug") return `Schriftzug: ${it.size}`;
-      return `${it.title} (${it.size||"?"})`;
-    }
-
-    function itemPricePerUnit(it){
-      if(it.price_cents != null) return fromCents(it.price_cents);
-
-      if(it.product_type==="bunny"){
-        const s = String(it.size||"");
-        const sizeNum = s.includes("11") ? "11" : s.includes("15") ? "15" : "20";
-        return PRICES.bunny[sizeNum] || 0;
-      }
-      if(it.product_type==="lumi") return PRICES.lumi;
-      return 0;
-    }
-
-    function cartTotal(items){
-      // Bunny combo nur, wenn KEIN bunny-item price_cents override hat
-      const bunnies = items.filter(x=>x.product_type==="bunny");
-      const bunnyHasOverride = bunnies.some(x=>x.price_cents != null);
-
-      let total = 0;
-
-      // non-bunny
-      for(const it of items){
-        if(it.product_type!=="bunny"){
-          total += itemPricePerUnit(it) * it.qty;
-        }
-      }
-
-      if(bunnyHasOverride){
-        for(const it of bunnies){
-          total += itemPricePerUnit(it) * it.qty;
-        }
-        return total;
-      }
-
-      // combo
-      const counts = { "20":0,"15":0,"11":0 };
-      for(const it of bunnies){
-        const s = String(it.size||"");
-        const sizeNum = s.includes("11") ? "11" : s.includes("15") ? "15" : "20";
-        counts[sizeNum] += it.qty;
-      }
-      const combos = Math.min(counts["20"], counts["15"], counts["11"]);
-      if(combos>0){
-        total += combos * PRICES.bunny.comboAllThree;
-        counts["20"] -= combos; counts["15"] -= combos; counts["11"] -= combos;
-      }
-      total += counts["20"] * PRICES.bunny["20"];
-      total += counts["15"] * PRICES.bunny["15"];
-      total += counts["11"] * PRICES.bunny["11"];
-      return total;
-    }
-
-    function validateSaveEnabled(){
-      saveOrderBtn.disabled = cart.length===0;
-    }
-
-    function colorLines(it){
-      const c = it.colors || {};
-      if(it.product_type==="bunny"){
-        if(c.mode==="single"){
-          return `<div class="muted">Einfarbig: ${esc(c.single||"")}</div>`;
-        }
-        return `
-          <div class="muted">Ohren: ${esc(c.ears||"")}</div>
-          <div class="muted">Körper: ${esc(c.body||"")}</div>
-          <div class="muted">Popo: ${esc(c.butt||"")}</div>
-        `;
-      }
-      if(it.product_type==="lumi"){
-        return `
-          <div class="muted">Körper: ${esc(c.body||"")}</div>
-          <div class="muted">Flügel: ${esc(c.wings||"")}</div>
-          <div class="muted">Fühler: ${esc(c.feelers||"")}</div>
-        `;
-      }
-      // schriftzug / other: main + second
-      return `
-        <div class="muted">Hauptfarbe: ${esc(c.main||"")}</div>
-        <div class="muted">2. Farbe: ${esc(c.second||"")}</div>
-      `;
-    }
-
-    function updateCartUI(){
-      cartList.innerHTML = "";
-      cartHint.style.display = cart.length===0 ? "block" : "none";
-
-      for(const it of cart){
-        const card = document.createElement("div");
-        card.className = "card pad";
-        card.innerHTML = `
-          <div class="row" style="justify-content:space-between; align-items:flex-start;">
-            <div style="min-width:240px;">
-              <div style="font-weight:1000">${esc(itemDisplayTitle(it))} <span class="muted">(${esc(prioLabel(it.priority))})</span></div>
-              ${colorLines(it)}
-            </div>
-            <div class="row" style="gap:8px;">
-              <span class="badge">× ${esc(it.qty)}</span>
-              <button class="iconBtn danger" data-del="${esc(it._cid)}" title="Entfernen">✖</button>
-            </div>
-          </div>
-        `;
-        cartList.appendChild(card);
-      }
-
-      cartList.querySelectorAll("[data-del]").forEach(b=>{
-        b.addEventListener("click", ()=>{
-          const id = b.getAttribute("data-del");
-          cart = cart.filter(x=>x._cid !== id);
-          updateCartUI();
-          validateSaveEnabled();
-        });
-      });
-
-      cartSum.textContent = "Summe: " + euro(cartTotal(cart));
-    }
-
-    addItemBtn.addEventListener("click", ()=>{
-      clearErr();
-      const msg = validateItem();
-      if(msg){ err("Bitte erst ausfüllen. " + msg); return; }
-
-      cart.push(makeItem());
-      qty = null;
-      qtyOther.value = "";
-      document.querySelectorAll(".qtyBtn").forEach(x=>x.classList.remove("active"));
-
-      updateCartUI();
-      validateSaveEnabled();
-    });
-
-    // ========= Save order =========
-    async function saveOrder(){
-      clearErr();
-      saveStatus.style.display="none";
-      if(cart.length===0){ err("Füge zuerst mindestens eine Position hinzu."); return; }
-
-      saveOrderBtn.disabled = true;
-      saveOrderBtn.textContent = "Speichern…";
-
-      const orderPayload = {
-        customer_name: (customer.value||"").trim(),
-        note: (noteEl.value||"").trim() || null,
-        archived: false,
-        total_override_cents: null
-      };
-
-      const { data: orderData, error: orderErr } = await supabase
-        .from("orders")
-        .insert(orderPayload)
-        .select("id")
-        .single();
-
-      if(orderErr){
-        err("Fehler beim Speichern (Order): " + orderErr.message);
-        saveOrderBtn.disabled = false;
-        saveOrderBtn.textContent = "✅ Bestellung speichern";
-        return;
-      }
-
-      const orderId = orderData.id;
-
-      const itemsPayload = cart.map(it=>({
-        order_id: orderId,
-        product_type: it.product_type,
-        title: it.title,
-        size: it.size ?? null,
-        colors: it.colors ?? null,
-        priority: it.priority,
-        qty: it.qty,
-        price_cents: it.price_cents ?? null,
-        produced: false,
-        note: it.note ?? null
+    document.getElementById("bodyBtn")
+      .addEventListener("click",()=>openColorModal(v=>{
+        p.body=v;
+        renderProductArea();
       }));
 
-      const { error: itemsErr } = await supabase.from("order_items").insert(itemsPayload);
+    document.getElementById("wingBtn")
+      .addEventListener("click",()=>openColorModal(v=>{
+        p.wings=v;
+        renderProductArea();
+      }));
 
-      if(itemsErr){
-        err("Fehler beim Speichern (Positionen): " + itemsErr.message);
-        await supabase.from("orders").delete().eq("id", orderId);
-        saveOrderBtn.disabled = false;
-        saveOrderBtn.textContent = "✅ Bestellung speichern";
-        return;
+    document.getElementById("feelBtn")
+      .addEventListener("click",()=>openColorModal(v=>{
+        p.feelers=v;
+        renderProductArea();
+      }));
+  }
+}
+
+/* =============================
+   BUNNY COLORS
+============================= */
+
+function renderBunnyColors(){
+  const p = fields.bunny;
+  const host = document.getElementById("bunnyColors");
+  if(!host) return;
+
+  if(p.mode==="single"){
+    host.innerHTML = `
+      <div class="sep"></div>
+      <label>Farbe</label>
+      <button class="btnSoft" id="singleBtn">${p.single||"Farbe wählen"}</button>
+    `;
+
+    document.getElementById("singleBtn")
+      .addEventListener("click",()=>openColorModal(v=>{
+        p.single=v;
+        renderProductArea();
+      }));
+  }
+
+  if(p.mode==="multi"){
+    host.innerHTML = `
+      <div class="sep"></div>
+      <label>Ohren</label>
+      <button class="btnSoft" id="earsBtn">${p.ears||"Farbe wählen"}</button>
+
+      <label>Körper</label>
+      <button class="btnSoft" id="bodyBtn">${p.body||"Farbe wählen"}</button>
+
+      <label>Popo</label>
+      <button class="btnSoft" id="buttBtn">${p.butt||"Farbe wählen"}</button>
+    `;
+
+    document.getElementById("earsBtn")
+      .addEventListener("click",()=>openColorModal(v=>{
+        p.ears=v;
+        renderProductArea();
+      }));
+
+    document.getElementById("bodyBtn")
+      .addEventListener("click",()=>openColorModal(v=>{
+        p.body=v;
+        renderProductArea();
+      }));
+
+    document.getElementById("buttBtn")
+      .addEventListener("click",()=>openColorModal(v=>{
+        p.butt=v;
+        renderProductArea();
+      }));
+  }
+}
+
+/* =============================
+   DYNAMISCHE FARBEN
+============================= */
+
+function renderColorFields(obj){
+  const container = document.getElementById("colorContainer");
+  container.innerHTML="";
+
+  obj.colors.forEach((c,i)=>{
+    const row = document.createElement("div");
+    row.className="colorRow";
+
+    row.innerHTML = `
+      <input value="${esc(c.label)}">
+      <button class="btnSoft">${c.value||"Farbe wählen"}</button>
+      ${obj.colors.length>2?'<button class="iconBtn">✖</button>':''}
+    `;
+
+    const labelInput = row.children[0];
+    const pickBtn    = row.children[1];
+    const delBtn     = row.children[2];
+
+    labelInput.addEventListener("input",e=>{
+      obj.colors[i].label = e.target.value;
+    });
+
+    pickBtn.addEventListener("click",()=>{
+      openColorModal(v=>{
+        obj.colors[i].value=v;
+        renderProductArea();
+      });
+    });
+
+    if(delBtn){
+      delBtn.addEventListener("click",()=>{
+        obj.colors.splice(i,1);
+        renderProductArea();
+      });
+    }
+
+    container.appendChild(row);
+  });
+
+  const addBtn = document.getElementById("addColorBtn");
+  if(addBtn){
+    addBtn.addEventListener("click",()=>{
+      if(obj.colors.length>=4) return;
+      obj.colors.push({label:"Weitere Farbe",value:""});
+      renderProductArea();
+    });
+  }
+}
+
+/* =============================
+   PREIS PAD
+============================= */
+
+function openPricePad(obj){
+
+  let value = obj.price || "";
+
+  const pad = document.createElement("div");
+  pad.className="modal open";
+  pad.innerHTML=`
+    <div class="modalBox">
+      <div class="sectionTitle">Preis eingeben</div>
+      <div style="font-size:22px;margin-bottom:12px;">${value||"0"}</div>
+      <div class="colorGrid">
+        ${[1,2,3,4,5,6,7,8,9,0,",","←"].map(v=>`
+          <div class="chip">${v}</div>
+        `).join("")}
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(pad);
+
+  const display = pad.querySelector("div[style]");
+  pad.querySelectorAll(".chip").forEach(el=>{
+    el.addEventListener("click",()=>{
+      const val = el.textContent;
+      if(val==="←"){
+        value=value.slice(0,-1);
+      }else{
+        value+=val;
       }
+      display.textContent=value||"0";
+    });
+  });
 
-      cart = [];
-      updateCartUI();
-      validateSaveEnabled();
+  pad.addEventListener("click",e=>{
+    if(e.target===pad){
+      obj.price=value;
+      pad.remove();
+      renderProductArea();
+    }
+  });
+}
 
-      saveStatus.style.display="block";
-      saveStatus.textContent="Gespeichert ✅";
-      saveOrderBtn.textContent="✅ Bestellung speichern";
-      saveOrderBtn.disabled=true;
+/* =============================
+   INIT
+============================= */
 
-      await loadAll();
+renderProductArea();
+
+/* =============================
+   SUPABASE
+============================= */
+
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+const SUPABASE_URL = "https://htgrzmlcdolxxzvkppon.supabase.co";
+const SUPABASE_ANON_KEY = "DEeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0Z3J6bWxjZG9seHh6dmtwcG9uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0MzM2ODIsImV4cCI6MjA4NTAwOTY4Mn0.B0PxMAzmuvsHNd2n_mgNspjlPkaBpQlkrNzGu7p78fYIN_ANON_KEY_HIER_EINFÜGEN";
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+/* =============================
+   PREISE
+============================= */
+
+const PRICES = {
+  bunny: { "11":6, "15":9, "20":12, comboAllThree:22.5 },
+  lumi: 8.5
+};
+
+function euro(n){
+  return (Number(n)||0).toFixed(2).replace(".",",")+" €";
+}
+
+function parsePrice(val){
+  if(!val) return null;
+  const n = Number(val.replace(",","."));
+  if(isNaN(n)) return null;
+  return Math.round(n*100);
+}
+
+/* =============================
+   ITEM ERSTELLEN
+============================= */
+
+function buildItem(){
+
+  const customerName = document.getElementById("customer").value.trim();
+  if(!customerName) return null;
+
+  if(currentProduct==="schriftzug"){
+    const p = fields.schriftzug;
+    if(!p.name || !p.price) return null;
+    if(p.colors.some(c=>!c.value)) return null;
+
+    return {
+      product_type:"schriftzug",
+      title:p.name,
+      size:null,
+      colors:p.colors,
+      priority,
+      qty,
+      price_cents:parsePrice(p.price),
+      produced:false
+    };
+  }
+
+  if(currentProduct==="other"){
+    const p = fields.other;
+    if(!p.name || !p.size || !p.price) return null;
+    if(p.colors.some(c=>!c.value)) return null;
+
+    return {
+      product_type:"other",
+      title:p.name,
+      size:p.size,
+      colors:p.colors,
+      priority,
+      qty,
+      price_cents:parsePrice(p.price),
+      produced:false
+    };
+  }
+
+  if(currentProduct==="bunny"){
+    const p = fields.bunny;
+    if(!p.size || !p.mode) return null;
+    if(p.mode==="single" && !p.single) return null;
+    if(p.mode==="multi" && (!p.ears||!p.body||!p.butt)) return null;
+
+    return {
+      product_type:"bunny",
+      title:"Hase",
+      size:p.size,
+      colors:p.mode==="single"
+        ? [{label:"Farbe",value:p.single}]
+        : [
+            {label:"Ohren",value:p.ears},
+            {label:"Körper",value:p.body},
+            {label:"Popo",value:p.butt}
+          ],
+      priority,
+      qty,
+      price_cents:null,
+      produced:false
+    };
+  }
+
+  if(currentProduct==="lumi"){
+    const p = fields.lumi;
+    if(!p.body||!p.wings||!p.feelers) return null;
+
+    return {
+      product_type:"lumi",
+      title:"Lumi",
+      size:null,
+      colors:[
+        {label:"Körper",value:p.body},
+        {label:"Flügel",value:p.wings},
+        {label:"Fühler",value:p.feelers}
+      ],
+      priority,
+      qty,
+      price_cents:null,
+      produced:false
+    };
+  }
+
+  return null;
+}
+
+/* =============================
+   CART
+============================= */
+
+const cartList = document.getElementById("cartList");
+const addItemBtn = document.getElementById("addItemBtn");
+
+addItemBtn.addEventListener("click",()=>{
+  const item = buildItem();
+  if(!item){
+    alert("Bitte alles korrekt ausfüllen.");
+    return;
+  }
+  cart.push(item);
+  renderCart();
+});
+
+function itemPrice(item){
+  if(item.price_cents!=null) return item.price_cents/100;
+  if(item.product_type==="lumi") return PRICES.lumi;
+  if(item.product_type==="bunny") return PRICES.bunny[item.size]||0;
+  return 0;
+}
+
+function cartTotal(){
+  let total=0;
+
+  const bunnies = cart.filter(x=>x.product_type==="bunny");
+  const others  = cart.filter(x=>x.product_type!=="bunny");
+
+  others.forEach(i=>{
+    total += itemPrice(i)*i.qty;
+  });
+
+  if(bunnies.length){
+    let counts={"11":0,"15":0,"20":0};
+    bunnies.forEach(b=>counts[b.size]+=b.qty);
+
+    const combos=Math.min(counts["11"],counts["15"],counts["20"]);
+    if(combos>0){
+      total+=combos*PRICES.bunny.comboAllThree;
+      counts["11"]-=combos;
+      counts["15"]-=combos;
+      counts["20"]-=combos;
     }
 
-    saveOrderBtn.addEventListener("click", saveOrder);
+    Object.keys(counts).forEach(s=>{
+      total+=counts[s]*(PRICES.bunny[s]||0);
+    });
+  }
 
-    // ========= Produced toggle + totals + override =========
-    function orderTotal(order){
-      // wenn override gesetzt -> genau der Wert
-      if(order.total_override_cents != null) return fromCents(order.total_override_cents);
+  return total;
+}
 
-      return cartTotal(order.items.map(x=>({
-        product_type: x.product_type,
-        title: x.title,
-        size: x.size,
-        colors: x.colors,
-        priority: x.priority,
-        qty: x.qty,
-        price_cents: x.price_cents
-      })));
+function renderCart(){
+  cartList.innerHTML="";
+
+  cart.forEach((item,i)=>{
+    const div=document.createElement("div");
+    div.className="orderCard";
+
+    div.innerHTML=`
+      <div><strong>${esc(item.title)}</strong></div>
+      <div>${item.colors.map(c=>`${esc(c.label)}: ${esc(c.value)}`).join("<br>")}</div>
+      <div>Menge: ${item.qty}</div>
+      <div>Preis: ${euro(itemPrice(item)*item.qty)}</div>
+      <button class="iconBtn danger">✖</button>
+    `;
+
+    div.querySelector("button").addEventListener("click",()=>{
+      cart.splice(i,1);
+      renderCart();
+    });
+
+    cartList.appendChild(div);
+  });
+
+  if(cart.length){
+    const totalDiv=document.createElement("div");
+    totalDiv.style.marginTop="10px";
+    totalDiv.innerHTML="<strong>Gesamt: "+euro(cartTotal())+"</strong>";
+    cartList.appendChild(totalDiv);
+  }
+}
+
+/* =============================
+   SAVE ORDER
+============================= */
+
+document.getElementById("saveOrderBtn")
+  .addEventListener("click", async ()=>{
+
+    if(cart.length===0){
+      alert("Keine Positionen im Warenkorb.");
+      return;
     }
 
-    function allProduced(items){
-      return items.length>0 && items.every(x=>x.produced===true);
+    const customerName = document.getElementById("customer").value.trim();
+    const note = document.getElementById("note").value.trim() || null;
+
+    if(!customerName){
+      alert("Kundenname fehlt.");
+      return;
     }
 
-    async function toggleProduced(itemId, newVal){
-      const { error } = await supabase.from("order_items").update({ produced: newVal }).eq("id", itemId);
-      if(error) alert(error.message);
-      await loadAll();
+    const { data:orderData, error:orderError } = await supabase
+      .from("orders")
+      .insert({
+        customer_name:customerName,
+        note,
+        archived:false,
+        total_override_cents:null
+      })
+      .select()
+      .single();
+
+    if(orderError){
+      alert(orderError.message);
+      return;
     }
 
-    async function editOrderOverride(orderId, currentCents){
-      const cur = currentCents==null ? "" : String(fromCents(currentCents)).replace(".", ",");
-      const v = prompt("Neuer Gesamtpreis (€) — leer = zurück auf automatisch:", cur);
-      if(v===null) return;
+    const orderId = orderData.id;
 
-      const t = String(v).trim();
-      let newCents = null;
-      if(t!==""){
-        const c = toCents(t);
-        if(c==null || c<0){ alert("Bitte gültigen Preis eingeben."); return; }
-        newCents = c;
-      }
+    const itemsPayload = cart.map(item=>({
+      order_id:orderId,
+      product_type:item.product_type,
+      title:item.title,
+      size:item.size,
+      colors:item.colors,
+      priority:item.priority,
+      qty:item.qty,
+      price_cents:item.price_cents,
+      produced:false
+    }));
 
-      const { error } = await supabase.from("orders").update({ total_override_cents: newCents }).eq("id", orderId);
-      if(error) alert(error.message);
-      await loadAll();
+    const { error:itemError } = await supabase
+      .from("order_items")
+      .insert(itemsPayload);
+
+    if(itemError){
+      alert(itemError.message);
+      return;
     }
 
-    async function archiveOrder(orderId){
-      await supabase.from("orders").update({ archived:true }).eq("id", orderId);
-      await loadAll();
+    cart=[];
+    renderCart();
+    document.getElementById("customer").value="";
+    document.getElementById("note").value="";
+    alert("Bestellung gespeichert.");
+
+    await loadOrders();
+});
+/* =============================
+   LOAD ORDERS
+============================= */
+
+const openOrdersEl = document.getElementById("openOrders");
+const archiveOrdersEl = document.getElementById("archiveOrders");
+
+async function loadOrders(){
+
+  const { data:orders, error:oErr } = await supabase
+    .from("orders")
+    .select("*")
+    .order("created_at",{ascending:false});
+
+  if(oErr){
+    console.error(oErr);
+    return;
+  }
+
+  const { data:items, error:iErr } = await supabase
+    .from("order_items")
+    .select("*");
+
+  if(iErr){
+    console.error(iErr);
+    return;
+  }
+
+  const map = new Map();
+
+  orders.forEach(o=>{
+    map.set(o.id,{...o,items:[]});
+  });
+
+  items.forEach(i=>{
+    const order = map.get(i.order_id);
+    if(order) order.items.push(i);
+  });
+
+  const allOrders = Array.from(map.values());
+
+  const open = allOrders.filter(o=>!o.archived);
+  const archived = allOrders.filter(o=>o.archived);
+
+  renderOrders(openOrdersEl, open, false);
+  renderOrders(archiveOrdersEl, archived, true);
+}
+
+/* =============================
+   ORDER TOTAL
+============================= */
+
+function orderTotal(order){
+
+  if(order.total_override_cents!=null){
+    return order.total_override_cents/100;
+  }
+
+  let total=0;
+
+  const bunnies = order.items.filter(x=>x.product_type==="bunny");
+  const others  = order.items.filter(x=>x.product_type!=="bunny");
+
+  others.forEach(i=>{
+    const price = i.price_cents!=null
+      ? i.price_cents/100
+      : (i.product_type==="lumi"?PRICES.lumi:0);
+    total += price*i.qty;
+  });
+
+  if(bunnies.length){
+    let counts={"11":0,"15":0,"20":0};
+    bunnies.forEach(b=>counts[b.size]+=b.qty);
+
+    const combos=Math.min(counts["11"],counts["15"],counts["20"]);
+    if(combos>0){
+      total+=combos*PRICES.bunny.comboAllThree;
+      counts["11"]-=combos;
+      counts["15"]-=combos;
+      counts["20"]-=combos;
     }
-    async function restoreOrder(orderId){
-      await supabase.from("orders").update({ archived:false }).eq("id", orderId);
-      await loadAll();
-    }
-    async function deleteOrder(orderId){
-      const ok = confirm("Wirklich löschen? Das kann man nicht rückgängig machen.");
-      if(!ok) return;
-      await supabase.from("orders").delete().eq("id", orderId);
-      await loadAll();
-    }
 
-    function formatDateOnly(iso){
-      const d = new Date(iso);
-      const dd = String(d.getDate()).padStart(2,"0");
-      const mm = String(d.getMonth()+1).padStart(2,"0");
-      const yy = d.getFullYear();
-      return `${dd}.${mm}.${yy}`;
-    }
+    Object.keys(counts).forEach(s=>{
+      total+=counts[s]*(PRICES.bunny[s]||0);
+    });
+  }
 
-    function renderOrders(target, orders, archived){
-      target.innerHTML = "";
-      if(orders.length===0){
-        target.innerHTML = `<div class="muted">Keine ${archived ? "archivierten" : "offenen"} Bestellungen.</div>`;
-        return;
-      }
+  return total;
+}
 
-      for(const o of orders){
-        const total = orderTotal(o);
-        const date = formatDateOnly(o.created_at);
+/* =============================
+   RENDER ORDERS
+============================= */
 
-        const minPr = Math.min(...o.items.map(x=>prioRank(x.priority)).concat([2]));
-        const prText = minPr===0 ? "Sehr wichtig" : minPr===1 ? "Wichtig" : "Nicht wichtig";
+function renderOrders(container, list, archived){
 
-        const fertig = allProduced(o.items);
+  container.innerHTML="";
 
-        const card = document.createElement("div");
-        card.className = "card pad";
+  if(list.length===0){
+    container.innerHTML="<div>Keine Einträge.</div>";
+    return;
+  }
 
-        const lines = o.items.map(it=>{
-          const done = !!it.produced;
-          return `
-            <div style="padding:10px 0; border-top:1px dashed #eef2f7;">
-              <div class="row" style="justify-content:space-between; align-items:flex-start;">
-                <div style="min-width:240px;">
-                  <div style="font-weight:900">${esc(itemDisplayTitle(it))} <span class="muted">(${esc(prioLabel(it.priority))})</span></div>
-                  ${colorLines(it)}
-                </div>
+  list.forEach(order=>{
 
-                <div class="row" style="gap:10px;">
-                  <button class="prodBtn ${done?'done':''}" data-prod="${it.id}" data-val="${done ? "0" : "1"}" title="Produziert">
-                    ${done ? "✅" : "✖"}
-                  </button>
-                  <span class="badge">× ${esc(it.qty)}</span>
-                </div>
-              </div>
-            </div>
-          `;
-        }).join("");
+    const fertig = order.items.length>0 &&
+      order.items.every(i=>i.produced);
 
-        card.innerHTML = `
-          <div class="row" style="justify-content:space-between; align-items:flex-start;">
+    const total = orderTotal(order);
+
+    const card=document.createElement("div");
+    card.className="orderCard";
+
+    card.innerHTML=`
+      <div class="orderHeader">
+        <div>
+          <strong>${esc(order.customer_name)}</strong>
+          ${fertig?'<span class="badge ok">FERTIG</span>':''}
+        </div>
+        <div>
+          ${euro(total)}
+          <button class="iconBtn" data-edit="${order.id}">✏</button>
+          ${archived
+            ?'<button class="iconBtn" data-restore="'+order.id+'">↩</button>'
+            :'<button class="iconBtn" data-archive="'+order.id+'">📦</button>'}
+          <button class="iconBtn danger" data-delete="${order.id}">🗑</button>
+        </div>
+      </div>
+
+      <div class="orderItems">
+        ${order.items.map(i=>`
+          <div class="orderItem">
             <div>
-              <div class="row" style="gap:10px; align-items:center;">
-                <div style="font-weight:1000">${archived ? "Archiv" : "Offen"} • ${esc(date)}</div>
-                <span class="badge">${esc(prText)}</span>
-                ${fertig ? `<span class="badge ok">FERTIG</span>` : ``}
-              </div>
-              <div class="muted" style="margin-top:6px;">👤 ${esc(o.customer_name)}</div>
-              ${o.note ? `<div class="muted" style="margin-top:4px;">📝 ${esc(o.note)}</div>` : ``}
+              ${esc(i.title)} × ${i.qty}
             </div>
-
-            <div class="row" style="gap:8px; align-items:center;">
-              <div style="font-weight:1000">${euro(total)}</div>
-              <!-- Stift: Override nur hier, NICHT als extra Button -->
-              <button class="iconBtn" title="Gesamtpreis überschreiben" data-edit-total="${o.id}" data-cur="${o.total_override_cents ?? ""}">✏</button>
-
-              ${
-                archived
-                  ? `
-                    <button class="iconBtn" title="Zurück holen" data-restore="${o.id}">↩</button>
-                    <button class="iconBtn danger" title="Löschen" data-delete="${o.id}">🗑</button>
-                  `
-                  : `
-                    <button class="iconBtn" title="Ins Archiv" data-archive="${o.id}">📦</button>
-                    <button class="iconBtn danger" title="Löschen" data-delete="${o.id}">🗑</button>
-                  `
-              }
+            <div style="display:flex;gap:8px;align-items:center;">
+              <div class="checkboxBtn ${i.produced?'done':''}" 
+                   data-prod="${i.id}">
+                ${i.produced?'✓':''}
+              </div>
             </div>
           </div>
+        `).join("")}
+      </div>
+    `;
 
-          <div class="sep"></div>
-          ${lines}
-        `;
+    /* PRODUCED */
+    card.querySelectorAll("[data-prod]").forEach(btn=>{
+      btn.addEventListener("click",async()=>{
+        const id = btn.dataset.prod;
+        const current = order.items.find(x=>x.id===id).produced;
 
-        target.appendChild(card);
-      }
+        await supabase.from("order_items")
+          .update({produced:!current})
+          .eq("id",id);
 
-      // handlers
-      target.querySelectorAll("[data-prod]").forEach(b=>{
-        b.addEventListener("click", ()=>{
-          const id = b.getAttribute("data-prod");
-          const val = b.getAttribute("data-val")==="1";
-          toggleProduced(id, val);
-        });
+        await loadOrders();
       });
-      target.querySelectorAll("[data-edit-total]").forEach(b=>{
-        b.addEventListener("click", ()=>{
-          const id = b.getAttribute("data-edit-total");
-          const cur = b.getAttribute("data-cur");
-          editOrderOverride(id, cur==="" ? null : Number(cur));
-        });
-      });
-      target.querySelectorAll("[data-archive]").forEach(b=> b.addEventListener("click", ()=>archiveOrder(b.getAttribute("data-archive"))) );
-      target.querySelectorAll("[data-restore]").forEach(b=> b.addEventListener("click", ()=>restoreOrder(b.getAttribute("data-restore"))) );
-      target.querySelectorAll("[data-delete]").forEach(b=> b.addEventListener("click", ()=>deleteOrder(b.getAttribute("data-delete"))) );
-    }
-
-    async function loadAll(){
-      const { data: orders, error: oErr } = await supabase
-        .from("orders")
-        .select("id,created_at,customer_name,note,archived,total_override_cents")
-        .order("created_at", { ascending:false });
-
-      if(oErr){
-        openOrdersEl.innerHTML = `<div class="error">Fehler: ${esc(oErr.message)}</div>`;
-        return;
-      }
-
-      const { data: items, error: iErr } = await supabase
-        .from("order_items")
-        .select("*")
-        .order("created_at", { ascending:false });
-
-      if(iErr){
-        openOrdersEl.innerHTML = `<div class="error">Fehler: ${esc(iErr.message)}</div>`;
-        return;
-      }
-
-      const map = new Map();
-      for(const o of (orders||[])) map.set(o.id, { ...o, items: [] });
-      for(const it of (items||[])){
-        const o = map.get(it.order_id);
-        if(o) o.items.push({ ...it, colors: it.colors || {} });
-      }
-
-      const all = Array.from(map.values());
-      let open = all.filter(x=>!x.archived);
-      const archived = all.filter(x=>x.archived);
-
-      if(sortMode==="prio"){
-        open.sort((a,b)=>{
-          const ap = Math.min(...a.items.map(x=>prioRank(x.priority)).concat([2]));
-          const bp = Math.min(...b.items.map(x=>prioRank(x.priority)).concat([2]));
-          if(ap!==bp) return ap-bp;
-          return new Date(b.created_at)-new Date(a.created_at);
-        });
-      }else{
-        open.sort((a,b)=> new Date(b.created_at)-new Date(a.created_at));
-      }
-
-      const openTotal = open.reduce((s,o)=> s + orderTotal(o), 0);
-      openSumEl.textContent = "Summe offen: " + euro(openTotal);
-
-      const archTotal = archived.reduce((s,o)=> s + orderTotal(o), 0);
-      archivedTotalEl.textContent = "Archiv gesamt: " + euro(archTotal);
-
-      renderOrders(openOrdersEl, open, false);
-      renderOrders(archiveOrdersEl, archived, true);
-    }
-
-    sortDate.addEventListener("click", ()=>{
-      sortMode="date";
-      sortDate.classList.add("btnDark"); sortDate.classList.remove("btnSoft");
-      sortPrio.classList.add("btnSoft"); sortPrio.classList.remove("btnDark");
-      loadAll();
-    });
-    sortPrio.addEventListener("click", ()=>{
-      sortMode="prio";
-      sortPrio.classList.add("btnDark"); sortPrio.classList.remove("btnSoft");
-      sortDate.classList.add("btnSoft"); sortDate.classList.remove("btnDark");
-      loadAll();
     });
 
-    // init
-    setProduct("bunny");
-    validateSaveEnabled();
-    updateCartUI();
-    await loadAll();
-  </script>
+    /* ARCHIVE */
+    const archBtn = card.querySelector("[data-archive]");
+    if(archBtn){
+      archBtn.addEventListener("click",async()=>{
+        await supabase.from("orders")
+          .update({archived:true})
+          .eq("id",order.id);
+        await loadOrders();
+      });
+    }
+
+    /* RESTORE */
+    const resBtn = card.querySelector("[data-restore]");
+    if(resBtn){
+      resBtn.addEventListener("click",async()=>{
+        await supabase.from("orders")
+          .update({archived:false})
+          .eq("id",order.id);
+        await loadOrders();
+      });
+    }
+
+    /* DELETE */
+    card.querySelector("[data-delete]")
+      .addEventListener("click",async()=>{
+        if(!confirm("Wirklich löschen?")) return;
+        await supabase.from("orders").delete().eq("id",order.id);
+        await loadOrders();
+      });
+
+    /* OVERRIDE */
+    card.querySelector("[data-edit]")
+      .addEventListener("click",async()=>{
+
+        const current = order.total_override_cents
+          ? String(order.total_override_cents/100).replace(".",",")
+          : "";
+
+        const v = prompt("Neuer Gesamtpreis (€):",current);
+        if(v===null) return;
+
+        const cents = v.trim()===""
+          ? null
+          : Math.round(Number(v.replace(",","."))*100);
+
+        await supabase.from("orders")
+          .update({total_override_cents:cents})
+          .eq("id",order.id);
+
+        await loadOrders();
+      });
+
+    container.appendChild(card);
+  });
+}
+
+/* =============================
+   INIT LOAD
+============================= */
+
+loadOrders();
+
+</script>
 </body>
 </html>
